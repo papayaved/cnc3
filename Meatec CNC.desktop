@@ -1,0 +1,21 @@
+[Desktop Entry]
+Categories=Application;
+Comment[en_US]=Program for wire-cutting CNC machine
+Comment=Program for wire-cutting CNC machine
+Encoding=UTF-8
+Exec=/home/cnc/Meatec/icnc2/icnc.sh
+GenericName[en_US]=CNC
+GenericName=CNC
+Icon=/home/cnc/Meatec/icnc2/icnc.png
+MimeType=
+Name[en_US]=Meatec CNC
+Name=Meatec CNC
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=

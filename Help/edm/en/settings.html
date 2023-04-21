@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>CNC settings</title>
+		<style>
+			h1 {text-align: center;}
+			h2 {text-align: center;}
+			code {
+				color:Tomato;
+				font-weight:bold;
+			}
+			font.button {color:MediumSeaGreen;}
+		</style>
+	</head>
+	<body>
+		<table align="center" width="800" bgcolor="lightyellow">
+			<tr>
+				<td>
+					<a href="home.html#top">Home</a>
+					<h2 id="top">Application settings</h2>
+					<ul>
+						<li>
+							<h3>Language</h3>
+							<p>
+								Choosing the language of the program interface. <b><i>The changes will take effect after a reboot.</i></b>
+							</p>
+						</li>
+					</ul>
+					<h2>CNC settings</h2>
+					<ul>
+						<li>
+							<h3>Input signals levels</h3>
+							<p>
+								In the drop-down menu, you can select presets CNC input levels for EDM (Metal) or stone cutting (Stone), or program debugging (Debug) CNC mode.
+							</p>
+						</li><li>
+							<h3>Calculation step</h3>
+							<p>
+								Calculation step of the next position.
+							</p>
+						</li><li>
+							<h3><font class="button">Use servomotors</font></h3>
+							<p>
+								Generate step-dir signals instead phase signals.
+							</p>
+						</li><li>
+							<h3><font class="button">Reverse motors X, Y, U, V</font></h3>
+							<p>
+								Reverse direction of X, Y, U, V axes.
+							</p>
+						</li><li>
+							<h3><font class="button">Swap motors X, Y and U, V</font></h3>
+							<p>
+								Swap X,Y and U,V axes. The X-axis must be in the same plane as the U-axis and have the same direction. The same rule is used for the Y and V axes.
+							</p>
+						</li><li>
+							<h3><font class="button">Use linear encoders for X, Y axes</font></h3>
+							<p>
+								If linear encoders are installed, they can be used when cutting.
+							</p>
+							<ul>
+								<li>
+									<h3><font class="button">Reverse Encoder X, Y</font></h3>
+									<p>
+										Reverse encoder directions. The encoder direction must match the corresponding axis.
+									</p>
+								</li>
+							</ul>
+						</li><li>
+							<h3><font class="button">Feedback enable</font></h3>
+							<p>
+								Enable feedback mode. CNC keeps cutting voltage in the range between Low and High Thresholds. CNC have two voltage ranges for High Voltage and Low High Voltage.
+							</p>
+							<ul>
+								<li>
+									<h3>High, Low thresholds</h3>
+								</li><li>
+									<h3>Rollback timeout</h3>
+									<p>
+										The time in the short-circuit state after which the CNC rolls back to the rollback distance.
+									</p>
+								</li><li>
+									<h3>Rollback distance</h3>
+								</li><li>
+									<h3>Rollback speed</h3>
+									<p>
+										Rollback speed after a short circuit.
+									</p>						
+								</li><li>
+									<h3>Rollback attempts</h3>
+									<p>
+										Number of attempts to start cutting after a short-circuit.
+									</p>
+								</li>
+							</ul>
+						</li><li>
+							<h3>Acceleration</h3>
+							<p>
+								Maximum acceleration. It's only used to cutting speed control in feedback enabled mode.
+							</p>
+						</li><li>
+							<h3>Deceleration</h3>
+							<p>
+								Maximum deceleration.
+							</p>
+						</li><li>
+							<h3>Motors' precision</h3>
+							<p>
+								A number of motor steps per mm for each axis.
+							</p>
+						</li><li>
+							<h3>Encoders' precision</h3>
+							<p>
+								A number of encoder steps per mm for each axis.
+							</p>
+						</li>
+					</ul>
+					<h2>Buttons</h2>
+					<ul>
+						<li>
+							<h3><font class="button">Home</font> - go to the Home panel</h3>
+						</li><li>
+							<h3><font class="button">Read</font> - read CNC settings</h3>
+						</li><li>
+							<h3><font class="button">Write</font> - write CNC settings</h3>
+						</li><li>
+							<h3><font class="button">Default</font> - set default settings</h3>
+						</li>
+					</ul>
+					<p><a href="#top">Up</a></p>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

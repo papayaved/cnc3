@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>Size measuring for a 4-axle machine. CNC Meatec</title>
+		<style>
+			h1 {text-align: center;}
+			h2 {text-align: center;}
+			code {
+				color:Tomato;
+				font-weight:bold;
+			}
+			font.button {color:MediumSeaGreen;}
+		</style>
+	</head>
+	<body>
+		<table width="800" bgcolor="lightyellow" align="center">
+			<tr>
+				<td>
+					<a href="home.html#top">Home</a>
+					<h1 id="top">Size measuring for a 4-axle machine</h1>
+					<p>
+						This panel is an instrument for accurately measuring the position of the machine bed and the distance between the rollers. To do this, the CNC will cut a truncated cone, after which it will be necessary to measure the top and the bottom diameters. For better measurement accuracy, use a thick workpiece.
+					</p>
+					<ul>
+						<li>
+							<h3>Wire Diameter</h3>
+						</li><li>
+							<h3>Maximum U, V motors travel (UV_MAX)</h3>
+							<p>
+								Maximum motor travel along the U and V axes.
+							</p>
+						</li><li>
+							<h3>Distance between rollers (L)</h3>
+							<p>
+								Distance between axes of rollers.
+							</p>
+						</li><li>
+							<h3>Workpiece bottom height (H)</h3>
+							<p>
+								Distance between the axis of the lower roller and the bottom of the workpiece.
+							</p>
+						</li><li>
+							<h3>Workpiece thickness (T)</h3>
+							<p>The workpiece must have a rectangular profile.</p>
+						</li><li>
+							<h3>Roller diameter</h3>
+							<p>
+								The inner diameter on which the wire lies, <b><i>not the outer</i></b>.
+							</p>
+						</li><li>
+							<h3>Roller plane</h3>
+							<ul>
+								<li>
+									<h3><font class="button">XZ</font></h3>
+									<p>Rollers are placed along the X-axis.</p>
+								</li><li>
+									<h3><font class="button">YZ</font></h3>
+									<p>Rollers are placed along the Y-axis.</p>
+								</li>
+							</ul>
+						</li><li>
+							<h3>Entry line length</h3>
+							<p>The length of the Entry Line for a truncated cone.</p>
+						</li><li>
+							<h3>Cutting direction</h3>
+							<ul>
+								<li>
+									<h3><font class="button">X+</font></h3>
+									<p>Cut a truncated cone in the direction of increasing the X-axis.</p>
+								</li><li>
+									<h3><font class="button">X-</font></h3>
+									<p>Cut a truncated cone in the direction of decreasing the X-axis.</p>
+								</li><li>
+									<h3><font class="button">Y+</font></h3>
+									<p>Cut a truncated cone in the direction of increasing the Y-axis.</p>
+								</li><li>
+									<h3><font class="button">Y-</font></h3>
+									<p>Cut a truncated cone in the direction of decreasing the Y-axis.</p>
+								</li>
+							</ul>
+						</li><li>
+							<h3>Button <font class="button">Generate</font></h3>
+							<p>
+								Generate a G-code for a truncated cone.
+							</p>
+						</li>
+					</ul>
+					<h2>Recalculate</h2>
+					<p>Measure the top and the bottom diameters of the cut truncated cone.</p>
+					<ul>
+						<li>
+							<h3>Measured top diameter</h3>
+						</li><li>
+							<h3>Measured bottom diameter</h3>
+						</li><li>
+							<h3>Button <font class="button">Recalculate</font></h3>
+							<p>
+								Press to calculate machine parameters.
+							</p>
+						</li>
+					</ul>
+					<h2>Result</h2>
+					<ul>
+						<li>
+							<h3>L</h3>
+							<p>
+								The actual distance between rollers.
+							</p>
+						</li><li>
+							<h3>H</h3>
+							<p>
+								The actual height of the bottom of the workpiece (machine bed) above the axis of the bottom roller.
+							</p>
+						</li>
+					</ul>
+					<p><a href="#top">Up</a></p>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

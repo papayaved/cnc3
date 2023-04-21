@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>Cutting settings</title>
+		<style>
+			h1 {text-align: center;}
+			h2 {text-align: center;}
+			code {
+				color:Tomato;
+				font-weight:bold;
+			}
+			font.button {color:MediumSeaGreen;}
+		</style>
+	</head>
+	<body>
+		<table width="800" bgcolor="lightyellow" align="center">
+			<tr>
+				<td>
+					<a href="contour.html#top">Back</a>
+					<h1 id="top">Cutting settings</h1>
+					<h2>Bottom panel</h2>
+					<h3>Buttons</h3>
+						<ul>
+							<li>
+								<h3><font class="button">Back</font></h3>
+								<p>Return to the Contour editor.</p>
+							</li><li>
+								<h3><font class="button">Open</font></h3>
+								<p>Open cutting settings from file.</p>
+							</li><li>
+								<h3><font class="button">Save</font></h3>
+								<p>Save cutting setting to the current file.</p>
+							</li><li>
+								<h3><font class="button">Save as</font></h3>
+								<p>Save cutting settings as a new file.</p>
+							</li><li>
+								<h3><font class="button">Default</font></h3>
+								<p>Set default values.</p>
+							</li><li>
+								<h3><font class="button">Generate</font></h3>
+								<p>
+									Generate the G-code program based on the contour and cutting settings. After successful generation, the program goes to the Work Panel.
+								</p>
+							</li>
+						</ul>
+					<h2>Cutting settings panel</h2>
+					<ul>
+						<li>
+							<h3>Wire offset</h3>
+							<p>
+								Wire width compensation. This parameter changes the contour to compensate for the width of the cutting wire.
+							</p>
+							<ul>
+								<li>
+									<h3><font class="button">Left offset</font></h3>
+									<p>Use wire offset to the left of the cutting direction.</p>
+								</li><li>
+									<h3><font class="button">Right offset</font></h3>
+									<p>Use wire offset to the right of the cutting direction.</p>
+								</li>
+							</ul>
+						</li><li>
+							<h3>Cutting times</h3>
+							<p>Number of passes along the cutting contour. Values from 1 to 7.</p>
+						</li><li>
+							<h3>Offsets for passes 1..7</h3>
+							<p>Wire offsets for passes 1 to 7.</p>
+						</li><li>
+							<h3>Modes for passes 1..7</h3>
+							<p>Operation modes for passes 1 to 7.</p>
+						</li><li>
+							<h3>Entry line mode</h3>
+							<p>Entry line operation mode.</p>
+						</li><li>
+							<h3><font class="button">Workpiece Tab</font></h3>
+							<p>
+								The CNC machine can stop before it reaches the end of the contour, leaving a tab (or bridge) to hold a part in the workpiece. It prevents a part from falling down. After clamping the part, you can continue cutting by pressing the "Start" button.
+							</p>
+							<ul>
+								<li>
+									<h3><font class="button">Onepass</font></h3>
+									<p>
+										Cut off the tab with onepass.
+									</p>
+								</li><li>
+									<h3><font class="button">Multi-pass</font></h3>
+									<p>
+										Cut off the tab using the multi-pass mode as in the main cut.
+									</p>
+								</li><li>
+									<h3>Tab Width</h3>
+								</li><li>
+									<h3><font class="button">Use the last segment</font></h3>
+									<p>Use the last contour segment as a tab.</p>
+								</li><li>
+									<h3>Tab Offset</h3>
+									<p>Wire offset when cutting the tab with onepass.</p>
+								</li><li>
+									<h3>Tab Mode</h3>
+									<p>Operation mode when cutting the tab with onepass.</p>
+								</li><li>
+									<h3><font class="button">Tab Pause</font></h3>
+									<p>
+										Pause to clamp the part. <b><font color="red">Make sure, there is no High Voltage on the workpiece!</b></font>
+									</p>
+								</li>
+							</ul>
+						</li><li>
+							<h3>Overlap</h3>
+							<p>
+								This parameter sets the length of the contour overcut. It's used to process the entry point.
+							</p>
+						</li><li>
+							<h3>Cutting Speed Limit</h3>
+							<p>Set maximum cutting speed.</p>
+						</li><li>
+							<h3><font class="button">Tapered Cutting Parameters</font></h3>
+							<p>
+								Parameters for two contours cutting.
+							</p>
+							<ul>
+								<li>
+									<h3>Distance between rollers (L)</h3>
+									<p>
+										Distance between axes of rollers.
+									</p>
+								</li><li>
+									<h3>Workpiece bottom height (H)</h3>
+									<p>
+										Distance between the axis of the lower roller and the bottom of the workpiece.
+									</p>
+								</li><li>
+									<h3>Workpiece thickness (T)</h3>
+									<p>
+										The workpiece must have a rectangular profile.
+									</p>
+								</li>
+							</ul>
+						</li>
+					</ul>
+					<h2>Table of Generator Operation Modes</h2>
+					<h3>Buttons:</h3>
+					<ul>
+						<li>
+							<h3><font class="button">New</font></h3>
+							<p>Add a new mode.</p>
+						</li><li>
+							<h3><font class="button">Delete</font></h3>
+							<p>Delete selected mode.</p>
+						</li><li>
+							<h3><font class="button">Open</font></h3>
+							<p>Open operation modes file.</p>
+						</li><li>
+							<h3><font class="button">Save</font></h3>
+							<p>Save operation modes into the current file.</p>
+						</li><li>
+							<h3><font class="button">Save as</font></h3>
+							<p>Save operation modes as a new file.</p>
+						</li><li>
+							<h3><font class="button">Default</font></h3>
+							<p>Set default values.</p>
+						</li>
+					</ul>
+					<p><a href="#top">Up</a></p>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

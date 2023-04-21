@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>Centering Panel</title>
+		<style>
+			h1 {text-align: center;}
+			h2 {text-align: center;}
+			code {
+				color:Tomato;
+				font-weight:bold;
+			}
+			font.button {color:MediumSeaGreen;}
+		</style>
+	</head>
+	<body>
+		<table width="800" bgcolor="lightyellow" align="center">
+			<tr>
+				<td>
+					<a href="home.html#top">Home</a>
+					<h1 id="top">Centering</h1>
+					<h2>Bottom panel</h2>
+					<h3>Buttons</h3>
+					<ul>
+						<li>
+							<h3><font class="button">Home</font> - go to the Home panel</h3>
+							<p>The button is disabled during running.</p>
+						</li><li>
+							<h3><font class="button">X+</font></h3>
+							<p>
+								Search for the workpiece edge in the direction of increasing the X-coordinate
+							</p>
+						</li><li>
+							<h3><font class="button">X-</font></h3>
+							<p>
+								Search for the workpiece edge in the direction of decreasing the X-coordinate.
+							</p>
+						</li><li>
+							<h3><font class="button">Y+</font></h3>
+							<p>
+								Search for the workpiece edge in the direction of increasing the Y-coordinate.
+							</p>
+						</li><li>
+							<h3><font class="button">Y-</font></h3>
+							<p>
+								Search for the workpiece edge in the direction of decreasing the Y-coordinate.
+							</p>
+						</li><li>
+							<h3><font class="button">Center</font></h3>
+							<p>
+								Search the center of the round hole.
+							</p>
+						</li><li>
+							<h3><font class="button">Weak Voltage</font></h3>
+							<p>
+								Weak High voltage turn On/Off.
+							</p>
+						</li><li>
+							<h3><font class="button">Hold</font></h3>
+							<p>
+								Motors' holding turn On/Off.
+							</p>
+						</li><li>
+							<h3><font class="button">Cancel</font></h3>
+							<p>
+								Cancel moving.
+							</p>
+						</li>
+					</ul>
+					<h2>State panel</h2>
+						<ul>
+							<li>
+								<h3>Speed</h3>
+								<p>
+									Current workpiece speed.
+								</p>
+							</li><li>
+								<h3>Voltage</h3>
+								<p>
+									Current voltage between wire and workpiece.
+								</p>
+							</li><li>
+								<h3>X, Y</h3>
+								<p>
+									Current coordinates.
+								</p>
+							</li><li>						
+								<h3>Flags:</h3>
+								<ul>
+									<li>
+										<b>PWR</b> - no power supply 220V;
+									</li><li>
+										<b>WB</b> - wire break signal;
+									</li><li>
+										<b>TO</b> - short circuit timeout;
+									</li><li>
+										<b>FB</b> - feedback limit switch;
+									</li><li>
+										<b>ALM</b> - an alarm signal from one of the limit switches;
+									</li><li>
+										<b>REV</b> - the limit switch of the backward motion of the wire roll is active;
+									</li><li>
+										<b>FWD</b> - the limit switch of the forward motion of the wire roll is active.
+									</li>
+								</ul>
+							</li>
+						</ul>
+					<h2>Task panel</h2>
+					<ul>
+						<li>
+							<h3>Mode</h3>
+							<ul>
+								<li>
+									<b><font class="button">Edge search</font></b> - search the edge of a workpiece;
+								</li><li>
+									<b><font class="button">4-point search</font></b> - search the center of a round hole in a workpiece;
+								</li><li>
+									<b><font class="button">3-point search</font></b> - search the center of the arc at the workpiece edge.
+								</li>
+							</ul>
+						</li><li>
+							<h3>Search radius</h3>
+							<p>
+								Maximum search distance.
+							</p>
+						</li><li>
+							<h3>Fine zone</h3>
+							<p>
+								The size of a slow motion zone. This zone is used for precision search the edge of the workpiece
+							</p>
+						</li><li>
+							<h3>Rollback</h3>
+							<p>
+								Rollback distance after the workpiece edge is found.
+							</p>
+						</li><li>
+							<h3>Coarse speed</h3>
+							<p>
+								Initial speed.
+							</p>
+						</li><li>
+							<h3>Fine speed</h3>
+							<p>
+								Fine search speed.
+							</p>
+						</li><li>
+							<h3>Roll velocity</h3>
+							<p>
+								Roll velocity, from 0 to 7. 0 corresponds to an unmoved wire.
+							</p>
+						</li><li>
+							<h3>Threshold</h3>
+							<p>
+								Touch voltage.
+							</p>
+						</li><li>
+							<h3>Touches</h3>
+							<p>
+								The number of touches when CNC is searching for the workpiece edge.
+							</p>
+						</li><li>
+							<h3>Attempts</h3>
+							<p>
+								The number of attempts to find the center.
+							</p>
+						</li><li>
+							<h3>Angle 1, 2, 3</h3>
+							<p>
+								Set search angles for 3-point mode.
+							</p>
+						</li><li>
+							<h3><font class="button">Reset position</font></h3>
+							<p>
+								Same as<br>
+								<code>G92 X0 Y0</code>
+							</p>
+						</li>
+					</ul>
+					<p><a href="#top">Up</a></p>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

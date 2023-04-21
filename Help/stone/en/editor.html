@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>G-code Editor</title>
+		<style>
+			h1 {text-align: center;}
+			h2 {text-align: center;}
+			code {
+				color:Tomato;
+				font-weight:bold;
+			}
+			font.button {color:MediumSeaGreen;}
+		</style>
+	</head>
+	<body>
+		<table width="800" bgcolor="lightyellow" align="center">
+			<tr>
+				<td>
+					<a href="home.html#top">Home</a>
+					<section>
+						<h1 id="top">G-code Editor</h1>
+						<h2>Buttons</h2>
+						<ul>
+							<li>
+								<h3 id="home"><font class="button">Home</font></h3>
+								<p>Go to the Home panel.</p>
+							</li><li>
+								<h3 id="new"><font class="button">New</font></h3>
+								<p>Create a new G-code file.</p>
+							</li><li>
+								<h3 id="open"><font class="button">Open</font></h3>
+								<p>
+									Open a file with a CNC program in G-code format. The file extension should be (*.NC).
+								</p>
+							</li><li>
+								<h3 id="open"><font class="button">Save</font></h3>
+								<p>Save the current G-code file.</p>
+							</li><li>
+								<h3 id="save_as"><font class="button">Save as</font></h3>
+								<p>Save G-code as a new file.</p>
+							</li><li>
+								<h3 id="plot"><font class="button">Plot</font></h3>
+								<p>
+									Check G-code program and show a contour that is described in G-code.
+								</p>
+							</li><li>
+								<h3 id="contour"><font class="button">to Contour</font></h3>
+								<p>
+									Converting G-code to a contour to further customizing the processing parameters.
+								</p>
+							</li><li>
+								<h3 id="run"><font class="button">Run</font> - Work Panel</h3>
+								<p>Go to the Work panel with the current G-code.</p>
+							</li>
+						</ul>
+						<hr>
+					</section><section>
+						<h1 id="G-code">Supported G-code commands</h1>
+						<h2>Control character</h2>
+						<h3><code>%</code> - delimiter</h3>
+							<p>
+								It is set at the beginning and at the end of the G-code program.
+							</p>
+						<h2>Comments</h2>
+						<h3><code>({text of comment})</code></h3>
+							<p>
+								<i>Example:</i><br>
+									<code>G1 X10 Y0 (cutline)</code>
+							</p>
+						<h2>G-codes</h2>
+						<h3 align="center">Straight cutting</h3>
+						<h3><code>G0 X{x} Y{y}</code> - rapid positioning</h3>
+						<p>
+							Moving to a point (x, y) with maximum speed by linear trajectory.
+							<ul>
+							  <li><i>x, y</i> - in mm.</li>
+							</ul>
+						</p>
+						<h3><code>G1 X{x} Y{y} F{speed}</code> - linear interpolation</h3>
+						<p>
+							Moving to a point (x, y) with a given speed by linear trajectory.
+							<ul>
+								<li>
+									<i>x, y</i> - in mm;
+								</li><li>
+									<i>speed</i> - in mm/min, range [0.01, 18].
+								</li>
+							</ul>
+						</p>
+						<h3><code>G2 X{x} Y{y} I{Cx} J{Cy} F{speed}</code> - circular interpolation, clockwise</h3>
+						<p>
+							Moving to a point (x, y) by arc trajectory with a center of the arc at a point (Cx, Cy) clockwise with a given speed.
+							<ul>
+								<li>
+									<i>x, y</i> - is a new position, in mm;
+								</li><li>
+									<i>Cx, Cy</i> - is an incremental position of the arc center, in mm, based on current coordinates;
+								</li><li>
+									<i>speed</i> - in mm/min, range [0.01, 18].
+								</li>
+							</ul>
+							<i>Example:</i><br>
+							<code>
+								(A circle with a diameter of 20 mm)<br>
+								G92 X0 Y0<br>
+								G1 X10 F1.8 (entry line)<br>
+								G2 X20 Y10 I10 J0 (second quarter)<br>
+								G2 X30 Y0 I0 J-10 (first quarter)<br>
+								G2 X20 Y-10 I-10 J0 (forth quarter)<br>
+								G2 X10 Y0 I0 J10 (third quarter)<br>
+								G1 X0 Y0 (exit line)
+							</code>
+						</p>
+						<h3><code>G2 X{x} Y{y} R{radius} F{speed}</code> - circular interpolation, clockwise</h3>
+						<p>
+							Moving to a point (x, y) by arc trajectory with a given radius and speed in a clockwise direction.
+							<ul>
+								<li>
+									<i>x, y</i> - is a new position, in mm;
+								</li><li>
+									<i>radius</i> - in mm;
+								</li><li>
+									<i>speed</i> - in mm/min, range [0.01, 18].
+								</li>
+							</ul>
+						</p>
+						<h3><code>G3 X{x} Y{y} I{Cx} J{Cy} F{speed}</code> - circular interpolation, counterclockwise</h3>
+						<h3><code>G3 X{x} Y{y} R{radius} F{speed}</code> - circular interpolation, counterclockwise</h3>
+						<h3><code>G92 X{x} Y{y}</code> - set position register</h3>
+						<p>
+							Set coordinates (x, y) for the current position.
+						</p>
+						<h3><code>G4 P{pause}</code> - pause, milliseconds</h3>
+						<p>
+							The program pauses for a given time.<br>
+							<i>Example:</i><br>
+							<code>
+								M40 (pump enable)<br>
+								G4 P30000 (pause for 30 seconds)<br>
+								M82 (wire roll enable)
+							</code>
+						</p>
+						<h3><code>G90</code> - absolute programming (by default)</h3>
+						<p>
+							Switch a CNC work mode to absolute coordinates.
+						</p>
+						<h3><code>G91</code> - incremental programming</h3>
+						<p>
+							Switch a CNC work mode to incremental coordinates.
+						</p>						
+						<h3><code>G92 X{x} Y{y}</code> - set position register</h3>
+						<p>
+							Set coordinates (x, y) for the current position.
+						</p>
+						<h3 align="center">Modal Codes</h3>
+						<p>
+							Modal codes G1, G2, G3, X, Y, F remain in effect until replaced by a contradictory code.
+						</p><p>
+							<i>Example:</i><br>
+							<code>
+								%<br>
+								G92 X0 Y0<br>
+								G1 X10 Y20 F5<br>
+								X20 Y0<br>
+								X0<br>
+								M2<br>
+								%
+							</code>
+						</p>
+						<h2>M-codes</h2>
+						<h3><code>M0</code> - compulsory stop</h3>
+						<p>
+							G-code program stops and waits for the "Start" button to be pressed.
+						</p><p>
+							<i>Example:</i><br>
+							<code>M40</code> - pump enable<br>
+							<code>G4 P30000</code> - pause 30 seconds<br>
+							<code>M0</code> - stop and wait the "Start" button<br>
+							<code>M82</code> - wire roll enable
+						</p>
+						<h3><code>M2, M30</code> - end of program</h3>
+						<p>You can use any of these M-codes to end the program.</p>
+						<h3><code>M40</code> - pump enable</h3>
+						<h3><code>M41</code> - pump disable</h3>
+						<h3><code>M82</code> - wire roll enable</h3>
+						<h3><code>M83</code> - wire roll disable</h3>
+						<h3><code>M105 P{value}</code> – roll velocity</h3>
+						<p>Values within [1, 7]. 1 - minimal velocity, 7 - maximum velocity.</p>
+					</section>
+					<p><a href="#top">Up</a></p>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

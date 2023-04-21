@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>CNC Pult</title>
+		<style>
+			h1 {text-align: center;}
+			h2 {text-align: center;}
+			code {
+				color:Tomato;
+				font-weight:bold;
+			}
+			font.button {color:MediumSeaGreen;}
+		</style>
+	</head>
+	<body>
+		<table width="800" bgcolor="lightyellow" align="center">
+			<tr>
+				<td>
+					<a href="home.html#top">Home</a>
+					<h1 id="top">Pult</h1>
+					<h2>Common control</h2>
+					<h3>Buttons</h3>
+					<ul>
+						<li>
+							<h3><font class="button">Home</font> - go to the Home panel</h3>
+							<p>
+								The button is disabled during running.
+							</p>
+						</li><li>
+							<h3><font class="button">Break</font></h3>
+							<p>
+								Wire break control turn On/Off.
+							</p>
+						</li><li>
+							<h3><font class="button">Pump</font></h3>
+							<p>
+								Cutting fluid turn On/Off.
+							</p>
+						</li><li>
+							<h3><font class="button">Roll</font></h3>
+							<p>
+								Wire roll turn On/Off.
+							</p>
+						</li><li>
+							<h3><font class="button">Cancel</font></h3>
+							<p>
+								Cancel moving.
+							</p>
+						</li><li>
+							<h3><font class="button">Hold</font></h3>
+							<p>
+								Motors' holding turn On/Off.
+							</p>
+						</li>
+					</ul>
+					<h3>Controls</h3>
+					<ul>
+						<li>
+							<h3><font class="button">Roll</font> - wire roll velocity</h3>
+							<p>Values from 1 to 7.</p>
+						</li><li>
+							<h3><font class="button">Speed</font> - maximum cutting speed</h3>
+							<p>Values from 0,01 to 18 mm/min.</p>
+						</li>
+					</ul>
+					<h2>Task panel</h2>
+					<h3>Buttons</h3>
+					<ul>
+						<li>
+							<h3><font class="button">Forward</font></h3>
+							<p>
+								Move on distance <i>dX</i>, <i>dY</i> with given speed. Same as the G-code command<br>
+								<code>
+									G91 G1 X{<i>dX</i>} Y{<i>dY</i>} F{speed}
+								</code>
+							</p>
+						</li><li>
+							<h3><font class="button">Reverse</font></h3>
+							<p>
+								Move on distance <i>dX</i>, <i>dY</i> with given speed in reverse direction. Same as the G-code command<br>
+								<code>
+									G91 G1 X{<i>-dX</i>} Y{<i>-dY</i>} F{speed}
+								</code>
+							</p>
+						</li><li>
+							<h3><font class="button">Set</font></h3>
+							<p>
+								Set CNC position counters to <i>X</i>, <i>Y</i> values. Same as the G-code command<br>
+								<code>
+									G92 X{<i>X</i>} Y{<i>Y</i>}
+								</code>
+							</p>
+						</li><li>
+							<h3><font class="button">Copy</font></h3>
+							<p>
+								Copy current coordinates. Together with the "Back" button, it is used to return to the zero position.
+							</p>
+						</li><li>
+							<h3><font class="button">Remain</font></h3>
+							<p>
+								Calculate the difference between the given distance and current position.
+							</p>
+						</li><li>
+							<h3><font class="button">Clear</font></h3>
+							<p>
+								Clear fields <i>dX</i>, <i>dY</i>, <i>X</i>, <i>Y</i>.
+							</p>
+						</li><li>
+							<h3><font class="button">Reset</font></h3>
+							<p>
+								Set default parameters.
+							</p>
+						</li>
+					</ul>
+					<h3>Parameters</h3>
+					<ul>
+						<li>
+							<h3><font class="button">Scale</font></h3>
+							<p>
+								The precision of stepper motors and linear encoders is set here.<br>
+								<br>
+								The values are not written to the CNC. They are only used in the Pult panel.
+							</p>
+						</li>
+					</ul>
+					<h2>State panel</h2>
+					<p>
+						The State panel displays:
+						<ul>
+							<li>
+								Current coordinates X, Y in millimeters;;
+							</li><li>
+								Elapsed time from the start in HH:MM:SS format;
+							</li><li>
+								Estimated remaining time in HH:MM:SS format;
+							</li><li>
+								Flags:
+								<ul>
+									<li>
+										<b>PWR</b> - no power supply 220V;
+									</li><li>
+										<b>WB</b> - wire break signal;
+									</li><li>
+										<b>FB</b> - feedback limit switch;
+									</li><li>
+										<b>ALM</b> - an alarm signal from one of the limit switches;
+									</li><li>
+										<b>REV</b> - the limit switch of the backward motion of the wire roll is active;
+									</li><li>
+										<b>FWD</b> - the limit switch of the forward motion of the wire roll is active.
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</p>
+					<p><a href="#top">Up</a></p>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

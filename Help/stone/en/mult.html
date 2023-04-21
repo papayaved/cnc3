@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>Contour multiplication</title>
+		<style>
+			h1 {text-align: center;}
+			h2 {text-align: center;}
+			code {
+				color:Tomato;
+				font-weight:bold;
+			}
+			font.button {color:MediumSeaGreen;}
+		</style>
+	</head>
+	<body>
+		<table align="center" width="800" bgcolor="lightyellow">
+			<tr>
+				<td>
+					<a href="contour.html#top">Back</a>
+					<h2 id="top">Contour multiplication</h2>
+					<p>
+						The form allows you to multiplicate a part and cut out a batch of parts in one G-code program. Parts are arranged on the workpiece in rows along the trajectory with a snake. The part must have a closed contour and 4 junction vertices, in the positive and negative directions of the X and Y axes. These vertices will be used as junction points to connect the parts to each other. A vertex is a point where two adjacent segments are connected.
+					</p>
+					<ul>
+						<li>
+							<h3>Row direction</h3>
+							<p>
+								Choice the main axis of parts' multiplication. The direction along the axis depends on the sign of the width between the parts.
+							</p>
+							<ul>
+								<li>
+									<h3><font class="button">X</font></h3>
+									<p>Rows run along the X-axis.</p>
+								</li><li>
+									<h3><font class="button">Y</font></h3>
+									<p>Rows run along the Y-axis.</p>
+								</li>
+							</ul>
+						</li><li>
+							<h3>Parts per row</h3>
+							<p>The number of parts in each row.</p>
+						</li><li>
+							<h3>Rows</h3>
+							<p>The number of rows.</p>
+						</li><li>
+							<h3>Gap between parts in each row</h3>
+							<p>
+								Signed value. The sign determines the direction of the parts in a row.
+							</p>
+						</li><li>
+							<h3>Gap between rows</h3>
+							<p>
+								Signed value. The sign determines the direction of increasing the number of rows.
+							</p>
+						</li><li>
+							<h3><font class="button">Auto choice in the contour 4 junction verteces</font></h3>
+							<p>
+								Automatically choice in the closed contour 4 existing vertices as junction points, or manually:
+							</p>
+							<ul>
+								<li>
+									<h3>-X junction point is at the beginning of the segment <i>with the given number</i></h3>
+									<p>
+										Set the contour junction point for the negative direction of the X-axis.
+									</p>
+								</li><li>
+									<h3>+X junction point is at the beginning of the segment <i>with the given number</i></h3>
+									<p>
+										Set the contour junction point for the positive direction of the X-axis.
+									</p>
+								</li><li>
+									<h3>+Y junction point is at the beginning of the segment <i>with the given number</i></h3>
+									<p>
+										Set the contour junction point for the positive direction of the Y-axis.
+									</p>
+								</li><li>
+									<h3>-Y junction point is at the beginning of the segment <i>with the given number</i></h3>
+									<p>
+										Set the contour junction point for the negative direction of the Y-axis.
+									</p>
+								</li>
+							</ul>
+						</li><li>
+							<h3>Entry Line Length</h3>
+							<p>
+								The length of the Entry Line for the new complex contour.
+							</p>
+						</li><li>
+							<h3>Exit Line Length</h3>
+							<p>
+								The length of the Exit Line for the new complex contour.
+							</p>
+						</li>
+					</ul>
+					<h2>Buttons</h2>
+					<ul>
+						<li>
+							<h3><font class="button"><a href="contour.html#top">OK</a></font></h3>
+							<p>Multiplicate the part and return to the Contour editor.</p>
+						</li><li>
+							<h3><font class="button"><a href="contour.html#top">Cancel</a></font></h3>
+							<p>Cancel the action and return to the Contour editor.</p>
+						</li><li>
+							<h3><font class="button">Default</font></h3>
+							<p>Set default parameters.</p>
+						</li>
+					</ul>
+					<p><a href="#top">Up</a></p>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

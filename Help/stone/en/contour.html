@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>Contour Editor</title>
+		<style>
+			h1 {text-align: center;}
+			h2 {text-align: center;}
+			code {
+				color:Tomato;
+				font-weight:bold;
+			}
+			font.button {color:MediumSeaGreen;}
+		</style>
+	</head>
+	<body>
+		<table width="800" bgcolor="lightyellow" align="center">
+			<tr>
+				<td>
+					<a href="home.html#top">Home</a>
+					<h1 id="top">Contour Editor</h1>
+					<h2>Bottom Panel</h2>
+					<h3>Buttons</h3>
+					<ul>
+						<li>
+							<h3 id="home"><font class="button">Home</font></h3>
+							<p>Go to the Home Panel.</p>
+						</li><li>
+							<h3><font class="button">Open</font></h3>
+							<p>Open a project.</p>
+						</li><li>
+							<h3><font class="button">Save</font></h3>
+							<p>Save current project.</p>
+						</li><li>
+							<h3><font class="button">Save as</font></h3>
+							<p>Save as a copy or new file.</p>
+						</li><li>
+							<h3><font class="button">Load DXF</font></h3>
+							<p>
+								Load a cutting contour in the DXF format. Only line and arc segments are supported in the DXF file. If the DXF file contains several layers, you will be prompted to select the required layer.
+							</p>
+						</li><li>
+							<h3><font class="button"><a href="mult.html#top">Multiply</a></font></h3>
+							<p>
+								Multiplicate the selected closed contour. All other contours will be removed.
+						</li><li>
+							<h3><font class="button"><a href="passes.html#top">Generate</a></font></h3>
+							<p>Set up cutting parameters and modes, and generate G-code</p>
+						</li>
+					</ul>
+					<h2>Contour Edit Panel</h2>
+					<h3>Buttons</h3>
+					<ul>
+						<li>
+							<h3><font class="button">New</font></h3>
+							<p>
+								Create new empty contour.
+							</p>
+						</li><li>
+							<h3><font class="button">New Entry</font></h3>
+							<p>
+								Add a new cutline before the first segment. The Entry line will be attached to the first contour point marked with a red square on the plot.
+							</p>
+						</li><li>
+							<h3><font class="button">Delete</font></h3>
+							<p>Delete the selected contour from the project.</p>
+						</li><li>
+							<h3><font class="button">Clear</font></h3>
+							<p>delete all contours from the project.</p>
+						</li><li>
+							<h3><font class="button">First</font></h3>
+							<p>Set selected segment or contour as the first in the list.</p>
+						</li><li>
+							<h3><font class="button">Up</font></h3>
+							<p>Move selected segment or contour up in the list.</p>
+						</li><li>
+							<h3><font class="button">Down</font></h3>
+							<p>Move selected segment or contour down in the list.</p>
+						</li><li>
+							<h3><font class="button">Last</font></h3>
+							<p>Set selected segment or contour as the last in the list.</p>
+						</li><li>
+							<h3><font class="button">Sort</font></h3>
+							<p>Automatically sort the segments in the current contour.</p>
+						</li><li>
+							<h3><font class="button">Properties</font></h3>
+							<p>
+								Selected segment or contour properties. They allow you to move a segment to another contour or change the contour type.
+							</p>
+						</li><li>
+							<h3><font class="button">Undo</font></h3>
+							<p>Undo the last change.</p>
+						</li><li>
+							<h3>Меню <font class="button">Edit</font></h3>
+							<ul>
+								<li>
+									<h4><font class="button">Use as Entry line</font></h4>
+									<p>
+										Use the selected contour segment as the Entry line of a single contour. It works only with a single contour in the project.
+									</p>
+								</li><li>
+									<h4><font class="button">Change Direction</font></h4>
+									<p>
+										Reverse the segments' order in the current contour. This operation changes the cutting direction.
+									</p>
+								</li><li>
+									<h4><font class="button">Rotate</font></h4>
+									<p>Rotate all contours in the project by a given angle.</p>
+								</li><li>
+									<h4><font class="button">Flip Left-Right</font></h4>
+									<p>Flip all contours in the project from left to right.</p>
+								</li><li>
+									<h4><font class="button">Flip Upside-Down</font></h4>
+									<p>Flip all contours in the project upside down.</p>
+								</li><li>
+									<h4><font class="button">Resize</font></h4>
+									<p>Resize all contours in the project.</p>
+								</li>
+							</ul>
+						</li>
+					</ul>
+					<p><a href="#top">Up</a></p>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

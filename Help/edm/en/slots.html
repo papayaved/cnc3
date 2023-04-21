@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>Slots. CNC Meatec</title>
+		<style>
+			h1 {text-align: center;}
+			h2 {text-align: center;}
+			code {
+				color:Tomato;
+				font-weight:bold;
+			}
+			font.button {color:MediumSeaGreen;}
+		</style>
+	</head>
+	<body>
+		<table width="800" bgcolor="lightyellow" align="center">
+			<tr>
+				<td>
+					<a href="home.html#top">Home</a>
+					<h1 id="top">Slots Panel</h1>
+					<h2>Parameters</h2>
+					<ul>
+						<li>
+							<h3>Wire Diameter</h3>
+						</li><li>
+							<h3>Slots Depth</h3>
+							<p>Signed value.</p>
+						</li><li>
+							<h3>Step</h3>
+							<p>
+								The thickness of the parts. Signed value. The sign depends on the processing direction.
+							</p>
+						</li><li>
+							<h3>Slots Number</h3>
+						</li><li>
+							<h3>Cutting Speed</h3>
+							<p>Speed in the forward direction.</p>
+						</li><li>
+							<h3>Roll Velocity</h3>
+							<p>Wire roll velocity when the CNC is cutting in the forward direction.</p>
+						</li><li>
+							<h3>Idle Speed</h3>
+							<p>Speed in the reverse direction.</p>
+						</li><li>
+							<h3>Idle Roll Velocity</h3>
+							<p>Wire roll velocity when the CNC is moving in the reverse direction.</p>
+						</li><li>
+							<h3><font class="button">Pause</font></h3>
+							<p>
+								Pause time after cutting in the forward direction. This parameter is used when the wire bends due to excessive cutting speed.
+							</p>
+						</li><li>
+							<h3>Axis</h3>
+							<p>
+								Axis of the processing direction. The direction also depends on the sign of the step of the slots.
+							</p>
+							<ul>
+								<li>
+									<h3><font class="button">X</font></h3>
+								</li><li>
+									<h3><font class="button">Y</font></h3>
+								</li>
+							</ul>
+						</li>
+					</ul>
+					<h2>Buttons</h2>
+					<ul>
+						<li>
+							<h3><font class="button">Reset</font></h3>
+							<p>
+								Reset to default.
+							</p>
+						</li><li>
+							<h3><font class="button">Undo</font></h3>
+							<p>
+								Return last used.
+							</p>
+						</li><li>
+							<h3><font class="button">Generate</font></h3>
+							<p>
+								Generate G-code.
+							</p>
+						</li>
+					</ul>
+					<p><a href="#top">Up</a></p>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>
