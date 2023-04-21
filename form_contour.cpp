@@ -1460,22 +1460,16 @@ void FormContour::on_plotClicked(const QPointF& pt) {
 //}
 
 void FormContour::on_actResize_triggered() {
-    if (par.contours.size() == 0)
-        return;
-
-    if (par.contours.size() != 1) // todo for complex contour
-        return;
-
     if (par.contours.empty())
         return;
 
     updateCurrentViewPos();
-    ContourPair* const pair = par.contours.at(m_ctr_num);
+//    ContourPair* const pair = par.contours.at(m_ctr_num); // ??
 
-    if (!pair || pair->empty())
-        return;
+//    if (!pair || pair->empty()) // ??
+//        return;
 
-    ContourRange range = pair->range();
+    ContourRange range = par.contours.range();
     center = fpoint_valid_t(range.center(), center.valid);
 
     ResizeDialog* dialog = new ResizeDialog(range.width(), range.height(), center, this);
@@ -1485,56 +1479,57 @@ void FormContour::on_actResize_triggered() {
 
     dialog->exec();
 
-    double pct = 1;
-
     if (dialog->result() == QDialog::Accepted) {
         saveUndo();
 
-        if (dialog->isPct()) {
-            pct = dialog->pct() / 100;
+        double pct = 1;
+        if (dialog->hasPct()) {
+            pct = dialog->pct() / 100.0;
             qDebug() << "Dialog OK" << "Rotate pct: " << pct;
         }
-        else if (dialog->isRect()) {
+        else if (dialog->hasRect()) {
             qDebug() << "Dialog OK" << "Resize Width: " << dialog->rectWidth() << "Height: " << dialog->rectHeight();
             frect_t rect(fpoint_t(range.x_min, range.y_min), fpoint_t(range.x_max, range.y_max));
             pct = rect.resize(dialog->rectWidth(), dialog->rectHeight());
         }
-        else if (dialog->isRatio()) {
+        else if (dialog->hasRatio()) {
             pct = dialog->ratioNewSize() / dialog->ratioBaseSize();
             qDebug() << "Dialog OK" << "Ratio Old: " << dialog->ratioBaseSize() << "New: " << dialog->ratioNewSize() << "(" << pct << ")";
         }
         else
             qDebug() << "Dialog Error";
 
-
         center = dialog->center();
-        fpoint_t base(center.valid ? center.x : range.x_min, center.valid ? center.y : range.y_min);
+//        fpoint_t base(center.valid ? center.x : range.x_min, center.valid ? center.y : range.y_min);
+        fpoint_t base(center.valid ? center.x : par.contours.firstBot().x, center.valid ? center.y : par.contours.firstBot().y);
 
-        pair->scale(pct, base);
+        par.contours.scale(pct, base);
 
-        if (m_ctr_num) {
-            ContourPair* const incut = par.contours.at(m_ctr_num - 1);
+//        pair->scale(pct, base);
 
-            if (incut && incut->type() == CONTOUR_TYPE::CUTLINE_CONTOUR) {
-                if (!incut->botEmpty())
-                    incut->bot()->back()->change_1( pair->firstBot() );
+//        if (m_ctr_num) {
+//            ContourPair* const incut = par.contours.at(m_ctr_num - 1);
 
-                if (!incut->topEmpty())
-                    incut->top()->back()->change_1( pair->firstTop() );
-            }
-        }
+//            if (incut && incut->type() == CONTOUR_TYPE::CUTLINE_CONTOUR) {
+//                if (!incut->botEmpty())
+//                    incut->bot()->back()->change_1( pair->firstBot() );
 
-        if ((m_ctr_num + 1) < par.contours.size()) {
-            ContourPair* const outcut = par.contours.at(m_ctr_num + 1);
+//                if (!incut->topEmpty())
+//                    incut->top()->back()->change_1( pair->firstTop() );
+//            }
+//        }
 
-            if (outcut && outcut->type() == CONTOUR_TYPE::CUTLINE_CONTOUR) {
-                if (!outcut->botEmpty())
-                    outcut->bot()->front()->change_0( pair->lastBot() );
+//        if ((m_ctr_num + 1) < par.contours.size()) {
+//            ContourPair* const outcut = par.contours.at(m_ctr_num + 1);
 
-                if (!outcut->topEmpty())
-                    outcut->top()->front()->change_0( pair->lastTop() );
-            }
-        }
+//            if (outcut && outcut->type() == CONTOUR_TYPE::CUTLINE_CONTOUR) {
+//                if (!outcut->botEmpty())
+//                    outcut->bot()->front()->change_0( pair->lastBot() );
+
+//                if (!outcut->topEmpty())
+//                    outcut->top()->front()->change_0( pair->lastTop() );
+//            }
+//        }
 
         restoreViewPos(m_ctr_num, m_row_num, m_col_num);
     }

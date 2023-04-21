@@ -335,6 +335,18 @@ ContourRange ContourList::range() const {
     return range;
 }
 
+void ContourList::scale(double k, const fpoint_t &base) {
+    for (ContourPair& pair: m_contours)
+        pair.shift(-base);
+
+    for (ContourPair& pair: m_contours) {
+        pair.scale(k);
+    }
+
+    for (ContourPair& pair: m_contours)
+        pair.shift(base);
+}
+
 void ContourList::select(size_t ctr_num) {
     clearSelected();
 

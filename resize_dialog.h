@@ -24,9 +24,9 @@ public:
 
     explicit ResizeDialog(double width, double height, const fpoint_valid_t& center, QWidget *parent = nullptr);
 
-    bool isPct() const;
-    bool isRect() const;
-    bool isRatio() const;
+    bool hasPct() const;
+    bool hasRect() const;
+    bool hasRatio() const;
 
     double pct() const;
     double rectWidth() const;

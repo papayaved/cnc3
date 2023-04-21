@@ -17,7 +17,7 @@ class FormMult : public QWidget {
     Q_OBJECT
 
     static constexpr size_t SPLIT_POINTS = 4;
-    const QString help_file = "mux.html";
+    const QString help_file = "mult.html";
     ProgramParam& par;
     size_t m_ctr_num {0};
 

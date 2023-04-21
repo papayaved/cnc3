@@ -551,11 +551,8 @@ void ContourPair::changeLastPoint(const fpoint_valid_t& pt_bot, const fpoint_val
 }
 
 void ContourPair::shift(const fpoint_t& pt) {
-    if (m_bot)
-        m_bot->shift(pt);
-
-    if (m_top)
-        m_top->shift(pt);
+    if (m_bot) m_bot->shift(pt);
+    if (m_top) m_top->shift(pt);
 }
 
 void ContourPair::moveTo(const fpoint_t &pt) {
@@ -597,16 +594,25 @@ void ContourPair::flipY(double y) {
 }
 
 void ContourPair::scale(double k, const fpoint_t& base) {
-    if (m_bot) {
-        m_bot->shift(-base);
-        m_bot->scale(k);
-        m_bot->shift(base);
-    }
-    if (m_top) {
-        m_top->shift(-base);
-        m_top->scale(k);
-        m_top->shift(base);
-    }
+    shift(-base);
+    scale(k);
+    shift(base);
+
+//    if (m_bot) {
+//        m_bot->shift(-base);
+//        m_bot->scale(k);
+//        m_bot->shift(base);
+//    }
+//    if (m_top) {
+//        m_top->shift(-base);
+//        m_top->scale(k);
+//        m_top->shift(base);
+//    }
+}
+
+void ContourPair::scale(double k) {
+    if (m_bot) m_bot->scale(k);
+    if (m_top) m_top->scale(k);
 }
 
 ContourRange ContourPair::range() const {

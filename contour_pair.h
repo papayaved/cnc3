@@ -182,6 +182,7 @@ public:
     void flipX(double x);
     void flipY(double y);
     void scale(double pct, const fpoint_t& base);
+    void scale(double pct);
 
     ContourRange range() const;
 

@@ -79,6 +79,7 @@ public:
     const std::string& lastError();
 
     ContourRange range() const;
+    void scale(double k, const fpoint_t& base);
 
     void select(size_t ctr_num);
     void select(size_t ctr_num, size_t row_num, size_t col_num);

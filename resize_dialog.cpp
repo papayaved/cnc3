@@ -163,9 +163,9 @@ ResizeDialog::ResizeDialog(double width, double height, const fpoint_valid_t& C,
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 }
 
-bool ResizeDialog::isPct() const { return radioPct->isChecked(); }
-bool ResizeDialog::isRect() const { return radioRect->isChecked(); }
-bool ResizeDialog::isRatio() const { return radioRatio->isChecked(); }
+bool ResizeDialog::hasPct() const { return radioPct->isChecked(); }
+bool ResizeDialog::hasRect() const { return radioRect->isChecked(); }
+bool ResizeDialog::hasRatio() const { return radioRatio->isChecked(); }
 
 double ResizeDialog::pct() const { return inPct->value(); }
 double ResizeDialog::rectWidth() const { return inWidth->value(); }
