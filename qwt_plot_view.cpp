@@ -25,16 +25,27 @@ QwtPlotView::QwtPlotView(QObject *parent) :
 
         emptyPlot();
 
+        //
         m_picker = new QwtPlotPicker(QwtPlot::xBottom, QwtPlot::yLeft,
                                                   QwtPicker::CrossRubberBand, QwtPicker::ActiveOnly,
                                                   m_qwtPlot->canvas());
 
+        m_picker->setMousePattern(QwtEventPattern::MouseSelect1, Qt::MouseButton::LeftButton, Qt::KeyboardModifier::NoModifier);
+
         m_picker->setStateMachine(new QwtPickerClickPointMachine());
 
-        connect(m_picker, &QwtPlotPicker::appended, this, &QwtPlotView::on_pointSelected);
+        //
+        m_picker2 = new QwtPlotPicker(QwtPlot::xBottom, QwtPlot::yLeft,
+                                                  QwtPicker::CrossRubberBand, QwtPicker::ActiveOnly,
+                                                  m_qwtPlot->canvas());
 
-//        m_pts_bot.resize(2);
-//        m_pts_top.resize(2);
+        m_picker2->setMousePattern(QwtEventPattern::MouseSelect1, Qt::MouseButton::LeftButton, Qt::KeyboardModifier::ControlModifier);
+
+        m_picker2->setStateMachine(new QwtPickerClickPointMachine());
+
+        //
+        connect(m_picker, QOverload<const QPointF&>::of(&QwtPlotPicker::selected), this, &QwtPlotView::on_selected);
+        connect(m_picker2, QOverload<const QPointF&>::of(&QwtPlotPicker::selected), this, &QwtPlotView::on_controlSelected);
     }
 }
 
@@ -130,7 +141,7 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
 
     m_qwtPlot->detachItems(QwtPlotItem::Rtti_PlotItem, true); // These are default parameters
 
-    bool passed_bot_reg = true, passed_top_reg = true;
+    bool passed_bot_reg = true, passed_top_reg = true, group_sel {false};
 
 //    for (const ContourPair& pair: contourList.contours()) {
 //        for (const DxfEntity* ent: pair.bot()->entities()) {
@@ -178,7 +189,7 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
 //        i++;
 //    }
 
-    const DxfEntity *selBotEnt {nullptr}, *selTopEnt {nullptr};
+//    const DxfEntity *selBotEnt {nullptr}, *selTopEnt {nullptr};
     const ContourPair *selPair {nullptr};
 
     size_t ctr {0}, row {0};
@@ -190,23 +201,27 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
         // BOT
         row = 0;
         for (const DxfEntity* ent: pair.bot()->entities()) {
-            bool a = contourList.isSegmentSelected();
-            bool b = ctr == contourList.selectedContour();
-            bool c = row == contourList.selectedRow();
+//            bool a = contourList.isSegmentSelected();
+//            bool b = ctr == contourList.selectedContour();
+//            bool c = row == contourList.selectedRow();
 
-//            if (contourList.isSegmentSelected() && ctr == contourList.selectedContour() && row == contourList.selectedRow())
-            if (a && b && c)
-                selBotEnt = ent;
+////            if (contourList.isSegmentSelected() && ctr == contourList.selectedContour() && row == contourList.selectedRow())
+//            if (a && b && c)
+//                selBotEnt = ent;
 
             bool passed = (int)ctr < contourList.currentContourNumber() || ((int)ctr == contourList.currentContourNumber() && (int)row <= contourList.currentSegmentNumber());
 
             if (!pts.empty()) {
+                if (group_sel)
+                    addPlot(m_qwtPlot, range, pts, m_swapXY, Qt::GlobalColor::yellow);
+                else {
 #ifdef DARK_PLOT_THEME
-                addPlot(m_qwtPlot, range, pts, m_swapXY, passed_bot_reg ? Qt::GlobalColor::red : Qt::GlobalColor::green);
+                    addPlot(m_qwtPlot, range, pts, m_swapXY, passed_bot_reg ? Qt::GlobalColor::red : Qt::GlobalColor::green);
 #else
-                addPlot(m_qwtPlot, range, pts_bot, m_swapXY, passed_bot_reg ? Qt::GlobalColor::red : Qt::GlobalColor::blue);
+                    addPlot(m_qwtPlot, range, pts_bot, m_swapXY, passed_bot_reg ? Qt::GlobalColor::red : Qt::GlobalColor::blue);
 #endif
-//                m_pts_bot[ctr].append(pts);
+                }
+
                 pts.clear();
             }
 
@@ -215,34 +230,44 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
             if (ent)
                 copy_back(pts, ent->getPoints());
 
+            group_sel = contourList.isSelected(ctr, row, 0);
+
             row++;
         }
 
         if (!pts.empty()) {
+            if (group_sel)
+                addPlot(m_qwtPlot, range, pts, m_swapXY, Qt::GlobalColor::yellow);
+            else {
 #ifdef DARK_PLOT_THEME
-            addPlot(m_qwtPlot, range, pts, m_swapXY, passed_bot_reg ? Qt::GlobalColor::red : Qt::GlobalColor::green);
+                addPlot(m_qwtPlot, range, pts, m_swapXY, passed_bot_reg ? Qt::GlobalColor::red : Qt::GlobalColor::green);
 #else
-            addPlot(m_qwtPlot, range, pts_bot, m_swapXY, passed_bot_reg ? Qt::GlobalColor::red : Qt::GlobalColor::blue);
+                addPlot(m_qwtPlot, range, pts_bot, m_swapXY, passed_bot_reg ? Qt::GlobalColor::red : Qt::GlobalColor::blue);
 #endif
-//            m_pts_bot[ctr].append(pts);
+            }
+
             pts.clear();
         }
 
         // TOP
         row = 0;
         for (const DxfEntity* ent: pair.top()->entities()) {
-            if (contourList.isSegmentSelected() && ctr == contourList.selectedContour() && row == contourList.selectedRow())
-                selTopEnt = ent;
+//            if (contourList.isSegmentSelected() && ctr == contourList.selectedContour() && row == contourList.selectedRow())
+//                selTopEnt = ent;
 
             bool passed = (int)ctr < contourList.currentContourNumber() || ((int)ctr == contourList.currentContourNumber() && (int)row <= contourList.currentSegmentNumber());
 
             if (!pts.empty()) {
+                if (group_sel)
+                    addPlot(m_qwtPlot, range, pts, m_swapXY, Qt::GlobalColor::darkYellow);
+                else {
 #ifdef DARK_PLOT_THEME
-                addPlot(m_qwtPlot, range, pts, m_swapXY, passed_top_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkGreen);
+                    addPlot(m_qwtPlot, range, pts, m_swapXY, passed_top_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkGreen);
 #else
-                addPlot(m_qwtPlot, range, pts_top, m_swapXY, passed_top_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkBlue);
+                    addPlot(m_qwtPlot, range, pts_top, m_swapXY, passed_top_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkBlue);
 #endif
-//                m_pts_top[ctr].append(pts);
+                }
+
                 pts.clear();
             }
 
@@ -251,23 +276,32 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
             if (ent)
                 copy_back(pts, ent->getPoints());
 
+            group_sel = contourList.isSelected(ctr, row, 0);
+
             row++;
         }
 
         if (!pts.empty()) {
-            addPlot(m_qwtPlot, range, pts, m_swapXY, passed_top_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkBlue, 2);
+            if (group_sel)
+                addPlot(m_qwtPlot, range, pts, m_swapXY, Qt::GlobalColor::darkYellow);
+            else {
+#ifdef DARK_PLOT_THEME
+                addPlot(m_qwtPlot, range, pts, m_swapXY, passed_top_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkGreen);
+#else
+                addPlot(m_qwtPlot, range, pts_top, m_swapXY, passed_top_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkBlue);
+#endif
+            }
 
-//            m_pts_top[ctr].append(pts);
             pts.clear();
         }
 
         ctr++;
     }
 
-    addPlot(m_qwtPlot, range, selPair, m_swapXY, Qt::GlobalColor::yellow, Qt::GlobalColor::yellow);
+    addPlot(m_qwtPlot, range, selPair, m_swapXY, Qt::GlobalColor::yellow, Qt::GlobalColor::darkYellow);
 
-    addPlot(m_qwtPlot, range, selBotEnt, m_swapXY, Qt::GlobalColor::yellow);
-    addPlot(m_qwtPlot, range, selTopEnt, m_swapXY, Qt::GlobalColor::yellow);
+//    addPlot(m_qwtPlot, range, selBotEnt, m_swapXY, Qt::GlobalColor::yellow);
+//    addPlot(m_qwtPlot, range, selTopEnt, m_swapXY, Qt::GlobalColor::darkYellow);
 
 //    fpoint_t pt(0,0);
 //    range.append({pt});
@@ -765,7 +799,7 @@ double QwtPlotView::calcPlotStep(double min, double max, size_t n) {
     return step * exp / 10;
 }
 
-void QwtPlotView::on_pointSelected(const QPointF& pt) {
+void QwtPlotView::on_selected(const QPointF& pt) {
     qDebug("Clicked (%f, %f)", pt.x(), pt.y());
 
     emit clicked(pt);
@@ -782,6 +816,12 @@ void QwtPlotView::on_pointSelected(const QPointF& pt) {
 //    }
 //    else
 //        qDebug("Clicked (%f, %f)", pt.x(), pt.y());
+}
+
+void QwtPlotView::on_controlSelected(const QPointF& pt) {
+    qDebug("Control clicked (%f, %f)", pt.x(), pt.y());
+
+    emit controlClicked(pt);
 }
 
 //bool QwtPlotView::find(const QPointF &pt, size_t &ctr_num, size_t &row_num, size_t &col_num) const {

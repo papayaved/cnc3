@@ -87,6 +87,7 @@ SegPropertiesDialog::SegPropertiesDialog(
 
     comboContour = new QComboBox;
     comboContour->insertItems(0, list);
+    comboContour->setCurrentIndex(ctr_num);
 
     checkNewContour = new QCheckBox(tr("New contour"));
 

@@ -2,17 +2,17 @@
 #include <QDebug>
 #include "main.h"
 
-ContourTableModel::ContourTableModel(QObject *parent) : QAbstractTableModel(parent), m_pair(nullptr) {}
-ContourTableModel::ContourTableModel(const ContourPair* contour, QObject* parent) : QAbstractTableModel(parent), m_pair(contour) {}
+SegmentsModel::SegmentsModel(QObject *parent) : QAbstractTableModel(parent), m_pair(nullptr) {}
+SegmentsModel::SegmentsModel(const ContourPair* contour, QObject* parent) : QAbstractTableModel(parent), m_pair(contour) {}
 
-void ContourTableModel::bind(const ContourPair* contour) { m_pair = contour; }
-void ContourTableModel::unbind() { m_pair = nullptr; }
+void SegmentsModel::bind(const ContourPair* contour) { m_pair = contour; }
+void SegmentsModel::unbind() { m_pair = nullptr; }
 
-int ContourTableModel::rowCount(const QModelIndex & /*parent*/) const {
+int SegmentsModel::rowCount(const QModelIndex & /*parent*/) const {
     return  m_pair ? int(m_pair->count()) : 0;
 }
 
-int ContourTableModel::columnCount(const QModelIndex & /*parent*/) const {
+int SegmentsModel::columnCount(const QModelIndex & /*parent*/) const {
 #if defined(STONE)
     return 1;
 #else
@@ -20,7 +20,7 @@ int ContourTableModel::columnCount(const QModelIndex & /*parent*/) const {
 #endif
 }
 
-QVariant ContourTableModel::data(const QModelIndex& index, int role) const {
+QVariant SegmentsModel::data(const QModelIndex& index, int role) const {
     if (m_pair && index.row() >= 0 && index.column() >= 0) {
         size_t row = size_t(index.row());
         size_t col = size_t(index.column());
@@ -44,7 +44,7 @@ QVariant ContourTableModel::data(const QModelIndex& index, int role) const {
     return QVariant();
 }
 
-QVariant ContourTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
+QVariant SegmentsModel::headerData(int section, Qt::Orientation orientation, int role) const {
     if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
         switch (section) {
         case 0:

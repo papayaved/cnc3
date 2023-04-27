@@ -11,13 +11,16 @@ class ContourList {
 //    int contourSelected, entitySelected;
 
     int m_cur_ctr {-1}, m_cur_seg {-1};
+
     fpoint_t m_xyPos, m_uvPos; // motors
     fpoint_t m_botPos; // workpiece
     bool m_xyValid {false}, m_uvValid {false}, m_botValid {false};
     double m_botLength {-1};
 
-    size_t m_ctr {0}, m_row {0}, m_col {0};
-    enum class CONTOUR_SELECT { NONE, CONTOUR, SEGMENT } m_sel = CONTOUR_SELECT::NONE;
+//    size_t m_ctr {0}, m_row {0}, m_col {0};
+    size_t m_ctr {0};
+    std::map<size_t, bool> m_seg_map;
+    enum class CONTOUR_SELECT { NONE, CONTOUR, SEGMENT } m_sel = CONTOUR_SELECT::NONE;    
 
     std::string m_error;    
 
@@ -42,7 +45,8 @@ public:
     void push_front(const ContourPair& pair);
     void push_back(const ContourPair& pair);
     void set(size_t index, const ContourPair& pair);
-    void insert(size_t index, const ContourPair& pair);
+
+    void insert_before(size_t index, const ContourPair& pair);
     void insert_after(size_t index, const ContourPair& pair);
 
     void new_insert(size_t index);
@@ -82,15 +86,20 @@ public:
     void scale(double k, const fpoint_t& base);
 
     void select(size_t ctr_num);
-    void select(size_t ctr_num, size_t row_num, size_t col_num);
+//    void select(size_t ctr_num, size_t row_num, size_t col_num);
+
+    // Contour number, segment number, top_botn
+    void select(size_t ctr_num, const std::map<size_t, bool>& seg_map);
     void select(const std::pair<size_t, size_t>& ctr_ent);
     void clearSelected();
 
     bool isContourSelected() const;
     bool isSegmentSelected() const;
     size_t selectedContour() const;
-    size_t selectedRow() const;
-    size_t selectedColomn() const;
+//    size_t selectedRow() const;
+//    size_t selectedColumn() const;
+
+    bool isSelected(size_t ctr, size_t row, size_t col) const;
 
     bool sort();
 

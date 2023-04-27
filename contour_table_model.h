@@ -4,13 +4,13 @@
 #include <QAbstractTableModel>
 #include "contour_list.h"
 
-class ContourTableModel : public QAbstractTableModel {
+class SegmentsModel : public QAbstractTableModel {
     Q_OBJECT
 
     const ContourPair* m_pair;
 public:
-    explicit ContourTableModel(QObject* parent = nullptr);
-    ContourTableModel(const ContourPair* contour, QObject *parent = nullptr);
+    explicit SegmentsModel(QObject* parent = nullptr);
+    SegmentsModel(const ContourPair* contour, QObject *parent = nullptr);
     void bind(const ContourPair* contour);
     void unbind();
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;

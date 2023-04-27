@@ -15,6 +15,7 @@
 #include "layer_dialog.h"
 #include "dialog_segment_properties.h"
 #include "dialog_contour_properties.h"
+#include "dialog_move_seg.h"
 
 using namespace std;
 //using namespace QtCharts;
@@ -39,7 +40,7 @@ FormContour::FormContour(ProgramParam& par, QWidget *parent) :
 
     buttons = {
         btnHome, btnOpen, btnSave, btnSaveAs, btnLoadDxf, btnMulti, btn6, btn7, btn8, btn9, btn10, btn11, btnGenerate, btnHelp,
-        btnNew, btnNewEntryLine, btnDelete, btnClear,
+        btnNewEmpty, btnNewCutline, btnDelete, btnClear,
         btnFirst, btnUp, btnDown, btnLast, btnSort,
         btnProperties, btnEdit, btnUndo
     };
@@ -69,6 +70,7 @@ FormContour::FormContour(ProgramParam& par, QWidget *parent) :
     m_fontSize = btnHome->font().pointSize();
 
     connect(&m_plotView, &QwtPlotView::clicked, this, &FormContour::on_plotClicked);
+    connect(&m_plotView, &QwtPlotView::controlClicked, this, &FormContour::on_plotControlClicked);
 }
 
 void FormContour::createButtons() {
@@ -167,12 +169,13 @@ void FormContour::createGridView() {
     viewContours = new QTableView;
     viewSegments = new QTableView;
 
-    ContourTableModel* model = new ContourTableModel();
+    viewSegments->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    viewSegments->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     viewContours->setModel(new ContoursModel());
     viewContours->horizontalHeader()->hide();
 
-    viewSegments->setModel(model);
+    viewSegments->setModel(new SegmentsModel());
 
     actPropCtr = new QAction(tr("Properties"), this);
     actPropCtr->setStatusTip(tr("Current contour properties"));
@@ -216,8 +219,8 @@ void FormContour::createGridView() {
     actPropSeg->setStatusTip(tr("Current segment properties"));
     actPropSeg->setFont(act_bold_font);
 
-    actEntryLineSeg = new QAction(tr("Use as Entry line"), this);
-    actEntryLineSeg->setStatusTip(tr("Use selected segment as the Entry line for a simple contour"));
+    actUseAsEntryLineSeg = new QAction(tr("Use as Entry line"), this);
+    actUseAsEntryLineSeg->setStatusTip(tr("Use selected segment as the Entry line for a simple contour"));
 
     actFirstSeg = new QAction(tr("First"), this);
     actFirstSeg->setStatusTip(tr("Set the selected segment as the first of the contour"));
@@ -234,14 +237,18 @@ void FormContour::createGridView() {
     actDeleleSeg = new QAction(tr("Delete"), this);
     actDeleleSeg->setStatusTip(tr("Delete current segment"));
 
+    actMoveSeg = new QAction(tr("Move to"), this);
+    actMoveSeg->setStatusTip(tr("Move selected segments to another contour"));
+
     viewSegments->setContextMenuPolicy(Qt::ContextMenuPolicy::ActionsContextMenu);
     viewSegments->addAction(actPropSeg);
-    viewSegments->addAction(actEntryLineSeg);
+    viewSegments->addAction(actUseAsEntryLineSeg);
     viewSegments->addAction(actFirstSeg);
     viewSegments->addAction(actUpSeg);
     viewSegments->addAction(actDownSeg);
     viewSegments->addAction(actLastSeg);
     viewSegments->addAction(actDeleleSeg);
+    viewSegments->addAction(actMoveSeg);
 
     groupContours = new QGroupBox(tr("Contours"));
     groupContour = new QGroupBox(tr("Current"));
@@ -282,16 +289,16 @@ void FormContour::createGridView() {
 
     actions = {
         actPropCtr, actSortCtr, actChangeDirCtr, actFirstCtr, actUpCtr, actDownCtr, actLastCtr, actDeleteCtr,
-        actPropSeg, actEntryLineSeg, actFirstSeg, actUpSeg, actDownSeg, actLastSeg, actDeleleSeg
+        actPropSeg, actUseAsEntryLineSeg, actFirstSeg, actUpSeg, actDownSeg, actLastSeg, actDeleleSeg, actMoveSeg
     };
 }
 
 void FormContour::createViewControl() {
-    btnNew = new QPushButton(tr("New"));
-    btnNew->setStatusTip(tr("Add a new empty contour"));
+    btnNewEmpty = new QPushButton(tr("New"));
+    btnNewEmpty->setStatusTip(tr("Add a new empty contour"));
 
-    btnNewEntryLine = new QPushButton(tr("New Entry"));
-    btnNewEntryLine->setStatusTip(tr("Add a new entry line before the first segment of the first contour"));
+    btnNewCutline = new QPushButton(tr("Cutline"));
+    btnNewCutline->setStatusTip(tr("Add an Entry or Exit line to a contour"));
 
     btnDelete = new QPushButton(tr("Delete"));
     btnDelete->setStatusTip(tr("Delete selected contour"));
@@ -300,8 +307,8 @@ void FormContour::createViewControl() {
     btnClear->setStatusTip(tr("Clear all contours"));
 
     vboxLeft = new QVBoxLayout;
-    vboxLeft->addWidget(btnNew);
-    vboxLeft->addWidget(btnNewEntryLine);
+    vboxLeft->addWidget(btnNewEmpty);
+    vboxLeft->addWidget(btnNewCutline);
     vboxLeft->addWidget(btnDelete);
     vboxLeft->addWidget(btnClear);
     vboxLeft->setSizeConstraint(QLayout::SetFixedSize);
@@ -322,8 +329,8 @@ void FormContour::createViewControl() {
     btnSort->setStatusTip(tr("Auto sort segments in the current contour"));
 
     //
-    actEntryLine = new QAction(tr("Use as Entry line"));
-    actEntryLine->setStatusTip(tr("Use selected segment as the Entry line of a single contour"));
+    actUseAsEntryLine = new QAction(tr("Use as Entry line"));
+    actUseAsEntryLine->setStatusTip(tr("Use selected segment as the Entry line of a single contour"));
 
 //    actBridgeLine = new QAction(tr("Use as Bridge line"));
 //    actBridgeLine->setStatusTip(tr("Use selected segment as the Bridge line"));
@@ -361,7 +368,7 @@ void FormContour::createViewControl() {
     actResize->setStatusTip(tr("Resize all contours in the project"));
 
     menuEdit = new QMenu;
-    menuEdit->addAction(actEntryLine);
+    menuEdit->addAction(actUseAsEntryLine);
     menuEdit->addAction(actChangeDir);
     menuEdit->addAction(actRotate);
     menuEdit->addAction(actFlipLeftRight);
@@ -383,8 +390,8 @@ void FormContour::createViewControl() {
     vboxRight_1->addWidget(btnEdit);
     vboxRight_1->addWidget(btnUndo);
 
-    connect(btnNew, &QPushButton::clicked, this, &FormContour::on_btnNewContour_clicked);
-    connect(btnNewEntryLine, &QPushButton::clicked, this, &FormContour::on_btnEntryCutline_clicked);
+    connect(btnNewEmpty, &QPushButton::clicked, this, &FormContour::on_btnNewContour_clicked);
+    connect(btnNewCutline, &QPushButton::clicked, this, &FormContour::on_btnNewCutline_clicked);
 
     connect(btnDelete, &QPushButton::clicked, this, [&](bool /*checked*/) {
         switch (m_viewState) {
@@ -444,13 +451,15 @@ void FormContour::createViewControl() {
     connect(actDeleteCtr, &QAction::triggered, this, &FormContour::on_actDeleteCtr_clicked);
     connect(actDeleleSeg, &QAction::triggered, this, &FormContour::on_actDeleteSeg_clicked);
 
+    connect(actMoveSeg, &QAction::triggered, this, &FormContour::on_actMoveSeg_clicked);
+
     connect(actSortCtr, &QAction::triggered, this, &FormContour::on_btnSortClicked);
 
     connect(actChangeDir, &QAction::triggered, this, &FormContour::on_btnChangeDir_clicked);
     connect(actChangeDirCtr, &QAction::triggered, this, &FormContour::on_btnChangeDir_clicked);
 
-    connect(actEntryLine, &QAction::triggered, this, &FormContour::on_actEntryLine_clicked);
-    connect(actEntryLineSeg, &QAction::triggered, this, &FormContour::on_actEntryLine_clicked);
+    connect(actUseAsEntryLine, &QAction::triggered, this, &FormContour::on_actUseAsEntryLine_clicked);
+    connect(actUseAsEntryLineSeg, &QAction::triggered, this, &FormContour::on_actUseAsEntryLine_clicked);
 
     connect(actFirstCtr, &QAction::triggered, this, &FormContour::on_actFirstCtr_clicked);
     connect(actUpCtr, &QAction::triggered, this, &FormContour::on_actUpCtr_clicked);
@@ -697,90 +706,134 @@ void FormContour::on_btnNewContour_clicked() {
     restoreViewPos(par.contours.size() - 1, 0, 0);
 }
 
-void FormContour::on_btnEntryCutline_clicked() {
+void FormContour::on_btnNewCutline_clicked() {
+    bool single {false};
+
+    if (par.contours.empty())
+        return;
+
     updateCurrentViewPos();
 
-    if (!par.contours.empty()) {
-        const ContourPair* const pair = par.contours.at(m_ctr_num);
-        const fpoint_valid_t entry_pt = pair && !pair->empty() && pair->bot() ? pair->bot()->first_point() : fpoint_valid_t(false);
+    if (par.contours.size() == 1) {
+        const ContourPair* const pair = par.contours.front();
+        single = pair && !pair->empty() && pair->type() == CONTOUR_TYPE::MAIN_CONTOUR && pair->isSorted() && pair->isLoop();
+    }
 
-        if (pair && pair->type() == CONTOUR_TYPE::MAIN_CONTOUR && entry_pt.valid) {
-            bool insert_before = m_ctr_num == 0 || par.contours.at(m_ctr_num - 1)->type() == CONTOUR_TYPE::MAIN_CONTOUR;
+    const ContourPair* const pair = par.contours.at(m_ctr_num);
 
-            const fpoint_valid_t exit_pt = pair && pair->bot() ? pair->bot()->last_point() : fpoint_valid_t(false);
-            bool insert_after = !insert_before && exit_pt.valid;
+    if (!pair || pair->empty() || pair->type() != CONTOUR_TYPE::MAIN_CONTOUR)
+        return;
 
-            if (insert_before || insert_after) {
-                NewCutlineDialog* dialog = new NewCutlineDialog(this);
+    const fpoint_valid_t entry_bot_pt = pair->bot() ? pair->bot()->first_point() : fpoint_valid_t(false);
+    const fpoint_valid_t entry_top_pt = pair->top() ? pair->top()->first_point() : fpoint_valid_t(false);
 
-                if (!dialog)
-                    return;
+    if (!entry_bot_pt.valid)
+        return;
 
-                if (insert_before) {
-                    dialog->set(0, entry_pt.x, 0, entry_pt.y);
-                    dialog->enable(0x5);
+    bool insert_before = m_viewState == VIEW_STATE::TABLE_VIEW_CONTOURS || m_row_num == 0;
+
+    fpoint_valid_t exit_bot_pt = fpoint_valid_t(false), exit_top_pt = fpoint_valid_t(false);
+
+    if (pair->bot() && m_row_num < pair->bot()->count())
+        exit_bot_pt = pair->bot()->at(m_row_num)->point_1();
+
+    if (pair->top() && m_row_num < pair->top()->count())
+        exit_top_pt = pair->top()->at(m_row_num)->point_1();
+
+    bool insert_after = !insert_before && (m_viewState == VIEW_STATE::TABLE_VIEW_SEGMENTS && m_row_num != 0) && exit_bot_pt.valid;
+
+    if (!insert_before && !insert_after)
+        return;
+
+    NewCutlineDialog* dialog = new NewCutlineDialog(entry_bot_pt, exit_bot_pt, insert_before, single, this);
+
+    if (!dialog)
+        return;
+
+    dialog->exec();
+
+    if (dialog->result() == QDialog::Accepted) {
+        double x0, x1, y0, y1;
+        DxfLine line_bot, line_top;
+        bool line_top_valid = false;
+
+        dialog->get(x0, x1, y0, y1);
+
+        if (dialog->isRel()) {
+            if (dialog->isIn()) {
+                line_bot.setX0(entry_bot_pt.x + x0);
+                line_bot.setX1(entry_bot_pt.x);
+                line_bot.setY0(entry_bot_pt.y + y0);
+                line_bot.setY1(entry_bot_pt.y);
+
+                if (entry_top_pt.valid) {
+                    line_top.setX0(entry_bot_pt.x + x0);
+                    line_top.setX1(entry_top_pt.x);
+                    line_top.setY0(entry_bot_pt.y + y0);
+                    line_top.setY1(entry_top_pt.y);
+                    line_top_valid = true;
                 }
-                else if (insert_after) {
-                    dialog->set(exit_pt.x, 0, exit_pt.y, 0);
-                    dialog->enable(0xA);
+            }
+            else { // after
+                line_bot.setX0(exit_bot_pt.x);
+                line_bot.setX1(exit_bot_pt.x + x1);
+                line_bot.setY0(exit_bot_pt.y);
+                line_bot.setY1(exit_bot_pt.y + y1);
+
+                if (exit_top_pt.valid) {
+                    line_top.setX0(exit_top_pt.x);
+                    line_top.setX1(exit_bot_pt.x + x1);
+                    line_top.setY0(exit_top_pt.y);
+                    line_top.setY1(exit_bot_pt.y + y1);
+                    line_top_valid = true;
                 }
-
-                dialog->exec();
-
-                if (dialog->result() == QDialog::Accepted) {
-                    double x0, x1, y0, y1;
-                    dialog->get(x0, x1, y0, y1);
-
-                    DxfLine line;
-                    if (dialog->isRel()) {
-                        if (insert_after) {
-                            line.setX0(entry_pt.x);
-                            line.setX1(entry_pt.x + x1);
-                            line.setY0(entry_pt.y);
-                            line.setY1(entry_pt.y + y1);
-                        }
-                        else { // before
-                            line.setX0(entry_pt.x + x0);
-                            line.setX1(entry_pt.x);
-                            line.setY0(entry_pt.y + y0);
-                            line.setY1(entry_pt.y);
-                        }
-                    }
-                    else {
-                        line.setX0(x0);
-                        line.setX1(x1);
-                        line.setY0(y0);
-                        line.setY1(y1);
-                    }
-
-                    qDebug() << "Dialog OK";
-
-                    ContourPair incut(CONTOUR_TYPE::CUTLINE_CONTOUR);
-                    if (incut.bot())
-                        incut.bot()->push_back(line);
-
-                    if (insert_before) {
-                        ContourPair outcut(incut);
-                        outcut.reverse();
-
-                        par.contours.push_front(incut);
-                        par.contours.push_back(outcut);
-
-                        m_row_num = 0;
-                        m_col_num = 0;
-                        par.contours.clearSelected();
-                    }
-                    else {
-                        par.contours.insert_after(m_ctr_num, incut);
-                        m_ctr_num++;
-                    }
-
-                    restoreViewPos(m_ctr_num, 0, 0);
-                }
-
-                delete dialog;
             }
         }
+        else {
+            line_bot.setX0(x0);
+            line_bot.setX1(x1);
+            line_bot.setY0(y0);
+            line_bot.setY1(y1);
+
+            if (dialog->isIn() && entry_top_pt.valid) {
+                line_top.setX0(x0);
+                line_top.setX1(entry_top_pt.x);
+                line_top.setY0(y0);
+                line_top.setY1(entry_top_pt.y);
+                line_top_valid = true;
+            }
+            else if (dialog->isOut() && exit_top_pt.valid) {
+                line_top.setX0(exit_top_pt.x);
+                line_top.setX1(x1);
+                line_top.setY0(exit_top_pt.y);
+                line_top.setY1(y1);
+                line_top_valid = true;
+            }
+        }
+
+        ContourPair cutline(CONTOUR_TYPE::CUTLINE_CONTOUR);
+        cutline.bot()->push_back(line_bot);
+
+        if (line_top_valid)
+            cutline.top()->push_back(line_top);
+
+        if (dialog->isIn()) {
+            par.contours.insert_before(m_ctr_num, cutline);
+
+            if (single) {
+                ContourPair outcut(cutline);
+                outcut.reverse();
+                par.contours.push_back(outcut);
+            }
+        }
+        else {
+            par.contours.insert_after(m_ctr_num, cutline);
+            m_ctr_num++;
+        }
+
+        restoreViewPos(m_ctr_num, 0, 0);
+
+        delete dialog;
     }
 }
 
@@ -1105,8 +1158,8 @@ void FormContour::onViewSegmentsClicked(const QModelIndex& index) {
             if (bot && m_row_num < bot->count()) {
                 lineSegment->setText( QString("%1 %2 XY").arg(m_row_num + 1).arg( QString::fromStdString(bot->at(m_row_num)->typeString()) ) );
                 txtMsg->setText( bot->at(m_row_num)->toString().c_str() );
-                par.contours.select(m_ctr_num, m_row_num, m_col_num);
-                plot();
+//                par.contours.select(m_ctr_num, m_row_num, m_col_num);
+//                plot_req = true;
             }
 
             break;
@@ -1114,16 +1167,44 @@ void FormContour::onViewSegmentsClicked(const QModelIndex& index) {
             if (top && m_row_num < top->count()) {
                 lineSegment->setText(QString("%1 %2 UV").arg(m_row_num + 1).arg( QString::fromStdString(top->at(m_row_num)->typeString()) ) );
                 txtMsg->setText( top->at(m_row_num)->toString().c_str() );
-                par.contours.select(m_ctr_num, m_row_num, m_col_num);
-                plot();
+//                par.contours.select(m_ctr_num, m_row_num, m_col_num);
+//                plot_req = true;
             }
             break;
+        }
+
+        QModelIndexList indexList = selectedIndexes();
+
+        if (!indexList.empty()) {
+            map<size_t, bool> sel_map;
+
+            for (auto it = indexList.constBegin(); it != indexList.constEnd(); ++it) {
+                int row = it->row();
+
+                switch (it->column()) {
+                case 0:
+                    if (bot && row >= 0 && (size_t)row < bot->count())
+                        sel_map[row] = 0;
+
+                    break;
+                case 1:
+                    if (top && row >= 0 && (size_t)row < top->count())
+                        sel_map[row] = 1;
+
+                    break;
+                }
+            }
+
+            if (!sel_map.empty()) {
+                par.contours.select(m_ctr_num, sel_map);
+                plot();
+            }
         }
     }
 }
 
 // only for single contour
-void FormContour::on_actEntryLine_clicked() {
+void FormContour::on_actUseAsEntryLine_clicked() {
     updateCurrentViewPos();
 
     if (par.contours.size() == 1) {
@@ -1228,7 +1309,7 @@ bool FormContour::restoreViewPos(size_t ctr_num) {
     _init();
 
     QItemSelectionModel* m = viewSegments->selectionModel();
-    viewSegments->setModel(new ContourTableModel(par.contours.at(ctr_num)));
+    viewSegments->setModel(new SegmentsModel(par.contours.at(ctr_num)));
     delete m;
 
     viewSegments->resizeColumnsToContents();
@@ -1282,7 +1363,7 @@ void FormContour::on_btnSegProp_clicked() {
 
     int i = 1;
     for (const ContourPair& ctr: par.contours.contours())
-        list.append(QString::number(i++) + " " + QString::fromStdString(ctr.toStringShort()));
+        list.append( QString::number(i++) + " " + QString::fromStdString(ctr.toStringShort()) );
 
     SegPropertiesDialog* dialog = new SegPropertiesDialog(
                 list,
@@ -1348,6 +1429,76 @@ void FormContour::on_btnSegProp_clicked() {
     }
 
     delete dialog;
+}
+
+QModelIndexList FormContour::selectedIndexes(bool sort_req, bool descent) {
+    QModelIndexList indexList = viewSegments->selectionModel()->selectedIndexes();
+
+    if (sort_req)
+        sort(indexList.begin(), indexList.end(), [descent](const QModelIndex& a, const QModelIndex& b) {
+            return descent ? a.row() > b.row() : a.row() < b.row();
+        });
+
+    return indexList;
+}
+
+void FormContour::on_actMoveSeg_clicked() {
+    updateCurrentViewPos();
+
+    // last first
+    QModelIndexList indexList = selectedIndexes(true, true);
+
+    if (indexList.empty())
+        return;
+
+    {
+        int i = 0;
+        qDebug("Move selected rows:");
+        for (auto it = indexList.constBegin(); it != indexList.constEnd(); ++it, i++) {
+            qDebug("%d: %d", i, it->row());
+        }
+    }
+
+    QStringList list;
+    int i = 1;
+
+    for (const ContourPair& ctr: par.contours.contours())
+        list.append( QString::number(i++) + " " + QString::fromStdString(ctr.toStringShort()) );
+
+    MoveSegDialog* dialog = new MoveSegDialog(list, m_ctr_num, indexList.count(), this);
+
+    if (!dialog)
+        return;
+
+    dialog->setFontPointSize(14);
+    dialog->exec();
+
+    if (dialog->result() == QDialog::Accepted) {
+        int new_ctr_num = dialog->contourNumber();
+
+        if (new_ctr_num >= 0 && size_t(new_ctr_num) != m_ctr_num) {
+            ContourPair* const pair_old = par.contours.at(m_ctr_num);
+            ContourPair* const pair_new = par.contours.at(new_ctr_num);
+
+            if (pair_old && pair_new) {
+                saveUndo();
+
+                for (auto it = indexList.constBegin(); it != indexList.constEnd(); ++it) {
+                    int r = it->row();
+
+                    if (r >= 0 && (size_t)r < pair_old->countBot()) {
+                        Dxf bot = pair_old->bot()->cut_at(r);
+                        Dxf top = pair_old->top()->cut_at(r);
+                        pair_new->move_back(bot, top);
+                    }
+                }
+
+                restoreViewPos(m_ctr_num, 0, 0);
+                viewSegments->setFocus();
+                setViewState(VIEW_STATE::TABLE_VIEW_SEGMENTS);
+            }
+        }
+    }
 }
 
 void FormContour::on_btnCtrProp_clicked() {
@@ -1440,7 +1591,7 @@ void FormContour::on_actFlipUpDown_triggered() {
 }
 
 void FormContour::on_plotClicked(const QPointF& pt) {
-    size_t ctr_num = 0, row_num = 0, col_num = 0;
+    size_t ctr_num(0), row_num(0), col_num(0);
 
     bool valid = par.contours.find(fpoint_t(pt.x(), pt.y()), m_plotView.range(), ctr_num, row_num, col_num);
 
@@ -1450,6 +1601,26 @@ void FormContour::on_plotClicked(const QPointF& pt) {
         restoreViewPos(ctr_num, row_num, col_num);
         viewSegments->setFocus();
         setViewState(VIEW_STATE::TABLE_VIEW_SEGMENTS);
+    }
+}
+
+void FormContour::on_plotControlClicked(const QPointF& pt) {
+    size_t ctr_num(0), row_num(0), col_num(0);
+
+    bool valid = par.contours.find(fpoint_t(pt.x(), pt.y()), m_plotView.range(), ctr_num, row_num, col_num);
+
+    if (valid) {
+        qDebug("Control clicked %s [%d, %d]", col_num == 0 ? "BOT" : "TOP", (int)ctr_num, (int)row_num);
+
+        updateCurrentContourViewPos();
+
+        if (m_ctr_num == ctr_num) {
+            QModelIndex seg_idx = viewSegments->model()->index(row_num, col_num);
+
+            viewSegments->selectionModel()->select(seg_idx, QItemSelectionModel::SelectionFlag::Select);
+
+            onViewSegmentsClicked(seg_idx);
+        }
     }
 }
 
@@ -1464,10 +1635,6 @@ void FormContour::on_actResize_triggered() {
         return;
 
     updateCurrentViewPos();
-//    ContourPair* const pair = par.contours.at(m_ctr_num); // ??
-
-//    if (!pair || pair->empty()) // ??
-//        return;
 
     ContourRange range = par.contours.range();
     center = fpoint_valid_t(range.center(), center.valid);
@@ -1503,33 +1670,37 @@ void FormContour::on_actResize_triggered() {
 //        fpoint_t base(center.valid ? center.x : range.x_min, center.valid ? center.y : range.y_min);
         fpoint_t base(center.valid ? center.x : par.contours.firstBot().x, center.valid ? center.y : par.contours.firstBot().y);
 
-        par.contours.scale(pct, base);
+        bool single {false};
+        ContourPair *incut {nullptr}, *pair {nullptr}, *outcut {nullptr};
 
-//        pair->scale(pct, base);
+        if (par.contours.size() == 3) {
+            incut = par.contours.front();
+            pair = par.contours.at(1);
+            outcut = par.contours.back();
 
-//        if (m_ctr_num) {
-//            ContourPair* const incut = par.contours.at(m_ctr_num - 1);
+            single =    incut && outcut && pair &&
+                        incut->type()   == CONTOUR_TYPE::CUTLINE_CONTOUR &&
+                        pair->type()    == CONTOUR_TYPE::MAIN_CONTOUR &&
+                        incut->type()   == CONTOUR_TYPE::CUTLINE_CONTOUR;                    ;
+        }
 
-//            if (incut && incut->type() == CONTOUR_TYPE::CUTLINE_CONTOUR) {
-//                if (!incut->botEmpty())
-//                    incut->bot()->back()->change_1( pair->firstBot() );
+        if (single) {
+            pair->scale(pct, base);
 
-//                if (!incut->topEmpty())
-//                    incut->top()->back()->change_1( pair->firstTop() );
-//            }
-//        }
+            if (!incut->botEmpty())
+                incut->bot()->back()->change_1( pair->firstBot() );
 
-//        if ((m_ctr_num + 1) < par.contours.size()) {
-//            ContourPair* const outcut = par.contours.at(m_ctr_num + 1);
+            if (!incut->topEmpty())
+                incut->top()->back()->change_1( pair->firstTop() );
 
-//            if (outcut && outcut->type() == CONTOUR_TYPE::CUTLINE_CONTOUR) {
-//                if (!outcut->botEmpty())
-//                    outcut->bot()->front()->change_0( pair->lastBot() );
+            if (!outcut->botEmpty())
+                outcut->bot()->front()->change_0( pair->lastBot() );
 
-//                if (!outcut->topEmpty())
-//                    outcut->top()->front()->change_0( pair->lastTop() );
-//            }
-//        }
+            if (!outcut->topEmpty())
+                outcut->top()->front()->change_0( pair->lastTop() );
+        }
+        else
+            par.contours.scale(pct, base);
 
         restoreViewPos(m_ctr_num, m_row_num, m_col_num);
     }
@@ -1552,7 +1723,7 @@ void FormContour::initView() {
 
 void FormContour::setEmptyModel() {
     QItemSelectionModel* m = viewSegments->selectionModel();
-    viewSegments->setModel(new ContourTableModel());
+    viewSegments->setModel(new SegmentsModel());
     delete m;
 }
 
@@ -1562,7 +1733,7 @@ void FormContour::initSegmentsView() {
     qDebug() << "Init. " << "Contours: " << par.contours.size();
 
     QItemSelectionModel* m = viewSegments->selectionModel();
-    viewSegments->setModel(new ContourTableModel(par.contours.at(m_ctr_num)));
+    viewSegments->setModel(new SegmentsModel(par.contours.at(m_ctr_num)));
     delete m;
 
     viewSegments->resizeColumnsToContents();
@@ -1608,11 +1779,15 @@ QSize FormContour::plotViewSize(const QSize& formSize) const {
     return QSize(w, h);
 }
 
-void FormContour::updateCurrentViewPos() {
+void FormContour::updateCurrentContourViewPos() {
     m_ctr_num = viewContours->currentIndex().row() < 0 ? 0 : viewContours->currentIndex().row();
 
     if (m_ctr_num >= par.contours.size())
         m_ctr_num = par.contours.size() - 1;
+}
+
+void FormContour::updateCurrentViewPos() {
+    updateCurrentContourViewPos();
 
     m_row_num = viewSegments->currentIndex().row() < 0 ? 0 : viewSegments->currentIndex().row();
 

@@ -621,7 +621,7 @@
         <translation>У слоёв нет имен</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="1263"/>
+        <location filename="form_contour.cpp" line="1268"/>
         <source>Delete selected segment</source>
         <translation>Удалить выделенный сегмент</translation>
     </message>
@@ -860,13 +860,13 @@
     </message>
     <message>
         <location filename="form_contour.cpp" line="646"/>
-        <location filename="form_contour.cpp" line="1026"/>
+        <location filename="form_contour.cpp" line="1031"/>
         <source>Removed unconnected segments from DXF</source>
         <translation>Удаленные не соединенные сегменты в файле DXF</translation>
     </message>
     <message>
         <location filename="form_contour.cpp" line="656"/>
-        <location filename="form_contour.cpp" line="1036"/>
+        <location filename="form_contour.cpp" line="1041"/>
         <source>Removed extra tails from DXF</source>
         <translation>Удаленные лишнии хвосты из файла DXF</translation>
     </message>
@@ -979,18 +979,23 @@
         <translation>Добавить новый пустой контур</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="293"/>
         <source>New Entry</source>
-        <translation>Линия захода</translation>
+        <translation type="vanished">Линия захода</translation>
+    </message>
+    <message>
+        <location filename="form_contour.cpp" line="293"/>
+        <source>Cutline</source>
+        <translation type="unfinished">Прорезь (Cutline)</translation>
     </message>
     <message>
         <location filename="form_contour.cpp" line="294"/>
-        <source>Add a new entry line before the first segment of the first contour</source>
-        <translation>Добавить новую Линию захода перед первым сегментом первого контура</translation>
+        <source>Add an Entry or Exit line to a contour</source>
+        <oldsource>Add a new entry line before the first segment of the first contour</oldsource>
+        <translation type="unfinished">Добавить новую Линию захода перед первым сегментом первого контура</translation>
     </message>
     <message>
         <location filename="form_contour.cpp" line="297"/>
-        <location filename="form_contour.cpp" line="1265"/>
+        <location filename="form_contour.cpp" line="1270"/>
         <source>Delete selected contour</source>
         <translation>Удалить выбранный контур</translation>
     </message>
@@ -1166,7 +1171,7 @@
     </message>
     <message>
         <location filename="form_contour.cpp" line="666"/>
-        <location filename="form_contour.cpp" line="1046"/>
+        <location filename="form_contour.cpp" line="1051"/>
         <source>Bottom layer DXF segments sorting error</source>
         <translation>Ошибка сортировки нижнего контура</translation>
     </message>
@@ -3550,17 +3555,27 @@
 <context>
     <name>NewCutlineDialog</name>
     <message>
-        <location filename="new_cutline_dialog.cpp" line="43"/>
+        <location filename="new_cutline_dialog.cpp" line="76"/>
         <source>Abs</source>
         <translation>Абс.</translation>
     </message>
     <message>
-        <location filename="new_cutline_dialog.cpp" line="44"/>
+        <location filename="new_cutline_dialog.cpp" line="77"/>
         <source>Rel</source>
         <translation>Отн.</translation>
     </message>
     <message>
-        <location filename="new_cutline_dialog.cpp" line="88"/>
+        <location filename="new_cutline_dialog.cpp" line="90"/>
+        <source>In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="new_cutline_dialog.cpp" line="91"/>
+        <source>Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="new_cutline_dialog.cpp" line="147"/>
         <source>New cutline</source>
         <translation>Новая линия захода</translation>
     </message>

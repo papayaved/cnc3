@@ -43,18 +43,18 @@ class FormContour : public QWidget {
     QAction *actPropCtr {nullptr}, *actChangeDirCtr {nullptr}, *actDeleteCtr {nullptr},
         *actFirstCtr {nullptr}, *actUpCtr {nullptr}, *actDownCtr {nullptr}, *actLastCtr {nullptr},
 
-        *actPropSeg {nullptr}, *actEntryLineSeg {nullptr},
+        *actPropSeg {nullptr}, *actUseAsEntryLineSeg {nullptr},
         *actFirstSeg {nullptr}, *actUpSeg {nullptr}, *actDownSeg {nullptr}, *actLastSeg {nullptr}, *actSortCtr {nullptr},
-        *actDeleleSeg {nullptr};
+        *actDeleleSeg {nullptr}, *actMoveSeg {nullptr};
 
     QGroupBox *groupContours, *groupContour;
-    QPushButton *btnNew {nullptr}, *btnNewEntryLine {nullptr}, *btnDelete {nullptr}, *btnClear {nullptr};
+    QPushButton *btnNewEmpty {nullptr}, *btnNewCutline {nullptr}, *btnDelete {nullptr}, *btnClear {nullptr};
 
     QVBoxLayout *vboxLeft, *vboxRight_0, *vboxRight_1;
 
     QPushButton *btnFirst, *btnUp, *btnDown, *btnLast, *btnSort, *btnProperties, *btnEdit, *btnUndo;
     QMenu *menuUseAs, *menuEdit;
-    QAction *actEntryLine, *actChangeDir, *actRotate, *actFlipLeftRight, *actFlipUpDown, *actResize;
+    QAction *actUseAsEntryLine, *actChangeDir, *actRotate, *actFlipLeftRight, *actFlipUpDown, *actResize;
 
     std::vector<QAction*> actions;
 
@@ -77,6 +77,7 @@ class FormContour : public QWidget {
     QSize plotViewSize() const;
     QSize plotViewSize(const QSize& newSize) const;
 
+    void updateCurrentContourViewPos();
     void updateCurrentViewPos();
     void restoreViewPos(size_t ctr_num, size_t row, size_t column);
     bool restoreViewPos(size_t ctr_num);
@@ -102,7 +103,7 @@ private slots:
     void on_btnLoadDxf_clicked();
 
     void on_btnNewContour_clicked();
-    void on_btnEntryCutline_clicked();
+    void on_btnNewCutline_clicked();
 
     void on_actDeleteCtr_clicked();
     void on_actDeleteSeg_clicked();
@@ -126,9 +127,13 @@ private slots:
     void onViewContoursClicked(const QModelIndex&);
     void onViewSegmentsClicked(const QModelIndex&);
 
-    void on_actEntryLine_clicked();
+    void on_actUseAsEntryLine_clicked();
     void on_btnSegProp_clicked();
     void on_btnCtrProp_clicked();
+
+    QModelIndexList selectedIndexes(bool sort_req = false, bool descent = false);
+    void on_actMoveSeg_clicked();
+
     void on_actExitPoint_triggered();
     void on_actRotate_triggered();
     void on_actResize_triggered();
@@ -136,6 +141,7 @@ private slots:
     void on_actFlipUpDown_triggered();
 
     void on_plotClicked(const QPointF& pt);
+    void on_plotControlClicked(const QPointF& pt);
 //    void on_plotClicked(size_t ctr_num, size_t row_num, size_t col_num);
 
     static void setFontPointSize(QWidget* const w, int pointSize);

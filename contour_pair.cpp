@@ -231,7 +231,7 @@ ContourPair& ContourPair::operator=(ContourPair&& other) noexcept {
         m_cut = other.m_cut;
         m_genModes = other.m_genModes;        
 
-        m_type = CONTOUR_TYPE::CONTOUR_UNKNOWN;
+        other.m_type = CONTOUR_TYPE::CONTOUR_UNKNOWN;
         other.m_bot = new Dxf;
         other.m_top = new Dxf;
         other.m_cut = nullptr;

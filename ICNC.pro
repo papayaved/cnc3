@@ -62,6 +62,7 @@ SOURCES += \
     combobox_delegate.cpp \
     contour_range.cpp \
     dialog_contour_properties.cpp \
+    dialog_move_seg.cpp \
     dialog_segment_properties.cpp \
     form_center.cpp \
     form_help.cpp \
@@ -140,6 +141,7 @@ HEADERS += \
     contour_range.h \
     contour_range.h \
     dialog_contour_properties.h \
+    dialog_move_seg.h \
     dialog_segment_properties.h \
     form_center.h \
     form_help.h \

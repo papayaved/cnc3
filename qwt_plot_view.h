@@ -15,14 +15,14 @@ class QwtPlotView : public QObject {
 
     const int m_margin;
 
-    bool m_owner;
-    QwtPlot* m_qwtPlot;
-    QwtPlotGrid* m_grid;
-    QwtPlotPicker* m_picker;
+    bool m_owner {false};
+    QwtPlot *m_qwtPlot {nullptr};
+    QwtPlotGrid *m_grid {nullptr};
+    QwtPlotPicker *m_picker {nullptr}, *m_picker2 {nullptr};
 
     ContourRange m_range;
-    bool m_swapXY{false}, m_inverseX{false}, m_inverseY{false};
-    bool m_showXY{false};
+    bool m_swapXY {false}, m_inverseX {false}, m_inverseY {false};
+    bool m_showXY {false};
 
 //    QVector<QVector<QPointF>> m_pts_bot, m_pts_top;
 
@@ -176,10 +176,12 @@ public:
     static double calcPlotStep(double min, double max, size_t n);
 
 private slots:
-    void on_pointSelected(const QPointF& pos);
+    void on_selected(const QPointF& pos);
+    void on_controlSelected(const QPointF& pos);
 
 signals:
     void clicked(const QPointF& pt);
+    void controlClicked(const QPointF& pt);
 //    void clicked(size_t ctr_num, size_t row_num, size_t col_num);
 };
 

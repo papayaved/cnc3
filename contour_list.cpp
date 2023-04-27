@@ -5,7 +5,7 @@ using namespace std;
 ContourList::ContourList() :
     m_contours(deque<ContourPair>()),
     m_thickness(0), m_cur_ctr(-1), m_cur_seg(-1), m_xyValid(false), m_uvValid(false), m_botValid(false), m_botLength(-1),
-    m_ctr(0), m_row(0), m_col(0), m_sel(CONTOUR_SELECT::NONE),
+    m_ctr(0), m_sel(CONTOUR_SELECT::NONE),
     m_error("")
 {
 }
@@ -15,7 +15,7 @@ ContourList::ContourList(const ContourList& other) {
 ContourList::ContourList(const deque<ContourPair>& contours) :
     m_contours(contours),
     m_thickness(0), m_cur_ctr(-1), m_cur_seg(-1), m_xyValid(false), m_uvValid(false), m_botValid(false), m_botLength(-1),
-    m_ctr(0), m_row(0), m_col(0), m_sel(CONTOUR_SELECT::NONE),
+    m_ctr(0), m_sel(CONTOUR_SELECT::NONE),
     m_error("")
 {
 }
@@ -25,7 +25,7 @@ ContourList::ContourList(ContourList&& other) {
 ContourList::ContourList(std::deque<ContourPair>&& contours) :
     m_contours(move(contours)),
     m_thickness(0), m_cur_ctr(-1), m_cur_seg(-1), m_xyValid(false), m_uvValid(false), m_botValid(false), m_botLength(-1),
-    m_ctr(0), m_row(0), m_col(0), m_sel(CONTOUR_SELECT::NONE),
+    m_ctr(0), m_sel(CONTOUR_SELECT::NONE),
     m_error("")
 {
 }
@@ -106,8 +106,7 @@ ContourList &ContourList::operator=(ContourList&& other) noexcept {
         m_botLength = -1;
 
         m_ctr = other.m_ctr;
-        m_row = other.m_row;
-        m_col = other.m_col;
+        m_seg_map = move(other.m_seg_map);
         m_sel = other.m_sel;
 
         m_error = move(other.m_error);
@@ -163,7 +162,7 @@ void ContourList::set(size_t index, const ContourPair &pair) {
     }
 }
 
-void ContourList::insert(size_t index, const ContourPair& pair) {
+void ContourList::insert_before(size_t index, const ContourPair& pair) {
     size_t i = 0;
 
     for (auto it = m_contours.begin(); it != m_contours.end(); ++it, i++) {
@@ -191,7 +190,7 @@ void ContourList::insert_after(size_t index, const ContourPair& pair) {
     m_botLength = -1;
 }
 
-void ContourList::new_insert(size_t index) { insert(index, ContourPair()); }
+void ContourList::new_insert(size_t index) { insert_before(index, ContourPair()); }
 void ContourList::new_front() { m_contours.push_front(ContourPair()); }
 void ContourList::new_back() { m_contours.push_back(ContourPair()); }
 
@@ -356,30 +355,57 @@ void ContourList::select(size_t ctr_num) {
     }
 }
 
-void ContourList::select(size_t ctr_num, size_t row_num, size_t col_num) {
+//void ContourList::select(size_t ctr_num, size_t row_num, size_t col_num) {
+//    clearSelected();
+
+//    if (ctr_num < m_contours.size()) {
+//        const ContourPair& pair = m_contours[ctr_num];
+
+//        switch (col_num) {
+//            case 0:
+//                if (row_num < pair.countBot()) {
+//                    m_ctr = ctr_num;
+//                    m_row = row_num;
+//                    m_col = col_num;
+//                    m_sel = CONTOUR_SELECT::SEGMENT;
+//                }
+//                break;
+//            case 1:
+//                if (row_num < pair.countTop()) {
+//                    m_ctr = ctr_num;
+//                    m_row = row_num;
+//                    m_col = col_num;
+//                    m_sel = CONTOUR_SELECT::SEGMENT;
+//                }
+//                break;
+//        }
+//    }
+//}
+
+void ContourList::select(size_t ctr_num, const map<size_t, bool>& seg_map) {
     clearSelected();
 
-    if (ctr_num < m_contours.size()) {
+    if (ctr_num < m_contours.size() && !seg_map.empty()) {
         const ContourPair& pair = m_contours[ctr_num];
 
-        switch (col_num) {
-            case 0:
-                if (row_num < pair.countBot()) {
-                    m_ctr = ctr_num;
-                    m_row = row_num;
-                    m_col = col_num;
-                    m_sel = CONTOUR_SELECT::SEGMENT;
-                }
-                break;
-            case 1:
-                if (row_num < pair.countTop()) {
-                    m_ctr = ctr_num;
-                    m_row = row_num;
-                    m_col = col_num;
-                    m_sel = CONTOUR_SELECT::SEGMENT;
-                }
-                break;
+        m_ctr = ctr_num;
+        m_seg_map = seg_map;
+
+        // check
+        size_t bot_size = pair.countBot();
+        size_t top_size = pair.countTop();
+
+        for (auto it = m_seg_map.begin(); it != m_seg_map.end(); ++it) {
+            if (it->second) { // top
+                if (it->first >= top_size)
+                    it = m_seg_map.erase(it);
+            } else { // bot
+                if (it->first >= bot_size)
+                    it = m_seg_map.erase(it);
+            }
         }
+
+        m_sel = m_seg_map.empty() ? CONTOUR_SELECT::NONE : CONTOUR_SELECT::SEGMENT;
     }
 }
 
@@ -391,15 +417,16 @@ void ContourList::select(const std::pair<size_t, size_t>& ctr_ent) {
 
     if (ctr_num < m_contours.size() && seg_num < m_contours[ctr_num].count()) {
         m_ctr = ctr_num;
-        m_row = seg_num;
-        m_col = 0;
+        m_seg_map[seg_num] = 0;
+        m_seg_map[seg_num] = 1;
         m_sel = CONTOUR_SELECT::SEGMENT;
     }
 }
 
 void ContourList::clearSelected() {
     m_cur_ctr = m_cur_seg = -1;
-    clearPos();
+    clearPos();    
+    m_seg_map.clear();
     m_sel = CONTOUR_SELECT::NONE;
 }
 
@@ -407,8 +434,21 @@ bool ContourList::isContourSelected() const { return m_sel == CONTOUR_SELECT::CO
 bool ContourList::isSegmentSelected() const { return m_sel == CONTOUR_SELECT::SEGMENT; }
 
 size_t ContourList::selectedContour() const { return m_ctr; }
-size_t ContourList::selectedRow() const     { return m_row; }
-size_t ContourList::selectedColomn() const  { return m_col; }
+//size_t ContourList::selectedRow() const     { return m_row; }
+//size_t ContourList::selectedColumn() const  { return m_col; }
+
+bool ContourList::isSelected(size_t ctr, size_t row, size_t col) const {
+    if (!m_seg_map.empty() && m_sel == CONTOUR_SELECT::SEGMENT && ctr == m_ctr && (col == 0 || col == 1)) {
+        const ContourPair* pair = at(ctr);
+
+        if (pair && (row < pair->countBot() || row < pair->countTop())) {
+            auto it = m_seg_map.find(row);
+            return it != m_seg_map.end() && it->second == col;
+        }
+    }
+
+    return false;
+}
 
 bool ContourList::sort() {
     bool OK {true};
@@ -648,11 +688,10 @@ fpoint_t ContourList::intersectUV() const {
     // find selected
     const ContourPair* const pair = at(m_ctr);
 
-    if (!pair)
+    if (!pair || m_cur_seg < 0)
         return fpoint_t();
 
-    const DxfEntity* const selectedBot = pair->bot()->at(m_row);
-
+    const DxfEntity* const selectedBot = pair->bot()->at(m_cur_seg);
 
     switch (selectedBot->type()) {
         case ENTITY_TYPE::LINE: {
