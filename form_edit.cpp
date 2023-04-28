@@ -385,10 +385,10 @@ void FormEdit::onTxtMsgMoved(int /*pos*/, int /*index*/) {
     plotView.onResizeEvent( plotViewSize() );
 }
 
-void FormEdit::onLineChanged(int row) {
+void FormEdit::onLineChanged(int line_num) {
     if (select_ena && !par.workContours.empty() && !par.mapGcodeToContours.empty()) {
-        if (row >= 0)
-            par.workContours.select( par.getDxfEntityNum(size_t(row)) );
+        if (line_num >= 0)
+            par.workContours.select( par.getDxfEntityNum(size_t(line_num)) );
         else
             par.workContours.clearSelected();
 

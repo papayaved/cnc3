@@ -30,7 +30,7 @@
     3.0.0.19 Generator wizards changed (added pause, save values, Undo)
     3.0.0.20 changed M codes, pass panel, modes table
     3.0.0.21 updated help, supported DXF lwpolyline, layers, enable dark theme for plot only, rename "drum" to "roll", work with UV in countor editor
-    3.0.0.22 Update the Contour editor, added contour multiplexor
+    3.0.0.22 Update the Contour editor, added contour multiplexor, select contours on plot, move segments
 */
 
 #define STONE

@@ -102,9 +102,6 @@ public:
 
     void clear();
 
-    // move DxfEntities
-    void move_back(Dxf& bot, Dxf& top);
-
     void setType(CONTOUR_TYPE value) { m_type = value; }
     CONTOUR_TYPE type() const { return m_type; }
 
@@ -143,6 +140,11 @@ public:
     std::string typeToXmlName() const;
 
     void reverse();
+
+    // move DxfEntities
+    void move_back(Dxf* const bot, Dxf* const top);
+    void move_back(Dxf& bot, Dxf& top);
+    void move_back(ContourPair& pair);
 
     void setFirst(size_t layer, size_t index);
     void setLast(size_t layer, size_t index);

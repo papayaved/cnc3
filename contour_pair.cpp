@@ -258,14 +258,6 @@ void ContourPair::clear() {
     clearModes();
 }
 
-void ContourPair::move_back(Dxf &bot, Dxf &top) {
-    if (m_bot)
-        m_bot->move_back(bot);
-
-    if (m_top)
-        m_top->move_back(top);
-}
-
 void ContourPair::setBot(const Dxf& ctr) {
     if (m_bot)
         delete m_bot;
@@ -405,6 +397,14 @@ void ContourPair::reverse() {
     if (m_bot) m_bot->reverse();
     if (m_top) m_top->reverse();
 }
+
+void ContourPair::move_back(Dxf* const bot, Dxf* const top) {
+    if (m_bot) m_bot->move_back(bot);
+    if (m_top) m_top->move_back(top);
+}
+
+void ContourPair::move_back(Dxf &bot, Dxf &top) { move_back(&bot, &top); }
+void ContourPair::move_back(ContourPair &pair) { move_back(pair.m_bot, pair.m_top); }
 
 void ContourPair::setFirst(size_t layer, size_t index) {
     switch (layer) {

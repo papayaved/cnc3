@@ -48,7 +48,7 @@ class FormContour : public QWidget {
         *actDeleleSeg {nullptr}, *actMoveSeg {nullptr};
 
     QGroupBox *groupContours, *groupContour;
-    QPushButton *btnNewEmpty {nullptr}, *btnNewCutline {nullptr}, *btnDelete {nullptr}, *btnClear {nullptr};
+    QPushButton *btnNewEmpty {nullptr}, *btnNewCutline {nullptr}, *btnMerge {nullptr}, *btnDelete {nullptr}, *btnClear {nullptr};
 
     QVBoxLayout *vboxLeft, *vboxRight_0, *vboxRight_1;
 
@@ -104,6 +104,8 @@ private slots:
 
     void on_btnNewContour_clicked();
     void on_btnNewCutline_clicked();
+
+    void on_btnMerge_clicked();
 
     void on_actDeleteCtr_clicked();
     void on_actDeleteSeg_clicked();

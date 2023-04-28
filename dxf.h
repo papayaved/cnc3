@@ -128,6 +128,7 @@ public:
 
     // Move DxfEntities into currnet Dxf
     void move_back(Dxf& ent);
+    void move_back(Dxf* const ent);
 
     void push_front(DxfEntity* const entity);
     void push_front(const DxfEntity& entity);

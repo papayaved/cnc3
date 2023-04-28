@@ -40,7 +40,7 @@ FormContour::FormContour(ProgramParam& par, QWidget *parent) :
 
     buttons = {
         btnHome, btnOpen, btnSave, btnSaveAs, btnLoadDxf, btnMulti, btn6, btn7, btn8, btn9, btn10, btn11, btnGenerate, btnHelp,
-        btnNewEmpty, btnNewCutline, btnDelete, btnClear,
+        btnNewEmpty, btnNewCutline, btnMerge, btnDelete, btnClear,
         btnFirst, btnUp, btnDown, btnLast, btnSort,
         btnProperties, btnEdit, btnUndo
     };
@@ -300,6 +300,9 @@ void FormContour::createViewControl() {
     btnNewCutline = new QPushButton(tr("Cutline"));
     btnNewCutline->setStatusTip(tr("Add an Entry or Exit line to a contour"));
 
+    btnMerge = new QPushButton(tr("Merge"));
+    btnMerge->setStatusTip(tr("Merge all contours together into one contour"));
+
     btnDelete = new QPushButton(tr("Delete"));
     btnDelete->setStatusTip(tr("Delete selected contour"));
 
@@ -309,6 +312,7 @@ void FormContour::createViewControl() {
     vboxLeft = new QVBoxLayout;
     vboxLeft->addWidget(btnNewEmpty);
     vboxLeft->addWidget(btnNewCutline);
+    vboxLeft->addWidget(btnMerge);
     vboxLeft->addWidget(btnDelete);
     vboxLeft->addWidget(btnClear);
     vboxLeft->setSizeConstraint(QLayout::SetFixedSize);
@@ -392,6 +396,8 @@ void FormContour::createViewControl() {
 
     connect(btnNewEmpty, &QPushButton::clicked, this, &FormContour::on_btnNewContour_clicked);
     connect(btnNewCutline, &QPushButton::clicked, this, &FormContour::on_btnNewCutline_clicked);
+
+    connect(btnMerge, &QPushButton::clicked, this, &FormContour::on_btnMerge_clicked);
 
     connect(btnDelete, &QPushButton::clicked, this, [&](bool /*checked*/) {
         switch (m_viewState) {
@@ -837,6 +843,12 @@ void FormContour::on_btnNewCutline_clicked() {
     }
 }
 
+void FormContour::on_btnMerge_clicked() {
+    saveUndo();
+    par.contours.merge();
+    restoreViewPos(0, 0, 0);
+}
+
 void FormContour::on_actDeleteCtr_clicked() {
     updateCurrentViewPos();
 
@@ -1176,7 +1188,7 @@ void FormContour::onViewSegmentsClicked(const QModelIndex& index) {
         QModelIndexList indexList = selectedIndexes();
 
         if (!indexList.empty()) {
-            map<size_t, bool> sel_map;
+            map<size_t, uint8_t> sel_map;
 
             for (auto it = indexList.constBegin(); it != indexList.constEnd(); ++it) {
                 int row = it->row();
@@ -1184,12 +1196,12 @@ void FormContour::onViewSegmentsClicked(const QModelIndex& index) {
                 switch (it->column()) {
                 case 0:
                     if (bot && row >= 0 && (size_t)row < bot->count())
-                        sel_map[row] = 0;
+                        sel_map[row] = 1;
 
                     break;
                 case 1:
                     if (top && row >= 0 && (size_t)row < top->count())
-                        sel_map[row] = 1;
+                        sel_map[row] = 2;
 
                     break;
                 }

@@ -1126,7 +1126,8 @@ DxfCodeValue Dxf::getCodeValue() {
 }
 
 void Dxf::push_back(DxfEntity* const entity) {
-    if (entity) m_entities.push_back(entity);
+    if (entity)
+        m_entities.push_back(entity);
 }
 
 void Dxf::push_back(const DxfEntity& entity) {
@@ -1134,24 +1135,34 @@ void Dxf::push_back(const DxfEntity& entity) {
 }
 
 void Dxf::push_back(const std::list<DxfEntity *> &entities) {
-    for (DxfEntity* ent : entities)
+    for (DxfEntity* ent : entities) {
         if (ent)
             push_back(ent->clone());
+    }
 }
 
-
-void Dxf::move_back(Dxf& ent) {
-    for (DxfEntity*& ent : ent.m_entities)
-        if (ent) {
-            m_entities.push_back(ent);
-            ent = nullptr;
-        }
-
-    ent.m_entities.clear();
+void Dxf::move_back(Dxf* const ent) {
+    if (ent) {
+        m_entities.splice(m_entities.end(), ent->m_entities);
+//        ent->m_entities.clear();
+    }
 }
+
+void Dxf::move_back(Dxf& ent) { move_back(&ent); }
+
+//void Dxf::move_back(Dxf& ent) {
+//    for (DxfEntity*& ent : ent.m_entities)
+//        if (ent) {
+//            m_entities.push_back(ent);
+//            ent = nullptr;
+//        }
+
+//    ent.m_entities.clear();
+//}
 
 void Dxf::push_front(DxfEntity* const entity) {
-    if (entity) m_entities.push_front(entity);
+    if (entity)
+        m_entities.push_front(entity);
 }
 
 void Dxf::push_front(const DxfEntity& entity) {

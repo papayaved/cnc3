@@ -276,7 +276,7 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
             if (ent)
                 copy_back(pts, ent->getPoints());
 
-            group_sel = contourList.isSelected(ctr, row, 0);
+            group_sel = contourList.isSelected(ctr, row, 1);
 
             row++;
         }

@@ -17,9 +17,8 @@ class ContourList {
     bool m_xyValid {false}, m_uvValid {false}, m_botValid {false};
     double m_botLength {-1};
 
-//    size_t m_ctr {0}, m_row {0}, m_col {0};
     size_t m_ctr {0};
-    std::map<size_t, bool> m_seg_map;
+    std::map<size_t, uint8_t> m_seg_map;
     enum class CONTOUR_SELECT { NONE, CONTOUR, SEGMENT } m_sel = CONTOUR_SELECT::NONE;    
 
     std::string m_error;    
@@ -68,6 +67,8 @@ public:
     void moveUp(size_t index);
     void moveDown(size_t index);
 
+    void merge();
+
     ContourPair* at(size_t index);
     const ContourPair* at(size_t index) const;
     const DxfEntity* at(size_t ctr, size_t row, size_t col);
@@ -88,8 +89,8 @@ public:
     void select(size_t ctr_num);
 //    void select(size_t ctr_num, size_t row_num, size_t col_num);
 
-    // Contour number, segment number, top_botn
-    void select(size_t ctr_num, const std::map<size_t, bool>& seg_map);
+    // Contour number, segment number, {top, bot}
+    void select(size_t ctr_num, const std::map<size_t, uint8_t>& seg_map);
     void select(const std::pair<size_t, size_t>& ctr_ent);
     void clearSelected();
 

@@ -68,7 +68,7 @@ private slots:
     void onTxtPlotMoved(int pos, int index);
     void onTxtMsgMoved(int pos, int index);
 
-    void onLineChanged(int row);
+    void onLineChanged(int line_num);
 
 public:
 //    explicit FormEdit(QWidget *parent = nullptr);
