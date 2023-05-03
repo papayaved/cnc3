@@ -494,7 +494,7 @@ string DxfArc::toString() const {
 string DxfArc::toString2() const {
     if (flags.valid) {
         char buf[128];
-        sprintf_s(buf, sizeof(buf), ", R: %.3f, Length: %.3f mm, CCW: %s.", R, length(), flags.ccw ? "True" : "False");
+        snprintf(buf, sizeof(buf), ", R: %.3f, Length: %.3f mm, CCW: %s.", R, length(), flags.ccw ? "True" : "False");
 
         fpoint_t A = point_0();
         fpoint_t B = point_1();

@@ -1,5 +1,6 @@
 #include "fpoint_t.h"
 #include <cmath>
+#include <stdio.h>
 
 using namespace std;
 
@@ -74,7 +75,7 @@ void fpoint_t::scale(double pct) {
 string fpoint_t::toString() const {
 //    s = "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
     char buf[128];
-    sprintf_s(buf, sizeof(buf), "(%.3f, %.3f)", x, y);
+    snprintf(buf, sizeof(buf), "(%.3f, %.3f)", x, y);
     string s(buf);
     return s;
 }

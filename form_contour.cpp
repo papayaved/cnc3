@@ -170,7 +170,7 @@ void FormContour::createGridView() {
     viewSegments = new QTableView;
 
     viewSegments->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    viewSegments->setSelectionBehavior(QAbstractItemView::SelectRows);
+    viewSegments->setSelectionBehavior(QAbstractItemView::SelectItems);
 
     viewContours->setModel(new ContoursModel());
     viewContours->horizontalHeader()->hide();
@@ -277,15 +277,13 @@ void FormContour::createGridView() {
     viewContours->show();
     viewSegments->show();
 
-    connect(viewContours, &QTableView::clicked, this, &FormContour::onViewContoursClicked);
+//    connect(viewContours, &QTableView::clicked, this, &FormContour::onViewContoursClicked);
     connect(viewContours, &QTableView::activated, this, &FormContour::onViewContoursClicked);
-    connect(viewContours, &QTableView::entered, this, &FormContour::onViewContoursClicked);
     connect(viewContours, &QTableView::pressed, this, &FormContour::onViewContoursClicked);
 
-    connect(viewSegments, &QTableView::clicked, this, &FormContour::onViewSegmentsClicked); // one mouse click
-    connect(viewSegments, &QTableView::activated, this, &FormContour::onViewSegmentsClicked); // two mouse click or Enter
-    connect(viewSegments, &QTableView::entered, this, &FormContour::onViewSegmentsClicked);
-    connect(viewSegments, &QTableView::pressed, this, &FormContour::onViewSegmentsClicked);
+//    connect(viewSegments, &QTableView::clicked, this, &FormContour::onViewSegmentsClicked); // only right mouse one click
+    connect(viewSegments, &QTableView::activated, this, &FormContour::onViewSegmentsClicked); // double mouse click (depend on platform) or Enter
+    connect(viewSegments, &QTableView::pressed, this, &FormContour::onViewSegmentsClicked); // left or right one mouse click, no enter
 
     actions = {
         actPropCtr, actSortCtr, actChangeDirCtr, actFirstCtr, actUpCtr, actDownCtr, actLastCtr, actDeleteCtr,
@@ -298,7 +296,7 @@ void FormContour::createViewControl() {
     btnNewEmpty->setStatusTip(tr("Add a new empty contour"));
 
     btnNewCutline = new QPushButton(tr("Cutline"));
-    btnNewCutline->setStatusTip(tr("Add an Entry or Exit line to a contour"));
+    btnNewCutline->setStatusTip(tr("Add an Entry or Exit line to the contour"));
 
     btnMerge = new QPushButton(tr("Merge"));
     btnMerge->setStatusTip(tr("Merge all contours together into one contour"));
@@ -1170,8 +1168,6 @@ void FormContour::onViewSegmentsClicked(const QModelIndex& index) {
             if (bot && m_row_num < bot->count()) {
                 lineSegment->setText( QString("%1 %2 XY").arg(m_row_num + 1).arg( QString::fromStdString(bot->at(m_row_num)->typeString()) ) );
                 txtMsg->setText( bot->at(m_row_num)->toString().c_str() );
-//                par.contours.select(m_ctr_num, m_row_num, m_col_num);
-//                plot_req = true;
             }
 
             break;
@@ -1179,8 +1175,6 @@ void FormContour::onViewSegmentsClicked(const QModelIndex& index) {
             if (top && m_row_num < top->count()) {
                 lineSegment->setText(QString("%1 %2 UV").arg(m_row_num + 1).arg( QString::fromStdString(top->at(m_row_num)->typeString()) ) );
                 txtMsg->setText( top->at(m_row_num)->toString().c_str() );
-//                par.contours.select(m_ctr_num, m_row_num, m_col_num);
-//                plot_req = true;
             }
             break;
         }
@@ -1195,13 +1189,21 @@ void FormContour::onViewSegmentsClicked(const QModelIndex& index) {
 
                 switch (it->column()) {
                 case 0:
-                    if (bot && row >= 0 && (size_t)row < bot->count())
-                        sel_map[row] = 1;
+                    if (bot && row >= 0 && (size_t)row < bot->count()) {
+                        if (sel_map.count(row) != 0)
+                            sel_map[row] |= 1;
+                        else
+                            sel_map[row] = 1;
+                    }
 
                     break;
                 case 1:
-                    if (top && row >= 0 && (size_t)row < top->count())
-                        sel_map[row] = 2;
+                    if (top && row >= 0 && (size_t)row < top->count()) {
+                        if (sel_map.count(row) != 0)
+                            sel_map[row] |= 2;
+                        else
+                            sel_map[row] = 2;
+                    }
 
                     break;
                 }

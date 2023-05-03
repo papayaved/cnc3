@@ -543,7 +543,7 @@
     <message>
         <location filename="form_contour.cpp" line="180"/>
         <location filename="form_contour.cpp" line="218"/>
-        <location filename="form_contour.cpp" line="352"/>
+        <location filename="form_contour.cpp" line="350"/>
         <source>Properties</source>
         <translation>Свойства</translation>
     </message>
@@ -559,7 +559,7 @@
     </message>
     <message>
         <location filename="form_contour.cpp" line="187"/>
-        <location filename="form_contour.cpp" line="333"/>
+        <location filename="form_contour.cpp" line="331"/>
         <source>Auto sort segments in the current contour</source>
         <translation>Отсортировать сегменты в текущем контуре</translation>
     </message>
@@ -573,17 +573,17 @@
         <translation type="vanished">Сортировать</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="355"/>
+        <location filename="form_contour.cpp" line="353"/>
         <source>Undo</source>
         <translation>Откат</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="356"/>
+        <location filename="form_contour.cpp" line="354"/>
         <source>Undo the last change</source>
         <translation>Откатить последнее изменение</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="360"/>
+        <location filename="form_contour.cpp" line="358"/>
         <source>Change direction of the current contour</source>
         <translation>Изменить направление текущего контура</translation>
     </message>
@@ -604,22 +604,22 @@
         <translation type="vanished">Изменить размеры всех контуров проекта</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="606"/>
+        <location filename="form_contour.cpp" line="604"/>
         <source>Entities</source>
         <translation>Сегментов</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="611"/>
+        <location filename="form_contour.cpp" line="609"/>
         <source>Layers&apos; names</source>
         <translation>Имена слоев</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="644"/>
+        <location filename="form_contour.cpp" line="642"/>
         <source>Layers has no names</source>
         <translation>У слоёв нет имен</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="1356"/>
+        <location filename="form_contour.cpp" line="1358"/>
         <source>Delete selected segment</source>
         <translation>Удалить выделенный сегмент</translation>
     </message>
@@ -715,7 +715,7 @@
     </message>
     <message>
         <location filename="form_contour.cpp" line="189"/>
-        <location filename="form_contour.cpp" line="359"/>
+        <location filename="form_contour.cpp" line="357"/>
         <source>Change Direction</source>
         <translation>Изм. направление</translation>
     </message>
@@ -728,18 +728,18 @@
         <translation type="vanished">Пометить как последний</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="588"/>
-        <location filename="form_contour.cpp" line="1841"/>
+        <location filename="form_contour.cpp" line="586"/>
+        <location filename="form_contour.cpp" line="1843"/>
         <source>All files</source>
         <translation>Все файлы</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="600"/>
+        <location filename="form_contour.cpp" line="598"/>
         <source>Contour: Open DXF file error</source>
         <translation>Контур: Ошибка открытия файла DXF</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="606"/>
+        <location filename="form_contour.cpp" line="604"/>
         <source>Number of loaded layers</source>
         <translation>Количество загруженных слоёв</translation>
     </message>
@@ -756,13 +756,13 @@
         <translation type="vanished">Нет контура, имеется только линия захода</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="1839"/>
+        <location filename="form_contour.cpp" line="1841"/>
         <source>Open project</source>
         <translation>Открыть проект из файла</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="1838"/>
-        <location filename="form_contour.cpp" line="1943"/>
+        <location filename="form_contour.cpp" line="1840"/>
+        <location filename="form_contour.cpp" line="1945"/>
         <source>Project files</source>
         <translation>Файлы проектов</translation>
     </message>
@@ -771,23 +771,23 @@
         <translation type="vanished">Загрузить DXF файл. Слой 0 - плоскость XY, слой 1 (не обязательный) - плоскость UV</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="1853"/>
+        <location filename="form_contour.cpp" line="1855"/>
         <source>Contour: Open project file error</source>
         <translation>Контур: Ошибка открытия файла проекта</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="1889"/>
+        <location filename="form_contour.cpp" line="1891"/>
         <source>Contour: Parse project file error</source>
         <oldsource>Cut settings: Parse file error</oldsource>
         <translation>Контур: Ошибка разбора файла проекта</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="1908"/>
+        <location filename="form_contour.cpp" line="1910"/>
         <source>Contour: Save project file error</source>
         <translation>Контур: Ошибка сохранения проекта</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="1941"/>
+        <location filename="form_contour.cpp" line="1943"/>
         <source>Save project</source>
         <translation>Сохранить проект</translation>
     </message>
@@ -847,7 +847,7 @@
     </message>
     <message>
         <location filename="form_contour.cpp" line="222"/>
-        <location filename="form_contour.cpp" line="336"/>
+        <location filename="form_contour.cpp" line="334"/>
         <source>Use as Entry line</source>
         <oldsource>Use segment as cutline</oldsource>
         <translation>Исп. как Линию захода</translation>
@@ -857,14 +857,14 @@
         <translation type="vanished">Отметить выбранный сегмент как послений в контуре</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="661"/>
-        <location filename="form_contour.cpp" line="1091"/>
+        <location filename="form_contour.cpp" line="659"/>
+        <location filename="form_contour.cpp" line="1089"/>
         <source>Removed unconnected segments from DXF</source>
         <translation>Удаленные не соединенные сегменты в файле DXF</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="671"/>
-        <location filename="form_contour.cpp" line="1101"/>
+        <location filename="form_contour.cpp" line="669"/>
+        <location filename="form_contour.cpp" line="1099"/>
         <source>Removed extra tails from DXF</source>
         <translation>Удаленные лишнии хвосты из файла DXF</translation>
     </message>
@@ -875,7 +875,7 @@
     <message>
         <location filename="form_contour.cpp" line="204"/>
         <location filename="form_contour.cpp" line="237"/>
-        <location filename="form_contour.cpp" line="306"/>
+        <location filename="form_contour.cpp" line="304"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
@@ -903,7 +903,7 @@
     <message>
         <location filename="form_contour.cpp" line="195"/>
         <location filename="form_contour.cpp" line="228"/>
-        <location filename="form_contour.cpp" line="323"/>
+        <location filename="form_contour.cpp" line="321"/>
         <source>Up</source>
         <translation>Вверх</translation>
     </message>
@@ -915,7 +915,7 @@
     <message>
         <location filename="form_contour.cpp" line="198"/>
         <location filename="form_contour.cpp" line="231"/>
-        <location filename="form_contour.cpp" line="326"/>
+        <location filename="form_contour.cpp" line="324"/>
         <source>Down</source>
         <translation>Вниз</translation>
     </message>
@@ -927,7 +927,7 @@
     <message>
         <location filename="form_contour.cpp" line="201"/>
         <location filename="form_contour.cpp" line="234"/>
-        <location filename="form_contour.cpp" line="329"/>
+        <location filename="form_contour.cpp" line="327"/>
         <source>Last</source>
         <translation>Последний</translation>
     </message>
@@ -977,12 +977,12 @@
         <translation>Переместить выделенные сегменты в другой контур</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="297"/>
+        <location filename="form_contour.cpp" line="295"/>
         <source>New</source>
         <translation>Новый</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="298"/>
+        <location filename="form_contour.cpp" line="296"/>
         <source>Add a new empty contour</source>
         <translation>Добавить новый пустой контур</translation>
     </message>
@@ -991,101 +991,105 @@
         <translation type="vanished">Линия захода</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="300"/>
+        <location filename="form_contour.cpp" line="298"/>
         <source>Cutline</source>
         <translation>Прорезь</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="301"/>
         <source>Add an Entry or Exit line to a contour</source>
         <oldsource>Add a new entry line before the first segment of the first contour</oldsource>
+        <translation type="vanished">Добавить линию захода перед первым сегментом контура</translation>
+    </message>
+    <message>
+        <location filename="form_contour.cpp" line="299"/>
+        <source>Add an Entry or Exit line to the contour</source>
         <translation>Добавить линию захода перед первым сегментом контура</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="303"/>
+        <location filename="form_contour.cpp" line="301"/>
         <source>Merge</source>
         <translation>Объединить</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="304"/>
+        <location filename="form_contour.cpp" line="302"/>
         <source>Merge all contours together into one contour</source>
         <translation>Объединить все контуры в один контур</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="307"/>
-        <location filename="form_contour.cpp" line="1358"/>
+        <location filename="form_contour.cpp" line="305"/>
+        <location filename="form_contour.cpp" line="1360"/>
         <source>Delete selected contour</source>
         <translation>Удалить выбранный контур</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="309"/>
+        <location filename="form_contour.cpp" line="307"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="310"/>
+        <location filename="form_contour.cpp" line="308"/>
         <source>Clear all contours</source>
         <translation>Очистить все контуры</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="321"/>
+        <location filename="form_contour.cpp" line="319"/>
         <source>Set the selected contour or segment as the first in the list</source>
         <translation>Установить выбранный контур или сегмент как первый в списке</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="324"/>
+        <location filename="form_contour.cpp" line="322"/>
         <source>Move up the selected contour or segment</source>
         <translation>Передвинуть вверх выбранный контур или сегмент</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="327"/>
+        <location filename="form_contour.cpp" line="325"/>
         <source>Move down the selected contour or segment</source>
         <translation>Передвинуть вниз выбранный контур или сегмент</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="330"/>
+        <location filename="form_contour.cpp" line="328"/>
         <source>Set the selected contour or segment as the last in the list</source>
         <translation>Установить выбранный контур или сегмент как последний в списке</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="332"/>
+        <location filename="form_contour.cpp" line="330"/>
         <source>Sort</source>
         <translation>Сорт.</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="337"/>
+        <location filename="form_contour.cpp" line="335"/>
         <source>Use selected segment as the Entry line of a single contour</source>
         <translation>Использовать выбранный контур как линию захода для одиночного контура</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="353"/>
+        <location filename="form_contour.cpp" line="351"/>
         <source>Current contour/segment properties</source>
         <translation>Свойства текущего контура или сегмента</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="363"/>
+        <location filename="form_contour.cpp" line="361"/>
         <source>Rotate all contours in the project by a given angle</source>
         <translation>Повернуть все контуры в проекте на заданный угол</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="366"/>
+        <location filename="form_contour.cpp" line="364"/>
         <source>Flip all contours in the project Left-Right</source>
         <translation>Перевернуть все контуры слево-направо</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="369"/>
+        <location filename="form_contour.cpp" line="367"/>
         <source>Flip all contours in the project Upside-Down</source>
         <translation>Перевернуть все контуры сверху-вниз</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="372"/>
+        <location filename="form_contour.cpp" line="370"/>
         <source>Resize all contours in the project</source>
         <translation>Изменить размер всех контуров проекта</translation>
     </message>
     <message>
         <location filename="form_contour.cpp" line="192"/>
         <location filename="form_contour.cpp" line="225"/>
-        <location filename="form_contour.cpp" line="320"/>
+        <location filename="form_contour.cpp" line="318"/>
         <source>First</source>
         <translation>Первый</translation>
     </message>
@@ -1102,7 +1106,7 @@
         <translation type="vanished">Изменить направление обхода контура</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="382"/>
+        <location filename="form_contour.cpp" line="380"/>
         <source>Edit</source>
         <translation>Редактировать</translation>
     </message>
@@ -1128,7 +1132,7 @@
         <translation type="vanished">Пометить как  выходной сегмент</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="362"/>
+        <location filename="form_contour.cpp" line="360"/>
         <source>Rotate</source>
         <translation>Поворот</translation>
     </message>
@@ -1137,7 +1141,7 @@
         <translation type="vanished">Повернуть контур</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="365"/>
+        <location filename="form_contour.cpp" line="363"/>
         <source>Flip Left-Right</source>
         <translation>Перевернуть слева-направо</translation>
     </message>
@@ -1146,7 +1150,7 @@
         <translation type="vanished">Перевернуть контур слево-направо</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="368"/>
+        <location filename="form_contour.cpp" line="366"/>
         <source>Flip Upside-Down</source>
         <oldsource>Flip Up-Down</oldsource>
         <translation>Перевернуть сверху-вниз</translation>
@@ -1157,7 +1161,7 @@
         <translation type="vanished">Перевернуть контур сверху-вниз</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="371"/>
+        <location filename="form_contour.cpp" line="369"/>
         <source>Resize</source>
         <translation>Изм. размер</translation>
     </message>
@@ -1166,12 +1170,12 @@
         <translation type="vanished">Изменить размер контура</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="586"/>
+        <location filename="form_contour.cpp" line="584"/>
         <source>Open DXF file</source>
         <translation>Открыть DXF файл</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="585"/>
+        <location filename="form_contour.cpp" line="583"/>
         <source>DXF files</source>
         <translation>Файлы DXF</translation>
     </message>
@@ -1188,13 +1192,13 @@
         <translation type="vanished">Удалены лишние хвосты из Dxf</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="681"/>
-        <location filename="form_contour.cpp" line="1111"/>
+        <location filename="form_contour.cpp" line="679"/>
+        <location filename="form_contour.cpp" line="1109"/>
         <source>Bottom layer DXF segments sorting error</source>
         <translation>Ошибка сортировки нижнего контура</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="697"/>
+        <location filename="form_contour.cpp" line="695"/>
         <source>Bottom layer DXF parsing error</source>
         <translation>Ошибка файла нижнего контура</translation>
     </message>
@@ -1299,32 +1303,32 @@
         <translation>Редактор G-кода: Ошибка открытия файла</translation>
     </message>
     <message>
-        <location filename="form_edit.cpp" line="255"/>
+        <location filename="form_edit.cpp" line="257"/>
         <source>G-code Editor: Save file error</source>
         <translation>Редактор G-кода: Ошибка сохранения файла</translation>
     </message>
     <message>
-        <location filename="form_edit.cpp" line="344"/>
+        <location filename="form_edit.cpp" line="346"/>
         <source>Warning</source>
         <translation>Предупреждение</translation>
     </message>
     <message>
-        <location filename="form_edit.cpp" line="345"/>
+        <location filename="form_edit.cpp" line="347"/>
         <source>The contour is not empty</source>
         <translation>Контур не пустой</translation>
     </message>
     <message>
-        <location filename="form_edit.cpp" line="346"/>
+        <location filename="form_edit.cpp" line="348"/>
         <source>Do you want to overwrite it?</source>
         <translation>Вы хотите перезаписать его?</translation>
     </message>
     <message>
-        <location filename="form_edit.cpp" line="347"/>
+        <location filename="form_edit.cpp" line="349"/>
         <source>Yes</source>
         <translation>Да</translation>
     </message>
     <message>
-        <location filename="form_edit.cpp" line="348"/>
+        <location filename="form_edit.cpp" line="350"/>
         <source>No</source>
         <translation>Нет</translation>
     </message>
@@ -1346,7 +1350,7 @@
     </message>
     <message>
         <location filename="form_edit.cpp" line="217"/>
-        <location filename="form_edit.cpp" line="285"/>
+        <location filename="form_edit.cpp" line="287"/>
         <source>G-code files</source>
         <oldsource>G-code (*.nc *.NC)</oldsource>
         <translation>G-код файлы</translation>
@@ -1357,17 +1361,17 @@
     </message>
     <message>
         <location filename="form_edit.cpp" line="97"/>
-        <location filename="form_edit.cpp" line="283"/>
+        <location filename="form_edit.cpp" line="285"/>
         <source>Save G-code file</source>
         <translation>Сохранить G-код</translation>
     </message>
     <message>
-        <location filename="form_edit.cpp" line="301"/>
+        <location filename="form_edit.cpp" line="303"/>
         <source>Play</source>
         <translation>Проиграть</translation>
     </message>
     <message>
-        <location filename="form_edit.cpp" line="307"/>
+        <location filename="form_edit.cpp" line="309"/>
         <source>Stop</source>
         <translation>Стоп</translation>
     </message>

@@ -241,6 +241,8 @@ void FormEdit::on_btnOpen_clicked() {
             btnSave->setEnabled(true);
             file_open = true;
             emit fileNameChanged(par.gcodeFileName);
+
+            on_btnPlot_clicked();
         }
     }
 }

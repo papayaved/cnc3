@@ -403,18 +403,19 @@ void ContourList::select(size_t ctr_num, const map<size_t, uint8_t>& seg_map) {
         m_ctr = ctr_num;
         m_seg_map = seg_map;
 
-        // check
+        // check map
         size_t bot_size = pair.countBot();
         size_t top_size = pair.countTop();
 
-        for (auto it = m_seg_map.begin(); it != m_seg_map.end(); ++it) {
-            if (it->second) { // top
-                if (it->first >= top_size)
-                    it = m_seg_map.erase(it);
-            } else { // bot
-                if (it->first >= bot_size)
-                    it = m_seg_map.erase(it);
-            }
+        for (auto it = m_seg_map.begin(); it != m_seg_map.end(); ) {
+            if ((it->second & 1) && it->first >= bot_size) // bot
+                it = m_seg_map.erase(it);
+            else if ((it->second & 2) && it->first >= top_size) // top
+                it = m_seg_map.erase(it);
+            else if (it->second == 0)
+                it = m_seg_map.erase(it);
+            else
+                ++it;
         }
 
         m_sel = m_seg_map.empty() ? CONTOUR_SELECT::NONE : CONTOUR_SELECT::SEGMENT;
@@ -432,15 +433,18 @@ void ContourList::select(const std::pair<size_t, size_t>& ctr_ent) {
         m_seg_map[seg_num] = 3;
         m_sel = CONTOUR_SELECT::SEGMENT;
 
-        setCurrent(ctr_num, seg_num);...
+        setCurrent(ctr_num, seg_num);
     }
 }
 
-void ContourList::clearSelected() {
-    m_cur_ctr = m_cur_seg = -1;
-    clearPos();    
+void ContourList::clearSelected() {    
+    clearPos();
+
+    m_ctr = 0;
     m_seg_map.clear();
     m_sel = CONTOUR_SELECT::NONE;
+
+    m_cur_ctr = m_cur_seg = -1;
 }
 
 bool ContourList::isContourSelected() const { return m_sel == CONTOUR_SELECT::CONTOUR; }
@@ -620,14 +624,11 @@ bool ContourList::verify() {
     return true;
 }
 
-void ContourList::setCurrent(int contour_num, int segment_num) {
-    if (m_cur_ctr >= 0 && size_t(m_cur_ctr) < m_contours.size()) {
-        m_cur_ctr = contour_num;
-
-        if (segment_num >= 0 && size_t(segment_num) < m_contours.at(size_t(m_cur_ctr)).count()) {
-            m_cur_seg = segment_num;
-            return;
-        }
+void ContourList::setCurrent(int ctr_num, int seg_num) {
+    if (ctr_num >= 0 && size_t(ctr_num) < m_contours.size() && seg_num >= 0 && size_t(seg_num) < m_contours.at(size_t(ctr_num)).count()) {
+        m_cur_ctr = ctr_num;
+        m_cur_seg = seg_num;
+        return;
     }
 
     m_cur_ctr = -1;
@@ -638,6 +639,7 @@ void ContourList::setCurrent(int contour_num, int segment_num) {
 double ContourList::botLengthFull() {
     if (m_botLength <= 0) {
         m_botLength = 0;
+
         for (const ContourPair& pair: m_contours)
             m_botLength += pair.lengthBot();
     }

@@ -477,7 +477,7 @@ string DxfLine::toString() const {
 string DxfLine::toString2() const {
     if (m_flags.valid) {
         char buf[128];
-        sprintf_s(buf, sizeof(buf), ", Length: %.3f mm", length());
+        snprintf(buf, sizeof(buf), ", Length: %.3f mm", length());
 
         return "Line: " + m_A.toString() + " - " + m_B.toString() + buf;
     }
