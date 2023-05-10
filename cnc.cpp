@@ -66,7 +66,7 @@ bool Cnc::reset() {
         CncParam::reverseX, CncParam::reverseY, CncParam::reverseU, CncParam::reverseV,
         CncParam::swapXY, CncParam::swapUV,
         CncParam::reverseEncX, CncParam::reverseEncY,
-        CncParam::acc, CncParam::dec
+        CncParam::fb_acc, CncParam::fb_dec
     ); // reset included
 
     if (OK)

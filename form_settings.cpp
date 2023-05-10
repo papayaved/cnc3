@@ -479,8 +479,8 @@ void FormSettings::init() {
         o->blockSignals(false);
 
 #ifndef STONE
-    fnumAcc->setValue(CncParam::acc);
-    fnumDec->setValue(CncParam::dec);
+    fnumAcc->setValue(CncParam::fb_acc);
+    fnumDec->setValue(CncParam::fb_dec);
     groupFeedback->setChecked(CncParam::fb_ena);
 
     numHighThld->setValue(round(CncParam::high_thld[0]));

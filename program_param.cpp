@@ -319,11 +319,11 @@ void ProgramParam::saveFeedbackParam(bool fb_ena, double low_thld[2], double hig
 
 void ProgramParam::saveAcceleration(double acc, double dec) {
     QSettings settings(org, app);
-    CncParam::acc = acc;
-    CncParam::dec = dec;
+    CncParam::fb_acc = acc;
+    CncParam::fb_dec = dec;
 
-    settings.setValue("acceleration", CncParam::acc);
-    settings.setValue("deceleration", CncParam::dec);
+    settings.setValue("acceleration", CncParam::fb_acc);
+    settings.setValue("deceleration", CncParam::fb_dec);
     settings.sync();
 }
 
@@ -436,8 +436,8 @@ bool ProgramParam::loadFeedbackParam(bool& fb_ena, double (&low_thld)[2], double
 bool ProgramParam::loadAcceleration(double &acc, double &dec) {
     bool OK = true;
     QSettings settings(org, app);
-    acc = CncParam::acc = loadDouble(settings, "acceleration", CncParam::DEFAULT_ACC * 0.1, CncParam::DEFAULT_ACC * 10, CncParam::DEFAULT_ACC, OK);
-    dec = CncParam::dec = loadDouble(settings, "deceleration", CncParam::DEFAULT_DEC * 0.1, CncParam::DEFAULT_DEC * 10, CncParam::DEFAULT_DEC, OK);
+    acc = CncParam::fb_acc = loadDouble(settings, "acceleration", CncParam::DEFAULT_ACC * 0.1, CncParam::DEFAULT_ACC * 10, CncParam::DEFAULT_ACC, OK);
+    dec = CncParam::fb_dec = loadDouble(settings, "deceleration", CncParam::DEFAULT_DEC * 0.1, CncParam::DEFAULT_DEC * 10, CncParam::DEFAULT_DEC, OK);
     return OK;
 }
 

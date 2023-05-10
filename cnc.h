@@ -266,9 +266,11 @@ public:
             bool sd_oe, bool sd_ena,
             bool rev_x, bool rev_y, bool rev_u, bool rev_v, bool swap_xy, bool swap_uv,
             bool rev_enc_x, bool rev_enc_y,
-            double acc, double dec
-        );    
+            double fb_acc, double fb_dec
+        );
     bool writeStep(float step, float scale_x, float scale_y, float scale_u, float scale_v, float scale_enc_x, float scale_enc_y, bool encXY);
+
+    bool writeAcc(bool ena, double acc, double dec);..
 
     bool readSettings(
             uint16_t& input_lvl,

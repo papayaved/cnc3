@@ -57,6 +57,9 @@ struct CncParam {
     static double low_thld[2], high_thld[2];
     static double rb_to, rb_len, rb_speed;
 
+    static double fb_acc, fb_dec;
+
+    static bool acc_ena;
     static double acc, dec;
 
     static int32_t mm_to_steps(double mm, double scale);

@@ -21,6 +21,9 @@ bool CncParam::encXY = false;
 bool CncParam::fb_ena = false;
 unsigned CncParam::rb_attempts = DEFAULT_RB_ATTEMPTS;
 double CncParam::low_thld[2] = {0, 0}, CncParam::high_thld[2] = {200, 200}, CncParam::rb_to = DEFAULT_RB_TO, CncParam::rb_len = DEFAULT_RB_LEN, CncParam::rb_speed = DEFAULT_RB_SPEED;
+double CncParam::fb_acc = DEFAULT_ACC, CncParam::fb_dec = DEFAULT_DEC;
+
+bool CncParam::acc_ena = false;
 double CncParam::acc = DEFAULT_ACC, CncParam::dec = DEFAULT_DEC;
 
 // scale - steps/mm
@@ -79,6 +82,6 @@ void CncParam::reset() {
     rb_to = DEFAULT_RB_TO;
     rb_len = DEFAULT_RB_LEN;
     rb_speed = DEFAULT_RB_SPEED;
-    acc = DEFAULT_ACC;
-    dec = DEFAULT_DEC;
+    fb_acc = DEFAULT_ACC;
+    fb_dec = DEFAULT_DEC;
 }
