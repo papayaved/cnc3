@@ -132,7 +132,7 @@ public:
 
 private:
     static QString loadString(QSettings& settings, const QString& key, const QString& defaultValue, bool& OK);
-    static bool loadBool(QSettings& settings, const QString& key, const bool defaultValue, bool& OK);
+    static bool loadBoolean(QSettings& settings, const QString& key, const bool defaultValue, bool& OK);
     static unsigned loadUInt(QSettings& settings, const QString& key, const unsigned minValue, const unsigned maxValue, const unsigned defaultValue, bool& OK);
     static double loadDouble(QSettings& settings, const QString& key, const double minValue, const double maxValue, const double defaultValue, bool& OK);
 
@@ -197,7 +197,8 @@ public:
 
     static void saveMotorDir(bool revX, bool revY, bool revU, bool revV, bool swapXY, bool swapUV, bool encReverseX, bool encReverseY);
     static void saveFeedbackParam(bool fb_ena, double low_thld[2], double high_thld[2], double rb_to, unsigned rb_attempts, double rb_len, double rb_speed);
-    static void saveAcceleration(double acc, double dec);
+    static void saveFeedbackAcceleration(double fb_acc, double fb_dec);
+    static void saveAcceleration(bool ena, double acc, double dec);
     static void saveStep(double step, double scaleX, double scaleY, double scaleU, double scaleV, double scaleEncX, double scaleEncY, bool encXY);
 
     static bool loadMotorReverseX();
@@ -209,7 +210,8 @@ public:
     static bool loadEncReverseX();
     static bool loadEncReverseY();
     static bool loadFeedbackParam(bool& fb_ena, double (&low_thld)[2], double (&high_thld)[2], double& rb_to, unsigned& rb_attempts, double& rb_len, double& rb_speed);
-    static bool loadAcceleration(double& acc, double& dec);
+    static bool loadFeedbackAcceleration(double& fb_acc, double& fb_dec);
+    static bool loadAcceleration(bool& ena, double& acc, double& dec);
     static bool loadStep(double& step, double& scaleX, double& scaleY, double& scaleU, double& scaleV, double& scaleEncX, double& scaleEncY, bool& encXY);
     static void loadParam();
     static void loadDefaultParam();

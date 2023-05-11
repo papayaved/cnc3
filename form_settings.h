@@ -30,7 +30,8 @@ class FormSettings : public QWidget
 
     QLabel *labelTitle = nullptr, *labelCNC = nullptr, *labelLanguage = nullptr, *labelInputLevel = nullptr, *labelStep = nullptr,\
         *labelX = nullptr, *labelY = nullptr, *labelU = nullptr, *labelV = nullptr, *labelEncX = nullptr,\
-        *labelEncY = nullptr, *labelPrecision = nullptr, *labelMotor = nullptr, *labelEncoder = nullptr, *labelAcc = nullptr, *labelDec = nullptr;
+        *labelEncY = nullptr, *labelPrecision = nullptr, *labelMotor = nullptr, *labelEncoder = nullptr,
+        *labelFbAcc = nullptr, *labelFbDec = nullptr, *labelAcc = nullptr, *labelDec = nullptr;
 
     QComboBox* comboLanguage = nullptr;
     QCheckBox *checkReverseX = nullptr, *checkReverseY = nullptr, *checkSwapXY = nullptr, *checkShowXY = nullptr,\
@@ -42,13 +43,14 @@ class FormSettings : public QWidget
     QSpinBox *numInputLevel = nullptr;
     QComboBox* comboInputLevel = nullptr;
 
-    QGroupBox *groupFeedback = nullptr, *groupEnc = nullptr;
+    QGroupBox *groupFeedback = nullptr, *groupAcc = nullptr, *groupEnc = nullptr;
     QLabel *labelLowThld = nullptr, *labelHighThld = nullptr, *labelLowThld2 = nullptr, *labelHighThld2 = nullptr, *labelRbTimeout = nullptr, *labelRbAttempts = nullptr, *labelRbLength = nullptr, *labelRbSpeed = nullptr;
     QSpinBox *numLowThld = nullptr, *numHighThld = nullptr, *numLowThld2 = nullptr, *numHighThld2 = nullptr, *numRbTimeout = nullptr, *numRbAttempts = nullptr;
     QDoubleSpinBox *fnumRbLength = nullptr, *fnumRbSpeed = nullptr;
 
     QDoubleSpinBox *fnumStep = nullptr, *fnumScaleX = nullptr, *fnumScaleY = nullptr, *fnumScaleU = nullptr, *fnumScaleV = nullptr,\
         *fnumScaleEncX = nullptr, *fnumScaleEncY = nullptr,\
+        *fnumFbAcc = nullptr, *fnumFbDec = nullptr,
         *fnumAcc = nullptr, *fnumDec = nullptr;
 
     std::vector<QCheckBox*> checks;

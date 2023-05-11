@@ -49,9 +49,10 @@ namespace ADDR {
 
     const uint32_t INPUT_LEVEL  = 0x30 << 2;    
     const uint32_t MOTOR_DIR    = 0x31 << 2;
-    const uint32_t ACC          = 0x32 << 2;
-    const uint32_t DEC          = 0x33 << 2;
-    const uint32_t SD_CTRL      = 0x34 << 2;
+    const uint32_t SD_CTRL      = 0x32 << 2;
+    const uint32_t ACC_ENA      = 0x33 << 2;
+    const uint32_t ACC          = 0x34 << 2;
+    const uint32_t DEC          = 0x35 << 2;
 
     const uint32_t FB_ENA       = 0x38 << 2;
     const uint32_t FB_ADC_THDL  = 0x39 << 2;
@@ -59,6 +60,8 @@ namespace ADDR {
     const uint32_t RB_ATTEMPTS  = 0x3B << 2;
     const uint32_t RB_LENGTH    = 0x3C << 2;
     const uint32_t RB_SPEED     = 0x3D << 2;
+    const uint32_t FB_ACC       = 0x3E << 2;
+    const uint32_t FB_DEC       = 0x3F << 2;
 
     const uint32_t SET_X        = 0x40 << 2;
     const uint32_t SET_Y        = 0x41 << 2;
@@ -266,11 +269,9 @@ public:
             bool sd_oe, bool sd_ena,
             bool rev_x, bool rev_y, bool rev_u, bool rev_v, bool swap_xy, bool swap_uv,
             bool rev_enc_x, bool rev_enc_y,
-            double fb_acc, double fb_dec
+            bool acc_ena, double acc, double dec
         );
     bool writeStep(float step, float scale_x, float scale_y, float scale_u, float scale_v, float scale_enc_x, float scale_enc_y, bool encXY);
-
-    bool writeAcc(bool ena, double acc, double dec);..
 
     bool readSettings(
             uint16_t& input_lvl,
@@ -278,7 +279,7 @@ public:
             bool& rev_x, bool& rev_y, bool& rev_u, bool& rev_v,
             bool& swap_xy, bool& swap_uv,
             bool& rev_enc_x, bool& rev_enc_y,
-            double& acc, double& dec
+            bool& acc_ena, double& acc, double& dec
         );
     bool readStep(float& step, float& scaleX, float& scaleY, float& scaleU, float& scaleV, float& scaleEncX, float& scaleEncY, bool&encXY);
 
@@ -299,9 +300,9 @@ public:
 //    bool writeRollbackSpeed(double mmm);
 //    bool readRollbackSpeed(double& mmm);
 
-    bool writeFeedback(bool enable, double Vlow, double Vhigh, double to_sec, uint32_t attempts, double length, double speed);
+    bool writeFeedback(bool enable, double Vlow, double Vhigh, double to_sec, uint32_t attempts, double length, double speed, double fb_acc, double fb_dec);
     bool writeFeedback(bool enable, double Vlow, double Vhigh);
-    bool readFeedback(bool& enable, double& Vlow, double& Vhigh, double& to_sec, uint32_t& attempts, double& length, double& speed);
+    bool readFeedback(bool& enable, double& Vlow, double& Vhigh, double& to_sec, uint32_t& attempts, double& length, double& speed, double& fb_acc, double& fb_dec);
 
     static double umsec2_to_mmtick2(double value) { return COE_UMSEC2_TO_MMTICK2 * value; }
     static double mmtick2_to_umsec2(double value) { return (1.0 / COE_UMSEC2_TO_MMTICK2) * value; }

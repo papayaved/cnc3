@@ -41,6 +41,7 @@ struct CncParam {
     static constexpr double DEFAULT_RB_LEN = 0.3; // mm
     static constexpr double DEFAULT_RB_SPEED = 1; // mm/min
 
+    static constexpr bool DEFAULT_ACC_ENA = false;
     static constexpr double DEFAULT_ACC = 100;
     static constexpr double DEFAULT_DEC = 100;
 

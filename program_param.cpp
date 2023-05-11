@@ -37,7 +37,7 @@ QString ProgramParam::loadString(QSettings& settings, const QString& key, const 
     return res;
 }
 
-bool ProgramParam::loadBool(QSettings& settings, const QString& key, const bool defaultValue, bool& OK) {
+bool ProgramParam::loadBoolean(QSettings& settings, const QString& key, const bool defaultValue, bool& OK) {
     bool res;
 
     if (settings.contains(key))
@@ -264,7 +264,7 @@ void ProgramParam::saveStepDir(bool sdEna) {
 
 bool ProgramParam::loadStepDir(bool &OK) {
     QSettings settings(org, app);
-    return CncParam::sdEnable = loadBool(settings, "sdEnable", CncParam::DEFAULT_SD_ENA, OK);
+    return CncParam::sdEnable = loadBoolean(settings, "sdEnable", CncParam::DEFAULT_SD_ENA, OK);
 }
 
 void ProgramParam::saveMotorDir(bool revX, bool revY, bool revU, bool revV, bool swapXY, bool swapUV, bool reverseEncX, bool reverseEncY) {
@@ -314,16 +314,29 @@ void ProgramParam::saveFeedbackParam(bool fb_ena, double low_thld[2], double hig
     settings.setValue("rollbackAttempts", CncParam::rb_attempts);
     settings.setValue("rollbackLength", CncParam::rb_len);
     settings.setValue("rollbackSpeed", CncParam::rb_speed);
+
     settings.sync();
 }
 
-void ProgramParam::saveAcceleration(double acc, double dec) {
+void ProgramParam::saveFeedbackAcceleration(double fb_acc, double fb_dec) {
     QSettings settings(org, app);
-    CncParam::fb_acc = acc;
-    CncParam::fb_dec = dec;
+    CncParam::fb_acc = fb_acc;
+    CncParam::fb_dec = fb_dec;
 
-    settings.setValue("acceleration", CncParam::fb_acc);
-    settings.setValue("deceleration", CncParam::fb_dec);
+    settings.setValue("fb_acc", CncParam::fb_acc);
+    settings.setValue("fb_dec", CncParam::fb_dec);
+    settings.sync();
+}
+
+void ProgramParam::saveAcceleration(bool ena, double acc, double dec) {
+    QSettings settings(org, app);
+    CncParam::acc_ena = ena;
+    CncParam::acc = acc;
+    CncParam::dec = dec;
+
+    settings.setValue("acc_ena", CncParam::acc_ena);
+    settings.setValue("acc", CncParam::acc);
+    settings.setValue("dec", CncParam::dec);
     settings.sync();
 }
 
@@ -353,55 +366,57 @@ void ProgramParam::saveStep(double step, double scaleX, double scaleY, double sc
 bool ProgramParam::loadMotorReverseX() {
     bool OK = true;
     QSettings settings(org, app);
-    return CncParam::reverseX = loadBool(settings, "motorReverseX", false, OK);
+    return CncParam::reverseX = loadBoolean(settings, "motorReverseX", false, OK);
 }
 
 bool ProgramParam::loadMotorReverseY() {
     bool OK = true;
     QSettings settings(org, app);
-    return CncParam::reverseY = loadBool(settings, "motorReverseY", false, OK);
+    return CncParam::reverseY = loadBoolean(settings, "motorReverseY", false, OK);
 }
 
 bool ProgramParam::loadMotorReverseU() {
     bool OK = true;
     QSettings settings(org, app);
-    return CncParam::reverseU = loadBool(settings, "motorReverseU", false, OK);
+    return CncParam::reverseU = loadBoolean(settings, "motorReverseU", false, OK);
 }
 
 bool ProgramParam::loadMotorReverseV() {
     bool OK = true;
     QSettings settings(org, app);
-    return CncParam::reverseV = loadBool(settings, "motorReverseV", false, OK);
+    return CncParam::reverseV = loadBoolean(settings, "motorReverseV", false, OK);
 }
 
 bool ProgramParam::loadMotorSwapXY() {
     bool OK = true;
     QSettings settings(org, app);
-    return CncParam::swapXY = loadBool(settings, "motorSwapXY", false, OK);
+    return CncParam::swapXY = loadBoolean(settings, "motorSwapXY", false, OK);
 }
 
 bool ProgramParam::loadMotorSwapUV() {
     bool OK = true;
     QSettings settings(org, app);
-    return CncParam::swapUV = loadBool(settings, "motorSwapUV", false, OK);
+    return CncParam::swapUV = loadBoolean(settings, "motorSwapUV", false, OK);
 }
 
 bool ProgramParam::loadEncReverseX() {
     bool OK = true;
     QSettings settings(org, app);
-    return CncParam::reverseEncX = loadBool(settings, "encReverseX", false, OK);
+    return CncParam::reverseEncX = loadBoolean(settings, "encReverseX", false, OK);
 }
 
 bool ProgramParam::loadEncReverseY() {
     bool OK = true;
     QSettings settings(org, app);
-    return CncParam::reverseEncY = loadBool(settings, "encReverseY", false, OK);
+    return CncParam::reverseEncY = loadBoolean(settings, "encReverseY", false, OK);
 }
 
-bool ProgramParam::loadFeedbackParam(bool& fb_ena, double (&low_thld)[2], double (&high_thld)[2], double& rb_to, unsigned& rb_attempts, double& rb_len, double& rb_speed) {
+bool ProgramParam::loadFeedbackParam(
+        bool& fb_ena, double (&low_thld)[2], double (&high_thld)[2], double& rb_to, unsigned& rb_attempts, double& rb_len, double& rb_speed
+){
     bool OK = true;
     QSettings settings(org, app);
-    fb_ena = CncParam::fb_ena = loadBool(settings, "feedbackEnable", false, OK);
+    fb_ena = CncParam::fb_ena = loadBoolean(settings, "feedbackEnable", false, OK);
 
     int thld_max = static_cast<int>( round(cnc_adc_volt_t::maxVolt(0)) );
 
@@ -433,11 +448,20 @@ bool ProgramParam::loadFeedbackParam(bool& fb_ena, double (&low_thld)[2], double
     return OK;
 }
 
-bool ProgramParam::loadAcceleration(double &acc, double &dec) {
+bool ProgramParam::loadFeedbackAcceleration(double &fb_acc, double &fb_dec) {
     bool OK = true;
     QSettings settings(org, app);
-    acc = CncParam::fb_acc = loadDouble(settings, "acceleration", CncParam::DEFAULT_ACC * 0.1, CncParam::DEFAULT_ACC * 10, CncParam::DEFAULT_ACC, OK);
-    dec = CncParam::fb_dec = loadDouble(settings, "deceleration", CncParam::DEFAULT_DEC * 0.1, CncParam::DEFAULT_DEC * 10, CncParam::DEFAULT_DEC, OK);
+    fb_acc = CncParam::fb_acc = loadDouble(settings, "fb_acc", CncParam::DEFAULT_ACC * 0.1, CncParam::DEFAULT_ACC * 10, CncParam::DEFAULT_ACC, OK);
+    fb_dec = CncParam::fb_dec = loadDouble(settings, "fb_dec", CncParam::DEFAULT_DEC * 0.1, CncParam::DEFAULT_DEC * 10, CncParam::DEFAULT_DEC, OK);
+    return OK;
+}
+
+bool ProgramParam::loadAcceleration(bool& ena, double &acc, double &dec) {
+    bool OK = true;
+    QSettings settings(org, app);
+    ena = CncParam::acc_ena = loadBoolean(settings, "acc_ena", CncParam::DEFAULT_ACC_ENA, OK);
+    acc = CncParam::acc = loadDouble(settings, "acc", CncParam::DEFAULT_ACC * 0.1, CncParam::DEFAULT_ACC * 10, CncParam::DEFAULT_ACC, OK);
+    dec = CncParam::dec = loadDouble(settings, "dec", CncParam::DEFAULT_DEC * 0.1, CncParam::DEFAULT_DEC * 10, CncParam::DEFAULT_DEC, OK);
     return OK;
 }
 
@@ -452,7 +476,7 @@ bool ProgramParam::loadStep(double &step, double &scaleX, double &scaleY, double
     scaleV = CncParam::scaleV = loadDouble(settings, "scaleV", CncParam::SCALE_MIN, CncParam::SCALE_MAX, CncParam::DEFAULT_SCALE_UV, OK);
     scaleEncX = CncParam::scaleEncX = loadDouble(settings, "scaleEncX", CncParam::SCALE_ENC_MIN, CncParam::SCALE_ENC_MAX, CncParam::DEFAULT_SCALE_ENC_XY, OK);
     scaleEncY = CncParam::scaleEncY = loadDouble(settings, "scaleEncY", CncParam::SCALE_ENC_MIN, CncParam::SCALE_ENC_MAX, CncParam::DEFAULT_SCALE_ENC_XY, OK);
-    encXY = CncParam::encXY = loadBool(settings, "encXY", CncParam::DEFAULT_ENC_XY, OK);
+    encXY = CncParam::encXY = loadBoolean(settings, "encXY", CncParam::DEFAULT_ENC_XY, OK);
 
     return OK;
 }
@@ -461,9 +485,10 @@ void ProgramParam::loadParam() {
     bool OK = true, fb_ena;
     unsigned rb_attempts;
     double low_thld[2], high_thld[2];
-    double rb_to, rb_len, rb_speed, acc, dec;
+    double rb_to, rb_len, rb_speed, fb_acc, fb_dec;
     double step, scaleX, scaleY, scaleU, scaleV, scaleEncX, scaleEncY;
-    bool encXY;
+    bool encXY, acc_ena;
+    double acc, dec;
 
     loadInterfaceLanguage();
     loadFontSize();
@@ -486,8 +511,9 @@ void ProgramParam::loadParam() {
     loadEncReverseY();
 
     OK &= loadFeedbackParam(fb_ena, low_thld, high_thld, rb_to, rb_attempts, rb_len, rb_speed);
-    OK &= loadAcceleration(acc, dec);
+    OK &= loadFeedbackAcceleration(fb_acc, fb_dec);
     OK &= loadStep(step, scaleX, scaleY, scaleU, scaleV, scaleEncX, scaleEncY, encXY);
+    OK &= loadAcceleration(acc_ena, acc, dec);
 
     loadStepDir(OK);
 }
@@ -511,7 +537,7 @@ void ProgramParam::saveSwapXY(bool value) {
 bool ProgramParam::loadSwapXY() {
     bool OK = true;
     QSettings settings(org, app);
-    return swapXY = loadBool(settings, "swapXY", false, OK);
+    return swapXY = loadBoolean(settings, "swapXY", false, OK);
 }
 
 void ProgramParam::saveReverseX(bool value) {
@@ -524,7 +550,7 @@ void ProgramParam::saveReverseX(bool value) {
 bool ProgramParam::loadReverseX() {
     bool OK = true;
     QSettings settings(org, app);
-    return reverseX = loadBool(settings, "reverseX", false, OK);
+    return reverseX = loadBoolean(settings, "reverseX", false, OK);
 }
 
 void ProgramParam::saveReverseY(bool value) {
@@ -537,7 +563,7 @@ void ProgramParam::saveReverseY(bool value) {
 bool ProgramParam::loadReverseY() {
     bool OK = true;
     QSettings settings(org, app);
-    return reverseY = loadBool(settings, "reverseY", false, OK);
+    return reverseY = loadBoolean(settings, "reverseY", false, OK);
 }
 
 void ProgramParam::saveShowXY(bool value) {
@@ -550,7 +576,7 @@ void ProgramParam::saveShowXY(bool value) {
 bool ProgramParam::loadShowXY() {
     bool OK = true;
     QSettings settings(org, app);
-    return showXY = loadBool(settings, "showXY", false, OK);
+    return showXY = loadBoolean(settings, "showXY", false, OK);
 }
 
 //enum BUTTON_T {START, REVERSE, CANCEL};
@@ -640,7 +666,7 @@ bool ProgramParam::loadComb(comb_t& comb) {
     if (comb.pause == 0)
         comb.pause_ena  = false;
     else
-        comb.pause_ena  = loadBool(settings,    "pause_ena", false, OK);
+        comb.pause_ena  = loadBoolean(settings,    "pause_ena", false, OK);
 
     comb.wireD          = loadDouble(settings,  "wireD", 0, 3, cnc_param::WIRE_DIAMETER, OK);
     comb.depth          = loadDouble(settings,  "depth", -1000, 1000, 40, OK);
@@ -702,7 +728,7 @@ bool ProgramParam::loadSlices(snake_t& snake) {
     if (snake.pause == 0)
         snake.pause_ena  = false;
     else
-        snake.pause_ena  = loadBool(settings,    "pause_ena", false, OK);
+        snake.pause_ena  = loadBoolean(settings,    "pause_ena", false, OK);
 
     snake.wireD          = loadDouble(settings,  "wireD", 0, 3, cnc_param::WIRE_DIAMETER, OK);
     snake.width          = loadDouble(settings,  "width", -1000, 1000, 40, OK);

@@ -33,7 +33,7 @@
     3.0.0.22 Update the Contour editor, added contour multiplexor, select contours on plot, move segments
 */
 
-//#define STONE
+#define STONE
 //#define TEST_PANEL
 #ifndef STONE
     #define SHOW_ENCODERS

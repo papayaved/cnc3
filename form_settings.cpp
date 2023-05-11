@@ -114,20 +114,20 @@ void FormSettings::createSettingsWidget() {
 
     groupEnc->setLayout(gridEnc);
 
-    //
-    labelAcc = new QLabel(tr("Acceleration") + ":");
-    fnumAcc = new QDoubleSpinBox;
-    fnumAcc->setRange(1, 1000);
-    fnumAcc->setSuffix(" " + tr("um/sec2")); // per 100 V
-    fnumAcc->setDecimals(0);
-    fnumAcc->setSingleStep(10);
+    // Feedback acceleration
+    labelFbAcc = new QLabel(tr("Acceleration per 100V") + ":");
+    fnumFbAcc = new QDoubleSpinBox;
+    fnumFbAcc->setRange(1, 1000);
+    fnumFbAcc->setSuffix(" " + tr("um/sec2")); // per 100 V
+    fnumFbAcc->setDecimals(0);
+    fnumFbAcc->setSingleStep(10);
 
-    labelDec = new QLabel(tr("Deceleration") + ":");
-    fnumDec = new QDoubleSpinBox;
-    fnumDec->setRange(1, 1000);
-    fnumDec->setSuffix(" " + tr("um/sec2")); // per 100 V
-    fnumDec->setDecimals(0);
-    fnumDec->setSingleStep(10);
+    labelFbDec = new QLabel(tr("Deceleration per 100V") + ":");
+    fnumFbDec = new QDoubleSpinBox;
+    fnumFbDec->setRange(1, 1000);
+    fnumFbDec->setSuffix(" " + tr("um/sec2")); // per 100 V
+    fnumFbDec->setDecimals(0);
+    fnumFbDec->setSingleStep(10);
 
     // Feedback
     groupFeedback = new QGroupBox(tr("Feedback enable"));
@@ -206,8 +206,40 @@ void FormSettings::createSettingsWidget() {
     gridFeedback->addWidget(labelRbAttempts, 7, 0);
     gridFeedback->addWidget(numRbAttempts, 7, 1);
 
+    gridFeedback->addWidget(labelFbAcc, 8, 0);
+    gridFeedback->addWidget(fnumFbAcc, 8, 1);
+    gridFeedback->addWidget(labelFbDec, 9, 0);
+    gridFeedback->addWidget(fnumFbDec, 9, 1);
+
     groupFeedback->setLayout(gridFeedback);
 #endif
+
+    // Acceleration
+    groupAcc = new QGroupBox(tr("Acceleration enable"));
+    groupAcc->setCheckable(true);
+
+    labelAcc = new QLabel(tr("Acceleration") + ":");
+    fnumAcc = new QDoubleSpinBox;
+    fnumAcc->setRange(1, 1000);
+    fnumAcc->setSuffix(" " + tr("um/sec2"));
+    fnumAcc->setDecimals(0);
+    fnumAcc->setSingleStep(10);
+
+    labelDec = new QLabel(tr("Deceleration") + ":");
+    fnumDec = new QDoubleSpinBox;
+    fnumDec->setRange(1, 1000);
+    fnumDec->setSuffix(" " + tr("um/sec2"));
+    fnumDec->setDecimals(0);
+    fnumDec->setSingleStep(10);
+
+    QGridLayout* gridAcc = new QGridLayout;
+
+    gridAcc->addWidget(labelAcc, 0, 0);
+    gridAcc->addWidget(fnumAcc, 0, 1);
+    gridAcc->addWidget(labelDec, 1, 0);
+    gridAcc->addWidget(fnumDec, 1, 1);
+
+    groupAcc->setLayout(gridAcc);
 
     //    
     fnumStep = new QDoubleSpinBox;
@@ -332,22 +364,23 @@ void FormSettings::createSettingsWidget() {
 
     gridSettings->addWidget(hLine[1], 20, 1, 1, 4);
     gridSettings->addWidget(groupFeedback, 21, 1, 1, 2);
+#endif
 
-    gridSettings->addWidget(groupLabelNum(labelAcc, fnumAcc), 22, 1, 1, 2);
-    gridSettings->addWidget(groupLabelNum(labelDec, fnumDec), 23, 1, 1, 2);
+    gridSettings->addWidget(groupAcc, 22, 1, 1, 2);
 
-    gridSettings->addWidget(labelPrecision, 24, 1, 1, 4, Qt::AlignHCenter | Qt::AlignBottom);
+#ifndef STONE
+    gridSettings->addWidget(labelPrecision, 23, 1, 1, 4, Qt::AlignHCenter | Qt::AlignBottom);
 
-    gridSettings->addWidget(labelMotor, 25, 0);
-    gridSettings->addWidget(groupLabelNum(labelX, fnumScaleX), 25, 1, 1, 2);
-    gridSettings->addWidget(groupLabelNum(labelY, fnumScaleY), 25, 3, 1, 2);
+    gridSettings->addWidget(labelMotor, 24, 0);
+    gridSettings->addWidget(groupLabelNum(labelX, fnumScaleX), 24, 1, 1, 2);
+    gridSettings->addWidget(groupLabelNum(labelY, fnumScaleY), 24, 3, 1, 2);
 
-    gridSettings->addWidget(groupLabelNum(labelU, fnumScaleU), 26, 1, 1, 2);
-    gridSettings->addWidget(groupLabelNum(labelV, fnumScaleV), 26, 3, 1, 2);
+    gridSettings->addWidget(groupLabelNum(labelU, fnumScaleU), 25, 1, 1, 2);
+    gridSettings->addWidget(groupLabelNum(labelV, fnumScaleV), 25, 3, 1, 2);
 
-    gridSettings->addWidget(labelEncoder, 27, 0);
-    gridSettings->addWidget(groupLabelNum(labelEncX, fnumScaleEncX), 27, 1, 1, 2);
-    gridSettings->addWidget(groupLabelNum(labelEncY, fnumScaleEncY), 27, 3, 1, 2);
+    gridSettings->addWidget(labelEncoder, 26, 0);
+    gridSettings->addWidget(groupLabelNum(labelEncX, fnumScaleEncX), 26, 1, 1, 2);
+    gridSettings->addWidget(groupLabelNum(labelEncY, fnumScaleEncY), 26, 3, 1, 2);
 #endif
 
 //    gridSettings->addWidget(new QFrame, 0, 3, 8, 1);
@@ -479,8 +512,6 @@ void FormSettings::init() {
         o->blockSignals(false);
 
 #ifndef STONE
-    fnumAcc->setValue(CncParam::fb_acc);
-    fnumDec->setValue(CncParam::fb_dec);
     groupFeedback->setChecked(CncParam::fb_ena);
 
     numHighThld->setValue(round(CncParam::high_thld[0]));
@@ -492,7 +523,14 @@ void FormSettings::init() {
     numRbAttempts->setValue(CncParam::rb_attempts);
     fnumRbLength->setValue(CncParam::rb_len);
     fnumRbSpeed->setValue(CncParam::rb_speed);
+
+    fnumFbAcc->setValue(CncParam::fb_acc);
+    fnumFbDec->setValue(CncParam::fb_dec);
 #endif
+
+    groupAcc->setChecked(CncParam::acc_ena);
+    fnumAcc->setValue(CncParam::acc);
+    fnumDec->setValue(CncParam::dec);
 
     fnumStep->setValue(CncParam::step);
 
@@ -615,10 +653,10 @@ void FormSettings::setFontPointSize(int pointSize) {
     labelEncX->setFont(font);
     labelEncY->setFont(font);
 
-    labelAcc->setFont(font);
-    labelDec->setFont(font);
-    fnumAcc->setFont(font);
-    fnumDec->setFont(font);
+    labelFbAcc->setFont(font);
+    labelFbDec->setFont(font);
+    fnumFbAcc->setFont(font);
+    fnumFbDec->setFont(font);
 
     groupFeedback->setFont(font);
     groupEnc->setFont(font);
@@ -633,6 +671,13 @@ void FormSettings::setFontPointSize(int pointSize) {
     numHighThld2->setFont(font);
     numLowThld2->setFont(font);
 #endif
+
+    groupAcc->setFont(font);
+
+    labelAcc->setFont(font);
+    labelDec->setFont(font);
+    fnumAcc->setFont(font);
+    fnumDec->setFont(font);
 }
 
 void FormSettings::createButtons() {
@@ -706,21 +751,21 @@ void FormSettings::createButtons() {
 
     connect(btnRead, &QPushButton::clicked, this, [&]() {
         uint16_t input_lvl;
-        bool sdEna, revX, revY, revU, revV, swapXY, swapUV, revEncX, revEncY;
+        bool sdEna, revX, revY, revU, revV, swapXY, swapUV, revEncX, revEncY, acc_ena;
         double acc, dec;
 
         bool OK = par.cnc.readSettings(
                     input_lvl, sdEna, sdEna, revX, revY, revU, revV,
                     swapXY, swapUV,
                     revEncX, revEncY,
-                    acc, dec
+                    acc_ena, acc, dec
         );
 
         if (OK) {
             ProgramParam::saveInputLevel(input_lvl);
             ProgramParam::saveStepDir(sdEna);
             ProgramParam::saveMotorDir(revX, revY, revU, revV, swapXY, swapUV, revEncX, revEncY);
-            ProgramParam::saveAcceleration(acc, dec);
+            ProgramParam::saveAcceleration(acc_ena, acc, dec);
 
             numInputLevel->setValue(input_lvl);
             checkReverseMotorX->setCheckState(revX ? Qt::Checked : Qt::Unchecked);
@@ -733,26 +778,30 @@ void FormSettings::createButtons() {
             checkSwapMotorUV->setCheckState(swapUV ? Qt::Checked : Qt::Unchecked);
             checkReverseEncX->setCheckState(revEncX ? Qt::Checked : Qt::Unchecked);
             checkReverseEncY->setCheckState(revEncY ? Qt::Checked : Qt::Unchecked);
+#endif
+            groupAcc->setChecked(acc_ena);
             fnumAcc->setValue(acc);
             fnumDec->setValue(dec);
-#endif
         }
-        else
+        else {
+            groupAcc->setChecked(false);
             qDebug("Read Input Levels ERROR!\n");
+        }
 
 #ifndef STONE
         bool fbEna;
         uint32_t rbAttempts;
-        double low_thld[2], high_thld[2], rbTimeout, rbLength, rbSpeed;
+        double low_thld[2], high_thld[2], rbTimeout, rbLength, rbSpeed, fb_acc, fb_dec;
 
         if (OK)
-            OK = par.cnc.readFeedback(fbEna, low_thld[0], high_thld[0], rbTimeout, rbAttempts, rbLength, rbSpeed);
+            OK = par.cnc.readFeedback(fbEna, low_thld[0], high_thld[0], rbTimeout, rbAttempts, rbLength, rbSpeed, fb_acc, fb_dec);
 
         low_thld[1] = CncParam::low_thld[1];
         high_thld[1] = CncParam::high_thld[1];
 
         if (OK) {            
             ProgramParam::saveFeedbackParam(fbEna, low_thld, high_thld, rbTimeout, rbAttempts, rbLength, rbSpeed);
+            ProgramParam::saveFeedbackAcceleration(fb_acc, fb_dec);
 
             numLowThld->blockSignals(true);
             numHighThld->blockSignals(true);
@@ -770,6 +819,9 @@ void FormSettings::createButtons() {
             numRbAttempts->setValue(rbAttempts);
             fnumRbLength->setValue(rbLength);
             fnumRbSpeed->setValue(rbSpeed);
+
+            fnumFbAcc->setValue(fb_acc);
+            fnumFbDec->setValue(fb_dec);
 
             numLowThld->blockSignals(false);
             numHighThld->blockSignals(false);
@@ -837,8 +889,6 @@ void FormSettings::createButtons() {
         const bool swapUV = false;
         const bool revEncX = false;
         const bool revEncY = false;
-        const double acc = CncParam::DEFAULT_ACC;
-        const double dec = CncParam::DEFAULT_DEC;
 
         const float step = CncParam::DEFAULT_STEP;
 
@@ -854,13 +904,12 @@ void FormSettings::createButtons() {
         ProgramParam::saveInputLevel(input_lvl);
         ProgramParam::saveMotorDir(revX, revY, revU, revV, swapXY, swapUV, revEncX, revEncY);
 
-#ifndef STONE
+        ProgramParam::saveStep(step, scaleX, scaleY, scaleU, scaleV, scaleEncX, scaleEncY, encXY);
+
+        bool acc_ena = groupAcc->isChecked();
         double acc = fnumAcc->value();
         double dec = fnumDec->value();
-        ProgramParam::saveAcceleration(acc, dec);
-#endif
-
-        ProgramParam::saveStep(step, scaleX, scaleY, scaleU, scaleV, scaleEncX, scaleEncY, encXY);
+        ProgramParam::saveAcceleration(acc_ena, acc, dec);
 
         bool OK =   par.cnc.writeSettings(
                         input_lvl,
@@ -868,10 +917,12 @@ void FormSettings::createButtons() {
                         revX, revY, revU, revV,
                         swapXY, swapUV,
                         revEncX, revEncY,
-                        acc, dec
+                        acc_ena, acc, dec
                     );
 
 #ifndef STONE
+        bool fb_ena = groupFeedback->isChecked();
+
         if (numHighThld->value() < numLowThld->value())
             numHighThld->setValue( numLowThld->value() );
 
@@ -885,8 +936,11 @@ void FormSettings::createButtons() {
         highThld[0] = numHighThld->value();
         highThld[1] = numHighThld2->value();
 
+        double fb_acc = fnumFbAcc->value();
+        double fb_dec = fnumFbDec->value();
+
         ProgramParam::saveFeedbackParam(
-                    groupFeedback->isChecked(),
+                    fb_ena,
                     lowThld,
                     highThld,
                     numRbTimeout->value(),
@@ -895,16 +949,19 @@ void FormSettings::createButtons() {
                     fnumRbSpeed->value()
                 );
 
+        ProgramParam::saveFeedbackAcceleration(fb_acc, fb_dec);
+
         if (OK)
             OK &=   par.cnc.writeFeedback(
-                    groupFeedback->isChecked(),
-                    numLowThld->value(),
-                    numHighThld->value(),
-                    numRbTimeout->value(),
-                    numRbAttempts->value(),
-                    fnumRbLength->value(),
-                    fnumRbSpeed->value()
-                );
+                        fb_ena,
+                        lowThld[0],
+                        highThld[0],
+                        numRbTimeout->value(),
+                        numRbAttempts->value(),
+                        fnumRbLength->value(),
+                        fnumRbSpeed->value(),
+                        fb_acc, fb_dec
+                    );
 
         if (OK)
             OK &= par.cnc.writeStep(step, scaleX, scaleY, scaleU, scaleV, scaleEncX, scaleEncY, encXY);

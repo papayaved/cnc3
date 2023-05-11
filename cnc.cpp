@@ -66,7 +66,7 @@ bool Cnc::reset() {
         CncParam::reverseX, CncParam::reverseY, CncParam::reverseU, CncParam::reverseV,
         CncParam::swapXY, CncParam::swapUV,
         CncParam::reverseEncX, CncParam::reverseEncY,
-        CncParam::fb_acc, CncParam::fb_dec
+        CncParam::acc_ena, CncParam::acc, CncParam::dec
     ); // reset included
 
     if (OK)
@@ -80,7 +80,8 @@ bool Cnc::reset() {
         OK = writeFeedback(
             CncParam::fb_ena,
             CncParam::low_thld[0], CncParam::high_thld[1],
-            CncParam::rb_to, CncParam::rb_attempts, CncParam::rb_len, CncParam::rb_speed
+            CncParam::rb_to, CncParam::rb_attempts, CncParam::rb_len, CncParam::rb_speed,
+            CncParam::fb_acc, CncParam::fb_dec
         );
 
     return OK;
@@ -860,9 +861,9 @@ bool Cnc::writeSettings(
         bool sd_oe, bool sd_ena,
         bool rev_x, bool rev_y, bool rev_u, bool rev_v, bool swap_xy, bool swap_uv,
         bool rev_enc_x, bool rev_enc_y,
-        double acc, double dec
+        bool acc_ena, double acc, double dec
 ){
-    vector<uint8_t> v = vector<uint8_t>(5 * sizeof(uint32_t));
+    vector<uint8_t> v = vector<uint8_t>(6 * sizeof(uint32_t));
 
     uint32_t data = input_lvl;
     memcpy(&v[0], reinterpret_cast<uint8_t*>(&data), sizeof(uint32_t));
@@ -871,14 +872,18 @@ bool Cnc::writeSettings(
            uint32_t(swap_uv)<<9 | uint32_t(swap_xy)<<8 | uint32_t(rev_v)<<3 | uint32_t(rev_u)<<2 | uint32_t(rev_y)<<1 | uint32_t(rev_x);
     memcpy(&v[4], reinterpret_cast<uint8_t*>(&data), sizeof(uint32_t));
 
-    float fdata = acc; // per 100V
-    memcpy(&v[8], reinterpret_cast<uint8_t*>(&fdata), sizeof(float));
-
-    fdata = dec; // per 100V
-    memcpy(&v[12], reinterpret_cast<uint8_t*>(&fdata), sizeof(float));
-
     data = uint32_t(sd_ena)<<1 | uint32_t(sd_oe);
-    memcpy(&v[16], reinterpret_cast<uint8_t*>(&data), sizeof(uint32_t));
+    memcpy(&v[8], reinterpret_cast<uint8_t*>(&data), sizeof(uint32_t));
+
+    // Acceleration
+    data = uint32_t(acc_ena);
+    memcpy(&v[12], reinterpret_cast<uint8_t*>(&data), sizeof(uint32_t));
+
+    float fdata = acc;
+    memcpy(&v[16], reinterpret_cast<uint8_t*>(&fdata), sizeof(float));
+
+    fdata = dec;
+    memcpy(&v[20], reinterpret_cast<uint8_t*>(&fdata), sizeof(float));
 
     bool OK = m_com.write(ADDR::INPUT_LEVEL, v);
 
@@ -916,12 +921,12 @@ bool Cnc::readSettings(
     bool& rev_x, bool& rev_y, bool& rev_u, bool& rev_v,
     bool& swap_xy, bool& swap_uv,
     bool& rev_enc_x, bool& rev_enc_y,
-    double& acc, double& dec
+    bool& acc_ena, double& acc, double& dec
 ){
     vector<uint8_t> v;
 
-    if (m_com.read(ADDR::INPUT_LEVEL, 5 * sizeof(uint32_t), v)) {
-        if (v.size() == 5 * sizeof(uint32_t)) {
+    if (m_com.read(ADDR::INPUT_LEVEL, 6 * sizeof(uint32_t), v)) {
+        if (v.size() == 6 * sizeof(uint32_t)) {
             input_lvl = BitConverter::toUInt16(v, 0);
 
             uint32_t motor_dir = BitConverter::toUInt32(v, 4);
@@ -934,12 +939,15 @@ bool Cnc::readSettings(
             rev_enc_x = (motor_dir & 1<<16) != 0;
             rev_enc_y = (motor_dir & 1<<17) != 0;
 
-            acc = BitConverter::toFloat(v, 8); // per 100V
-            dec = BitConverter::toFloat(v, 12); // per 100V
-
-            uint32_t sd = BitConverter::toUInt32(v, 16);
+            uint32_t sd = BitConverter::toUInt32(v, 8);
             sd_oe = (sd & 1<<0) != 0;
             sd_ena = (sd & 1<<1) != 0;
+
+            uint32_t data = BitConverter::toUInt32(v, 12);
+            acc_ena = (data & 1<<0) != 0;
+
+            acc = BitConverter::toFloat(v, 16);
+            dec = BitConverter::toFloat(v, 20);
 
             return true;
         }
@@ -1023,7 +1031,7 @@ bool Cnc::readStep(float &step, float &scaleX, float &scaleY, float &scaleU, flo
 //    return OK;
 //}
 
-bool Cnc::writeFeedback(bool enable, double Vlow, double Vhigh, double to_sec, uint32_t attempts, double length_mm, double speed_mmm) {
+bool Cnc::writeFeedback(bool enable, double Vlow, double Vhigh, double to_sec, uint32_t attempts, double length_mm, double speed_mmm, double fb_acc, double fb_dec) {
 //    int Vthld_max = static_cast<int>( round(cnc_adc_volt_t::maxVolt(0)) );
 //    Vlow  = Vlow  > Vthld_max ? Vthld_max : Vlow;
 //    Vhigh = Vhigh > Vthld_max ? Vthld_max : Vhigh;
@@ -1034,7 +1042,7 @@ bool Cnc::writeFeedback(bool enable, double Vlow, double Vhigh, double to_sec, u
     if (!enable)
         return m_com.write32(ADDR::FB_ENA, 0);
 
-    vector<uint8_t> v = vector<uint8_t>(6 * sizeof(uint32_t));
+    vector<uint8_t> v = vector<uint8_t>(8 * sizeof(uint32_t));
 
     uint32_t data = enable;
     memcpy(&v[0], reinterpret_cast<uint8_t*>(&data), sizeof(uint32_t));
@@ -1052,6 +1060,12 @@ bool Cnc::writeFeedback(bool enable, double Vlow, double Vhigh, double to_sec, u
 
     float mmm = speed_mmm;
     memcpy(&v[20], reinterpret_cast<uint8_t*>(&mmm), sizeof(float));
+
+    float fdata = fb_acc; // per 100V
+    memcpy(&v[24], reinterpret_cast<uint8_t*>(&fdata), sizeof(float));
+
+    fdata = fb_dec; // per 100V
+    memcpy(&v[28], reinterpret_cast<uint8_t*>(&fdata), sizeof(float));
 
     return m_com.write(ADDR::FB_ENA, v);
 }
@@ -1074,11 +1088,11 @@ bool Cnc::writeFeedback(bool enable, double Vlow, double Vhigh) {
     return m_com.write(ADDR::FB_ENA, v);
 }
 
-bool Cnc::readFeedback(bool &enable, double &Vlow, double &Vhigh, double &to_sec, uint32_t &attempts, double &length_mm, double &speed_mmm) {
+bool Cnc::readFeedback(bool &enable, double &Vlow, double &Vhigh, double &to_sec, uint32_t &attempts, double &length_mm, double &speed_mmm, double& fb_acc, double& fb_dec) {
     vector<uint8_t> v;
 
-    if (m_com.read(ADDR::FB_ENA, 6 * sizeof(uint32_t), v)) {
-        if (v.size() == 6 * sizeof(uint32_t)) {
+    if (m_com.read(ADDR::FB_ENA, 8 * sizeof(uint32_t), v)) {
+        if (v.size() == 8 * sizeof(uint32_t)) {
             enable = (v[0] & 1) != 0;
             Vlow = cnc_adc_volt_t::toVolt(0, BitConverter::toUInt16(v, 4));
             Vhigh = cnc_adc_volt_t::toVolt(0, BitConverter::toUInt16(v, 6));
@@ -1086,6 +1100,8 @@ bool Cnc::readFeedback(bool &enable, double &Vlow, double &Vhigh, double &to_sec
             attempts = BitConverter::toUInt32(v, 12);
             length_mm = BitConverter::toFloat(v, 16);
             speed_mmm = BitConverter::toFloat(v, 20);
+            fb_acc = BitConverter::toFloat(v, 24); // per 100V
+            fb_dec = BitConverter::toFloat(v, 28); // per 100V
             return true;
         }
     }
