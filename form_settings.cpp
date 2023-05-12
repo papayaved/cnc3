@@ -86,21 +86,20 @@ void FormSettings::createSettingsWidget() {
     checkReverseMotorY = new QCheckBox(tr("Reverse motor Y"));
     checkSwapMotorXY = new QCheckBox(tr("Swap motors X and Y"));
 
-#ifndef STONE
-    checkStepDirEnable = new QCheckBox(tr("Use servomotors"));    
-
-    checkReverseMotorU = new QCheckBox(tr("Reverse motor U"));
-    checkReverseMotorV = new QCheckBox(tr("Reverse motor V"));    
-    checkSwapMotorUV = new QCheckBox(tr("Swap motors U and V"));
-
-    //
-    QFrame* hLine[2];
+    QFrame* hLine[3];
     for (size_t i = 0; i < sizeof(hLine)/sizeof(hLine[0]); i++) {
         hLine[i] = new QFrame;
         hLine[i]->setFrameShape(QFrame::HLine);
         hLine[i]->setFrameShadow(QFrame::Sunken);
         hLine[i]->setLineWidth(3);
     }
+
+#ifndef STONE
+    checkStepDirEnable = new QCheckBox(tr("Use servomotors"));    
+
+    checkReverseMotorU = new QCheckBox(tr("Reverse motor U"));
+    checkReverseMotorV = new QCheckBox(tr("Reverse motor V"));    
+    checkSwapMotorUV = new QCheckBox(tr("Swap motors U and V"));
 
     groupEnc = new QGroupBox(tr("Use linear encoders for X, Y axes"));
     groupEnc->setCheckable(true);
@@ -135,25 +134,25 @@ void FormSettings::createSettingsWidget() {
 
     int thld_max = static_cast<int>( round(cnc_adc_volt_t::maxVolt(0)) );
 
-    labelHighThld = new QLabel(tr("High threshold (HV)"));
+    labelHighThld = new QLabel(tr("High threshold (High Voltage)"));
     numHighThld = new QSpinBox;
     labelHighThld->setBuddy(numHighThld);
     numHighThld->setRange(0, thld_max);
     numHighThld->setSuffix(" " + tr("V"));
 
-    labelLowThld = new QLabel(tr("Low threshold (HV)"));
+    labelLowThld = new QLabel(tr("Low threshold (High Voltage)"));
     numLowThld = new QSpinBox;
     labelLowThld->setBuddy(numLowThld);
     numLowThld->setRange(0, thld_max);
     numLowThld->setSuffix(" " + tr("V"));
 
-    labelHighThld2 = new QLabel(tr("High threshold (Low HV)"));
+    labelHighThld2 = new QLabel(tr("High threshold (Low High Voltage)"));
     numHighThld2 = new QSpinBox;
     labelHighThld2->setBuddy(numHighThld2);
     numHighThld2->setRange(0, thld_max);
     numHighThld2->setSuffix(" " + tr("V"));
 
-    labelLowThld2 = new QLabel(tr("Low threshold (Low HV)"));
+    labelLowThld2 = new QLabel(tr("Low threshold (Low High Voltage)"));
     numLowThld2 = new QSpinBox;
     labelLowThld2->setBuddy(numLowThld2);
     numLowThld2->setRange(0, thld_max);
@@ -361,26 +360,29 @@ void FormSettings::createSettingsWidget() {
 
     gridSettings->addWidget(hLine[0], 18, 1, 1, 4);
     gridSettings->addWidget(groupEnc, 19, 1, 1, 2);
-
-    gridSettings->addWidget(hLine[1], 20, 1, 1, 4);
-    gridSettings->addWidget(groupFeedback, 21, 1, 1, 2);
 #endif
 
-    gridSettings->addWidget(groupAcc, 22, 1, 1, 2);
+    gridSettings->addWidget(hLine[1], 20, 1, 1, 4);
+    gridSettings->addWidget(groupAcc, 21, 1, 1, 2);
 
 #ifndef STONE
-    gridSettings->addWidget(labelPrecision, 23, 1, 1, 4, Qt::AlignHCenter | Qt::AlignBottom);
+    gridSettings->addWidget(hLine[2], 22, 1, 1, 4);
+    gridSettings->addWidget(groupFeedback, 23, 1, 1, 2);
+#endif
 
-    gridSettings->addWidget(labelMotor, 24, 0);
-    gridSettings->addWidget(groupLabelNum(labelX, fnumScaleX), 24, 1, 1, 2);
-    gridSettings->addWidget(groupLabelNum(labelY, fnumScaleY), 24, 3, 1, 2);
+#ifndef STONE
+    gridSettings->addWidget(labelPrecision, 24, 1, 1, 4, Qt::AlignHCenter | Qt::AlignBottom);
 
-    gridSettings->addWidget(groupLabelNum(labelU, fnumScaleU), 25, 1, 1, 2);
-    gridSettings->addWidget(groupLabelNum(labelV, fnumScaleV), 25, 3, 1, 2);
+    gridSettings->addWidget(labelMotor, 25, 0);
+    gridSettings->addWidget(groupLabelNum(labelX, fnumScaleX), 25, 1, 1, 2);
+    gridSettings->addWidget(groupLabelNum(labelY, fnumScaleY), 25, 3, 1, 2);
 
-    gridSettings->addWidget(labelEncoder, 26, 0);
-    gridSettings->addWidget(groupLabelNum(labelEncX, fnumScaleEncX), 26, 1, 1, 2);
-    gridSettings->addWidget(groupLabelNum(labelEncY, fnumScaleEncY), 26, 3, 1, 2);
+    gridSettings->addWidget(groupLabelNum(labelU, fnumScaleU), 26, 1, 1, 2);
+    gridSettings->addWidget(groupLabelNum(labelV, fnumScaleV), 26, 3, 1, 2);
+
+    gridSettings->addWidget(labelEncoder, 27, 0);
+    gridSettings->addWidget(groupLabelNum(labelEncX, fnumScaleEncX), 27, 1, 1, 2);
+    gridSettings->addWidget(groupLabelNum(labelEncY, fnumScaleEncY), 27, 3, 1, 2);
 #endif
 
 //    gridSettings->addWidget(new QFrame, 0, 3, 8, 1);
@@ -955,7 +957,7 @@ void FormSettings::createButtons() {
             OK &=   par.cnc.writeFeedback(
                         fb_ena,
                         lowThld[0],
-                        highThld[0],
+                        highThld[0], // Low High will set through G-code
                         numRbTimeout->value(),
                         numRbAttempts->value(),
                         fnumRbLength->value(),
