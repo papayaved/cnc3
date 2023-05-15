@@ -34,7 +34,7 @@ union cnc_context_t {
         uint32_t rev:1;
         uint32_t rollback:1;
         uint32_t attempt:3;
-        uint32_t :1;
+        uint32_t acc_ena:1;
 
         uint32_t state:8;
         // 1
@@ -253,6 +253,21 @@ public:
     }
 
     inline std::string toStringRunDebug() const {
+        cnc_state_t state = static_cast<cnc_state_t>(m_context.field.state);
+
+        return  "State: "      + stateToString(state) + "\n" +
+                "Encoder "    + (m_context.field.enc_mode ? "(Yes)" : "(no)") + "\t" +
+                "UV "         + (m_context.field.uv_ena ? "(Yes)" : "(no)") + "\n" +
+                "Feedback "   + (m_context.field.fb_ena ? "(Yes)" : "(no)") + "\t" +
+                "Reverse "    + (m_context.field.rev ? "(Yes)" : "(no)") + "\t" +
+                "Rollback "   + (m_context.field.rollback ? "(Yes)" : "(no)") + "\n" +
+                "HV Enabled " + (m_context.field.hv_ena ? "(Yes)" : "(no)") + "\t" +
+                "HV & FB "     + (m_context.field.hv_ena && m_context.field.fb_stop ? "(Yes)" : "(no)") + "\t" +
+                "Attempt:\t"    + std::to_string(m_context.field.attempt) + " (" + std::to_string(m_context.field.attempts) + ")" + "\n" +
+                "Cur. speed:\t" + std::to_string( int(round(WireSpeed::toUMS(WireSpeed::TtoSpeed(m_context.field.T_cur)))) ) + " um/sec\n";
+    }
+
+    inline std::string toStringRunStoneDebug() const {
         cnc_state_t state = static_cast<cnc_state_t>(m_context.field.state);
 
         return  "State: "      + stateToString(state) + "\n" +

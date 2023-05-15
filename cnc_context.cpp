@@ -58,6 +58,7 @@ cnc_context_t CncContext::defaultContext() {
     ctx.field.rev = false;
     ctx.field.rollback = false;
     ctx.field.attempt = 0;
+    ctx.field.acc_ena = false;
 
     ctx.field.state = static_cast<uint8_t>(cnc_state_t::ST_IDLE);
 
@@ -116,6 +117,7 @@ cnc_context_t CncContext::parse(const std::vector<uint8_t> &v) {
         ctx.field.rev       = (v[2] & 4) != 0;
         ctx.field.rollback  = (v[2] & 8) != 0;
         ctx.field.attempt   = v[2]>>4 & 7;
+        ctx.field.acc_ena   = (v[1] & 0x80) != 0;
 
         ctx.field.state = static_cast<uint8_t>(toCncState(v[3]));
 

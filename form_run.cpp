@@ -936,6 +936,8 @@ void FormRun::readCncContext() {
             const CncContext& ctx = par.cncContext;
 #ifndef STONE
             runWidget->txtMsg->setText(m_info + QString( ctx.toStringRunDebug().c_str() ));
+#else
+            runWidget->txtMsg->setText(m_info + QString( ctx.toStringRunStoneDebug().c_str() ));
 #endif
 //            qDebug() << "CNC reader: " + QString(ctx.toString().c_str());
 
