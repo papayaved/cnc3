@@ -57,7 +57,7 @@ namespace auxItems {
     void print_strings(Reporter* const txt, const list<string>& ss) {
         if (txt)
             for (const string& s: ss)
-                txt->append( QString::asprintf("%s\n", s.c_str()) );
+                txt->write( QString::asprintf("%s\n", s.c_str()) );
     }
 
     // Add data to the vector of bytes to tail from src
@@ -256,10 +256,11 @@ namespace auxItems {
      }
 
      void Reporter::clear() {
-         if (m_txt) m_txt->clear();
+         if (m_txt)
+             m_txt->clear();
      }
 
-     void Reporter::append(const QString& s) {
+     void Reporter::write(const QString& s) {
          if (m_txt) {
              m_txt->append(s);
              m_txt->repaint();
@@ -267,12 +268,24 @@ namespace auxItems {
          qDebug() << s;
      }
 
-     void Reporter::append(const char* str) {
-         append(QString(str));
+     void Reporter::write(const char* const s) {
+         writeLine( QString(s) );
      }
 
-     void Reporter::append(const string& s) {
-         append(s.c_str());
+     void Reporter::write(const string& s) {
+         writeLine( QString::fromStdString(s) );
+     }
+
+     void Reporter::writeLine(const QString& s) {
+         write(s + "\n");
+     }
+
+     void Reporter::writeLine(const char* const s) {
+         writeLine( QString(s) );
+     }
+
+     void Reporter::writeLine(const string& s) {
+         writeLine( QString::fromStdString(s) );
      }
 
      int32_t double_to_int32(double value) {

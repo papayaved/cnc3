@@ -68,7 +68,7 @@ bool Cnc::testFpga() {
     qDebug("FPGA test\n");
     cnc_version_t ver = m_fpga.version();
     std::string s = ver.toString();
-    m_msg->append("FPGA version: " + s + "\n");
+    m_msg->writeLine("FPGA version: " + s);
     qDebug("FPGA version: %s\n", ver.toString().c_str());
 
     return true;

@@ -75,6 +75,7 @@ void CncParam::reset() {
     scaleX =  scaleY = scaleU = scaleV = DEFAULT_SCALE_UV;
     scaleEncX = scaleEncY = DEFAULT_SCALE_ENC_XY;
     encXY = false;
+
     fb_ena = false;
     rb_attempts = DEFAULT_RB_ATTEMPTS;
     low_thld[0] = low_thld[1] = 0;
@@ -84,4 +85,8 @@ void CncParam::reset() {
     rb_speed = DEFAULT_RB_SPEED;
     fb_acc = DEFAULT_ACC;
     fb_dec = DEFAULT_DEC;
+
+    acc_ena = false;
+    acc = DEFAULT_ACC;
+    dec = DEFAULT_DEC;
 }

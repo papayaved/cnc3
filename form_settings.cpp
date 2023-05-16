@@ -116,17 +116,21 @@ void FormSettings::createSettingsWidget() {
     // Feedback acceleration
     labelFbAcc = new QLabel(tr("Acceleration per 100V") + ":");
     fnumFbAcc = new QDoubleSpinBox;
-    fnumFbAcc->setRange(1, 1000);
+    fnumFbAcc->setRange(1, 300);
     fnumFbAcc->setSuffix(" " + tr("um/sec2")); // per 100 V
     fnumFbAcc->setDecimals(0);
     fnumFbAcc->setSingleStep(10);
+    fnumFbAcc->setAccelerated(true);
+    fnumFbAcc->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
 
     labelFbDec = new QLabel(tr("Deceleration per 100V") + ":");
     fnumFbDec = new QDoubleSpinBox;
-    fnumFbDec->setRange(1, 1000);
+    fnumFbDec->setRange(1, 300);
     fnumFbDec->setSuffix(" " + tr("um/sec2")); // per 100 V
     fnumFbDec->setDecimals(0);
     fnumFbDec->setSingleStep(10);
+    fnumFbDec->setAccelerated(true);
+    fnumFbDec->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
 
     // Feedback
     groupFeedback = new QGroupBox(tr("Feedback enable"));
@@ -219,17 +223,21 @@ void FormSettings::createSettingsWidget() {
 
     labelAcc = new QLabel(tr("Acceleration") + ":");
     fnumAcc = new QDoubleSpinBox;
-    fnumAcc->setRange(1, 1000);
+    fnumAcc->setRange(1, 300);
     fnumAcc->setSuffix(" " + tr("um/sec2"));
     fnumAcc->setDecimals(0);
     fnumAcc->setSingleStep(10);
+    fnumAcc->setAccelerated(true);
+    fnumAcc->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
 
     labelDec = new QLabel(tr("Deceleration") + ":");
     fnumDec = new QDoubleSpinBox;
-    fnumDec->setRange(1, 1000);
+    fnumDec->setRange(1, 300);
     fnumDec->setSuffix(" " + tr("um/sec2"));
     fnumDec->setDecimals(0);
     fnumDec->setSingleStep(10);
+    fnumDec->setAccelerated(true);
+    fnumDec->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
 
     QGridLayout* gridAcc = new QGridLayout;
 

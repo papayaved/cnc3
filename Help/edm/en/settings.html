@@ -68,6 +68,20 @@
 								</li>
 							</ul>
 						</li><li>
+							<h3><font class="button">Acceleration enable</font></h3>
+							<p>
+								Enable smooth speed up at the beginning of each segment or after stopping the cut, and smooth slow down at the end of each segment. <b><i>Doesn't work with feedback.</i></b>
+							</p>
+							<ul>
+								<li>
+									<h3>Acceleration</h3>
+									<p>Acceleration value in um/sec<sup>2</sup>.<p>
+								</li><li>
+									<h3>Deceleration</h3>
+									<p>Deceleration value in um/sec<sup>2</sup>.<p>
+								</li>
+							</ul>
+						</li><li>
 							<h3><font class="button">Feedback enable</font></h3>
 							<p>
 								Enable feedback mode. CNC keeps cutting voltage in the range between Low and High Thresholds. CNC have two voltage ranges for High Voltage and Low High Voltage.
@@ -92,18 +106,20 @@
 									<p>
 										Number of attempts to start cutting after a short-circuit.
 									</p>
+								</li><li>
+									<h3>Acceleration per 100V</h3>
+									<p>
+										The acceleration at the voltage in the spark gap of 100V or more.
+										<br><br>
+										The acceleration is adjusted depending on how much the voltage in the spark gap differs from the high threshold.
+									</p>
+								</li><li>
+									<h3>Deceleration per 100V</h3>
+									<p>
+										Maximum deceleration.
+									</p>
 								</li>
 							</ul>
-						</li><li>
-							<h3>Acceleration</h3>
-							<p>
-								Maximum acceleration. It's only used to cutting speed control in feedback enabled mode.
-							</p>
-						</li><li>
-							<h3>Deceleration</h3>
-							<p>
-								Maximum deceleration.
-							</p>
 						</li><li>
 							<h3>Motors' precision</h3>
 							<p>

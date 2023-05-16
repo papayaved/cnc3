@@ -116,9 +116,14 @@ namespace auxItems {
         inline void unbind() { m_txt = nullptr; }
 
         void clear();
-        void append(const QString& s);
-        void append(const char* s);
-        void append(const std::string& s);
+
+        void write(const QString& s);
+        void write(const char* const s);
+        void write(const std::string& s);
+
+        void writeLine(const QString& s);
+        void writeLine(const char* const s);
+        void writeLine(const std::string& s);
     };
 
     void print_strings(Reporter* const txt, const std::list<std::string>& ss);

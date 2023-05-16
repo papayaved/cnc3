@@ -43,7 +43,7 @@ void FormTest::on_btnQuickTest_clicked() {
     if (par.cnc.isOpen()) {
         try {
             s = par.cnc.readVersion();
-            m_report.append(s);
+            m_report.writeLine(s);
         } catch (string& s) {
             qDebug("%s\n", s.c_str());
         } catch (exception& e) {
@@ -53,7 +53,7 @@ void FormTest::on_btnQuickTest_clicked() {
         }
     }
     else
-        m_report.append("No CNC connection");
+        m_report.writeLine("No CNC connection");
 }
 
 void FormTest::on_btnFullTest_clicked() {
@@ -65,7 +65,7 @@ void FormTest::on_btnFullTest_clicked() {
     if (par.cnc.isOpen()) {
         try {
             s = par.cnc.readVersion();
-            m_report.append(s);
+            m_report.writeLine(s);
 
             if (par.cnc.testRegs())
                 ui->txtMsg->append("Info: RW registor OK");
@@ -91,7 +91,7 @@ void FormTest::on_btnFullTest_clicked() {
         }
     }
     else
-        m_report.append("No CNC connection");
+        m_report.writeLine("No CNC connection");
 }
 
 void FormTest::on_btnGCode_clicked() {
@@ -103,19 +103,19 @@ void FormTest::on_btnImit_clicked() {
     par.cnc.bindReporter(&m_report);
 
     if (par.gcodeText.length() == 0) {
-        m_report.append(tr("Error: No G-code program") + "\n");
+        m_report.writeLine(tr("Error: No G-code program"));
         return;
     }
 
     list<string> gframes = par.gcode.toFrameList();
     if (gframes.empty()) {
-        m_report.append(tr("Error: No G-code program") + "\n");
+        m_report.writeLine(tr("Error: No G-code program"));
         return;
     }
 
     try {
         string s = par.cnc.readVersion();
-        m_report.append(s);
+        m_report.writeLine(s);
 
         if (par.cnc.testRegs())
             ui->txtMsg->append("Info: RW registor OK");

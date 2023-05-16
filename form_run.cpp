@@ -470,7 +470,7 @@ bool FormRun::loadGcode() {
         m_info +=   tr("G-code size") + ": " + QString::number(wrsize) + " " + tr("bytes") + ". " +
                     tr("CNC program array size") + ": " + QString::number(pa_size) + " " + tr("bytes");
 
-        m_report.append(m_info);
+        m_report.write(m_info);
         m_info += "\n";
 
         QMessageBox::critical(
@@ -485,7 +485,7 @@ bool FormRun::loadGcode() {
     m_info +=   tr("G-code size") + ": " + QString::number(wrsize) + " " + tr("bytes") + ". " +
                 tr("CNC program array size") + ": " + QString::number(pa_size) + " " + tr("bytes");
 
-    m_report.append(m_info);
+    m_report.write(m_info);
     m_info += "\n";
 
     qDebug("loadGcode elapsed 1: %d ms", (int)t.elapsed());
@@ -543,7 +543,7 @@ void FormRun::init(bool recovery) {
         QString txt =   tr("G-code size") + ": " + QString::number(gsize) + " " + tr("bytes") + ". " +
                         tr("CNC program array size") + ": " + QString::number(pa_size) + " " + tr("bytes");
 
-        m_report.append(txt);
+        m_report.write(txt);
         m_info += txt + "\n";
 
         if (gsize > pa_size) {
@@ -573,7 +573,7 @@ void FormRun::init(bool recovery) {
                     par.appState.gotoPauseState();
                     updateButtons();
 
-                    m_report.append(tr("G-code is loaded"));
+                    m_report.writeLine(tr("G-code is loaded"));
                     par.cnc.imitEna(false);
 
                     if (timer) {
@@ -584,7 +584,7 @@ void FormRun::init(bool recovery) {
                     par.cncContext.setValid(false);
                 } else {
                     qDebug("form_run::FormRun::init(true)>>Load G-code error");
-                    m_report.append(tr("Load G-code error"));
+                    m_report.writeLine(tr("Load G-code error"));
                 }
             }
         }
@@ -596,17 +596,17 @@ void FormRun::init(bool recovery) {
         startAdc();
 #endif
     } catch (const runtime_error& e) {
-        m_report.append( "Connection error.\n" + QString(e.what()) );
+        m_report.writeLine( "Connection error.\n" + QString(e.what()) );
         par.cnc.close();
         return;
     } catch (const string& msg) {
-        m_report.append( "Error: " + msg );
+        m_report.writeLine( "Error: " + msg );
         return;
     } catch (const exception& e) {
-        m_report.append("Error: " + QString(e.what()) + ")");
+        m_report.writeLine("Error: " + QString(e.what()) + ")");
         return;
     } catch (...) {
-        m_report.append("Error: FormRun unknown exception");
+        m_report.writeLine("Error: FormRun unknown exception");
         return;
     }
 }
@@ -623,7 +623,7 @@ void FormRun::_init() {
     timer->clear();
 
     if (par.gcode.empty())
-        m_info = tr("Error") + ": " + tr("No G-code");
+        m_info = tr("Error") + ": " + tr("No G-code") + "\n";
     else {
         par.gcode.normalize();
 
@@ -635,7 +635,7 @@ void FormRun::_init() {
             par.workContours = ContourList( par.gcode.getContours(&par.mapGcodeToContours) );
         }
         else
-            m_info = tr("Error") + ": " + tr("G-code normalization error");
+            m_info = tr("Error") + ": " + tr("G-code normalization error") + "\n";
     }
 
     runWidget->checkIdle->setCheckState( par.appState.idleRun() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked );
@@ -646,10 +646,9 @@ void FormRun::_init() {
     runWidget->plot(par.workContours, par.swapXY, par.reverseX, par.reverseY, par.showXY);
 
     if (!par.cnc.isOpen())
-        m_info += "\n" + tr("Error") + ": " + tr("No CNC connection");
+        m_info += tr("Error") + ": " + tr("No CNC connection") + "\n";
 
-    m_report.append(m_info);
-    m_info += "\n";
+    m_report.write(m_info);
 }
 
 void FormRun::highlightCurrentLine() {
@@ -786,8 +785,13 @@ void FormRun::on_btnStart_clicked() {
             runWidget->btnStart->update();
 
             if (OK) {
+//                m_report.append(tr("G-code is loaded"));
                 qDebug("form_run::on_btnStart_clicked>>G-code is loaded");
-                m_report.append(tr("G-code is loaded"));
+
+                m_info.chop(1); // clear \n
+                m_info += " ... " + tr("Loaded") + "\n";
+                runWidget->txtMsg->setText(m_info);
+
                 par.cnc.imitEna(false);
 
                 if (runWidget->checkIdle->isChecked() || (btnBreak->isChecked() && btnPump->isChecked() && btnRoll->isChecked())) {
@@ -802,16 +806,18 @@ void FormRun::on_btnStart_clicked() {
                 }
             } else {
                 qDebug("form_run::on_btnStart_clicked>>Load G-code error");
-                m_report.append(tr("Load G-code error"));
+                m_info.chop(1); // clear \n
+                m_info += " " + tr("Load G-code error") + "\n";
+                runWidget->txtMsg->setText(m_info);
             }
         } catch (string& s) {
-            m_report.append(s.c_str());
+            m_report.writeLine(s);
             return;
         } catch (exception& e) {
-            m_report.append("Error: exception (" + QString(e.what()) + ")");
+            m_report.writeLine("Error: exception (" + QString(e.what()) + ")");
             return;
         } catch (...) {
-            m_report.append("Error: Form run unknown exception\n");
+            m_report.writeLine("Error: Form run unknown exception");
             return;
         }
         break;

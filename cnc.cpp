@@ -233,10 +233,10 @@ bool Cnc::writeFromFile(const string& fileName) {
     FILE* fp = fopen(fileName.c_str(), "r");
 
     if (fp == nullptr) {
-        m_msg->append( QString::asprintf("File \"%s\" is not found\n", fileName.c_str()) );
+        m_msg->write( QString::asprintf("File \"%s\" is not found\n", fileName.c_str()) );
         return false;
     }
-    m_msg->append( QString::asprintf("Read G-code from file \"%s\"\n", fileName.c_str()) );
+    m_msg->write( QString::asprintf("Read G-code from file \"%s\"\n", fileName.c_str()) );
 
     list<string> ss;
 
@@ -297,7 +297,7 @@ bool Cnc::write(const std::list<std::string>& frames, size_t* p_wrsize, size_t* 
     qDebug("cnc::write>>CNC program array size: %d bytes", (int)pa_size);
 
     if (wrsize > pa_size) {
-        m_msg->append( QString::asprintf("G-code size is too big %d bytes (available only %d bytes)", int(wrsize), int(pa_size)) );
+        m_msg->writeLine( QString::asprintf("G-code size is too big %d bytes (available only %d bytes)", int(wrsize), int(pa_size)) );
         qDebug("cnc::write>>G-code size is too big");
         return false;
     }
@@ -594,7 +594,7 @@ void Cnc::readImitFifo() {
         if (!v.empty()) {
             double baud = 8.0 * v.size() / sec;
             total += v.size();
-            m_msg->append(QString::asprintf(\
+            m_msg->write(QString::asprintf(\
                            "%d Read %g records (%d bytes). Total: records %g (%d bytes). Baud %g bit/s\n",\
                            pack_num, double(v.size()) / MotorRecord::size, int(v.size()), double(total) / MotorRecord::size, total, std::round(baud))\
                        );
@@ -646,7 +646,7 @@ void Cnc::saveImitData(string fileName) {
 
     fwrite(v.data(), sizeof(int32_t), v.size(), fp);
     fflush(fp);
-    m_msg->append("Imitation data saved to file \"" + fileName + "\"");
+    m_msg->writeLine("Imitation data saved to file \"" + fileName + "\"");
 }
 
 string Cnc::versionDate() {
