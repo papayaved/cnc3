@@ -2914,6 +2914,11 @@
         <translation>Ошибка нормализации G-кода</translation>
     </message>
     <message>
+        <location filename="form_run.cpp" line="792"/>
+        <source>Loaded</source>
+        <translation>Загружено</translation>
+    </message>
+    <message>
         <source>G-code error</source>
         <translation type="vanished">Ошибка G-код</translation>
     </message>
@@ -2923,26 +2928,25 @@
         <translation>Нет связи с ЧПУ</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="696"/>
-        <location filename="form_run.cpp" line="707"/>
-        <location filename="form_run.cpp" line="724"/>
+        <location filename="form_run.cpp" line="695"/>
+        <location filename="form_run.cpp" line="706"/>
+        <location filename="form_run.cpp" line="723"/>
         <source>Start</source>
         <translation>Пуск</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="773"/>
+        <location filename="form_run.cpp" line="772"/>
         <source>Loading</source>
         <translation>Загрузка</translation>
     </message>
     <message>
         <location filename="form_run.cpp" line="576"/>
-        <location filename="form_run.cpp" line="790"/>
         <source>G-code is loaded</source>
         <translation>G-код загружен</translation>
     </message>
     <message>
         <location filename="form_run.cpp" line="587"/>
-        <location filename="form_run.cpp" line="805"/>
+        <location filename="form_run.cpp" line="810"/>
         <source>Load G-code error</source>
         <translation>Ошибка загрузки G-кода</translation>
     </message>
@@ -2951,21 +2955,21 @@
         <translation type="vanished">Реверс</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="696"/>
-        <location filename="form_run.cpp" line="707"/>
-        <location filename="form_run.cpp" line="724"/>
+        <location filename="form_run.cpp" line="695"/>
+        <location filename="form_run.cpp" line="706"/>
+        <location filename="form_run.cpp" line="723"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="696"/>
-        <location filename="form_run.cpp" line="707"/>
-        <location filename="form_run.cpp" line="724"/>
+        <location filename="form_run.cpp" line="695"/>
+        <location filename="form_run.cpp" line="706"/>
+        <location filename="form_run.cpp" line="723"/>
         <source>Back</source>
         <translation>Назад</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="691"/>
+        <location filename="form_run.cpp" line="690"/>
         <source>Start cutting</source>
         <translation>Начать рез</translation>
     </message>
@@ -2975,33 +2979,33 @@
         <translation>Барабан</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="690"/>
+        <location filename="form_run.cpp" line="689"/>
         <source>Start/Stop running</source>
         <translation>Начать/остановить работу</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="692"/>
+        <location filename="form_run.cpp" line="691"/>
         <source>Stop cutting</source>
         <translation>Остановить рез</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="697"/>
-        <location filename="form_run.cpp" line="708"/>
-        <location filename="form_run.cpp" line="725"/>
+        <location filename="form_run.cpp" line="696"/>
+        <location filename="form_run.cpp" line="707"/>
+        <location filename="form_run.cpp" line="724"/>
         <source>Go to back</source>
         <translation>Двигаться в обратную сторону</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="697"/>
-        <location filename="form_run.cpp" line="708"/>
-        <location filename="form_run.cpp" line="725"/>
+        <location filename="form_run.cpp" line="696"/>
+        <location filename="form_run.cpp" line="707"/>
+        <location filename="form_run.cpp" line="724"/>
         <source>Cancel program</source>
         <translation>Отменить программу</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="718"/>
-        <location filename="form_run.cpp" line="735"/>
-        <location filename="form_run.cpp" line="747"/>
+        <location filename="form_run.cpp" line="717"/>
+        <location filename="form_run.cpp" line="734"/>
+        <location filename="form_run.cpp" line="746"/>
         <source>Stop</source>
         <translation>Стоп</translation>
     </message>
@@ -3010,23 +3014,23 @@
         <translation type="vanished">Сделать паузу</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="741"/>
+        <location filename="form_run.cpp" line="740"/>
         <source>Shortcut</source>
         <translation>Коротко</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="742"/>
+        <location filename="form_run.cpp" line="741"/>
         <source>Fast return to start position</source>
         <translation>Быстрый возврат на начальную позицию</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="742"/>
-        <location filename="form_run.cpp" line="754"/>
+        <location filename="form_run.cpp" line="741"/>
+        <location filename="form_run.cpp" line="753"/>
         <source>Reset CNC</source>
         <translation>Сброс ЧПУ</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="753"/>
+        <location filename="form_run.cpp" line="752"/>
         <source>Reset</source>
         <translation>Сброс</translation>
     </message>
@@ -3075,14 +3079,12 @@
         <translation>Входные уровни, биты</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="81"/>
         <source>Metal</source>
-        <translation>Металл</translation>
+        <translation type="vanished">Металл</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="82"/>
         <source>Stone</source>
-        <translation>Камень</translation>
+        <translation type="vanished">Камень</translation>
     </message>
     <message>
         <source>Servomotors enable</source>
@@ -3101,12 +3103,12 @@
         <translation>Изменить направление оси Y в ЧПУ</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="92"/>
+        <location filename="form_settings.cpp" line="100"/>
         <source>Reverse motor U</source>
         <translation>Изменить направление оси U в ЧПУ</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="93"/>
+        <location filename="form_settings.cpp" line="101"/>
         <source>Reverse motor V</source>
         <translation>Изменить направление оси V в ЧПУ</translation>
     </message>
@@ -3121,87 +3123,85 @@
         <translation>Настройки ЧПУ</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="90"/>
+        <location filename="form_settings.cpp" line="98"/>
         <source>Use servomotors</source>
         <oldsource>Enable servomotors</oldsource>
         <translation>Использовать сервоприводы</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="105"/>
+        <location filename="form_settings.cpp" line="104"/>
         <source>Use linear encoders for X, Y axes</source>
         <oldsource>Enable XY linear encoders</oldsource>
         <translation>Использовать линейные энкодеры для осей X, Y</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="94"/>
+        <location filename="form_settings.cpp" line="102"/>
         <source>Swap motors U and V</source>
         <translation>Поменять местами оси U и V в ЧПУ</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="108"/>
+        <location filename="form_settings.cpp" line="107"/>
         <source>Reverse Encoder X</source>
         <translation>Изменить направление энкодера X</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="109"/>
+        <location filename="form_settings.cpp" line="108"/>
         <source>Reverse Encoder Y</source>
         <translation>Изменить направление энкодера Y</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="118"/>
+        <location filename="form_settings.cpp" line="224"/>
         <source>Acceleration</source>
         <translation>Ускорение</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="121"/>
-        <location filename="form_settings.cpp" line="128"/>
+        <location filename="form_settings.cpp" line="120"/>
+        <location filename="form_settings.cpp" line="129"/>
+        <location filename="form_settings.cpp" line="227"/>
+        <location filename="form_settings.cpp" line="236"/>
         <source>um/sec2</source>
         <translation>мкм/сек2</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="125"/>
+        <location filename="form_settings.cpp" line="233"/>
         <source>Deceleration</source>
         <translation>Торможение</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="133"/>
+        <location filename="form_settings.cpp" line="136"/>
         <source>Feedback enable</source>
         <translation>Включить обратную связь</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="138"/>
         <source>High threshold (HV)</source>
         <oldsource>High threshold</oldsource>
-        <translation>Верхний порог (ВН)</translation>
+        <translation type="vanished">Верхний порог (ВН)</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="144"/>
         <source>Low threshold (HV)</source>
         <oldsource>Low threshold</oldsource>
-        <translation>Нижний порог (ВН)</translation>
+        <translation type="vanished">Нижний порог (ВН)</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="150"/>
         <source>High threshold (Low HV)</source>
-        <translation>Верхний порог (Низкое ВН)</translation>
+        <translation type="vanished">Верхний порог (Низкое ВН)</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="156"/>
         <source>Low threshold (Low HV)</source>
-        <translation>Нижний порог (Низкое ВН)</translation>
+        <translation type="vanished">Нижний порог (Низкое ВН)</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="162"/>
+        <location filename="form_settings.cpp" line="165"/>
         <source>Rollback timeout</source>
         <translation>Время ожидания отката</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="168"/>
+        <location filename="form_settings.cpp" line="171"/>
         <source>Rollback distance</source>
         <translation>Расстояние отката</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="184"/>
+        <location filename="form_settings.cpp" line="187"/>
         <source>Rollback attempts</source>
         <translation>Количество попыток отката</translation>
     </message>
@@ -3210,51 +3210,96 @@
         <translation type="vanished">Длина отката</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="176"/>
+        <location filename="form_settings.cpp" line="179"/>
         <source>Rollback speed</source>
         <translation>Скорость отката</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="639"/>
+        <location filename="form_settings.cpp" line="694"/>
         <source>Home</source>
         <translation>Главная</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="640"/>
+        <location filename="form_settings.cpp" line="695"/>
         <source>Go to the Home panel</source>
         <translation>Перейти на главную панель</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="680"/>
+        <location filename="form_settings.cpp" line="735"/>
         <source>Open Help</source>
         <translation>Открыть помощь</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="142"/>
-        <location filename="form_settings.cpp" line="148"/>
-        <location filename="form_settings.cpp" line="154"/>
-        <location filename="form_settings.cpp" line="160"/>
+        <location filename="form_settings.cpp" line="145"/>
+        <location filename="form_settings.cpp" line="151"/>
+        <location filename="form_settings.cpp" line="157"/>
+        <location filename="form_settings.cpp" line="163"/>
         <source>V</source>
         <translation>В</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="166"/>
+        <location filename="form_settings.cpp" line="81"/>
+        <source>Type 1</source>
+        <translation>Тип 1</translation>
+    </message>
+    <message>
+        <location filename="form_settings.cpp" line="82"/>
+        <source>Type 2</source>
+        <translation>Тип 2</translation>
+    </message>
+    <message>
+        <location filename="form_settings.cpp" line="117"/>
+        <source>Acceleration per 100V</source>
+        <translation>Ускорение при 100В</translation>
+    </message>
+    <message>
+        <location filename="form_settings.cpp" line="126"/>
+        <source>Deceleration per 100V</source>
+        <translation>Замедление при 100В</translation>
+    </message>
+    <message>
+        <location filename="form_settings.cpp" line="141"/>
+        <source>High threshold (High Voltage)</source>
+        <translation>Верхний порог (Высокое напряжение)</translation>
+    </message>
+    <message>
+        <location filename="form_settings.cpp" line="147"/>
+        <source>Low threshold (High Voltage)</source>
+        <translation>Нижний порог (Высокое напряжение)</translation>
+    </message>
+    <message>
+        <location filename="form_settings.cpp" line="153"/>
+        <source>High threshold (Low High Voltage)</source>
+        <translation>Верхний порог (Низкое высокое напряжение)</translation>
+    </message>
+    <message>
+        <location filename="form_settings.cpp" line="159"/>
+        <source>Low threshold (Low High Voltage)</source>
+        <translation>Нижний порог (Низкое высокое напряжение)</translation>
+    </message>
+    <message>
+        <location filename="form_settings.cpp" line="169"/>
         <source>sec</source>
         <translation>сек</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="172"/>
-        <location filename="form_settings.cpp" line="220"/>
+        <location filename="form_settings.cpp" line="175"/>
+        <location filename="form_settings.cpp" line="259"/>
         <source>mm</source>
         <translation>мм</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="180"/>
+        <location filename="form_settings.cpp" line="183"/>
         <source>mm/min</source>
         <translation>мм/мин</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="214"/>
+        <location filename="form_settings.cpp" line="221"/>
+        <source>Acceleration enable</source>
+        <translation>Включение ускорения</translation>
+    </message>
+    <message>
+        <location filename="form_settings.cpp" line="253"/>
         <source>Calculation step</source>
         <translation>Шаг вычислений</translation>
     </message>
@@ -3273,18 +3318,18 @@
         <translation type="vanished">Шаг вычислений, мм</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="228"/>
+        <location filename="form_settings.cpp" line="267"/>
         <source>Precision (steps/mm)</source>
         <oldsource>Scale (steps/mm)</oldsource>
         <translation>Точность (шагов/мм)</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="229"/>
+        <location filename="form_settings.cpp" line="268"/>
         <source>Motor</source>
         <translation>Двигатель</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="253"/>
+        <location filename="form_settings.cpp" line="292"/>
         <source>Encoder</source>
         <translation>Энкодер</translation>
     </message>
@@ -3298,38 +3343,38 @@
         <translation type="vanished">Вернуться на главную панель</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="643"/>
+        <location filename="form_settings.cpp" line="698"/>
         <source>Read</source>
         <translation>Чтение</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="644"/>
+        <location filename="form_settings.cpp" line="699"/>
         <source>Read settings from CNC</source>
         <translation>Прочитать настройки из ЧПУ</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="646"/>
+        <location filename="form_settings.cpp" line="701"/>
         <source>Write</source>
         <translation>Запись</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="647"/>
+        <location filename="form_settings.cpp" line="702"/>
         <source>Write settings</source>
         <translation>Записать настройки</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="649"/>
+        <location filename="form_settings.cpp" line="704"/>
         <source>Default</source>
         <translation>Сброс</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="650"/>
+        <location filename="form_settings.cpp" line="705"/>
         <source>Set default settings</source>
         <oldsource>Default settings</oldsource>
         <translation>Установить настройки по умолчанию</translation>
     </message>
     <message>
-        <location filename="form_settings.cpp" line="679"/>
+        <location filename="form_settings.cpp" line="734"/>
         <source>Help</source>
         <translation>Помощь</translation>
     </message>
@@ -3859,7 +3904,7 @@
         <translation>ЧПУ Меатэк</translation>
     </message>
     <message>
-        <location filename="cnc.cpp" line="705"/>
+        <location filename="cnc.cpp" line="706"/>
         <source>CNC</source>
         <translation>ЧПУ</translation>
     </message>
@@ -3872,7 +3917,7 @@
         <translation type="vanished">от</translation>
     </message>
     <message>
-        <location filename="cnc.cpp" line="708"/>
+        <location filename="cnc.cpp" line="709"/>
         <source>built on</source>
         <translation>от</translation>
     </message>
@@ -3881,18 +3926,18 @@
         <translation type="vanished">на</translation>
     </message>
     <message>
-        <location filename="cnc.cpp" line="705"/>
+        <location filename="cnc.cpp" line="706"/>
         <location filename="fpga.cpp" line="153"/>
         <source>ver.</source>
         <translation>вер.</translation>
     </message>
     <message>
-        <location filename="cnc.cpp" line="707"/>
+        <location filename="cnc.cpp" line="708"/>
         <source>MHz</source>
         <translation>МГц</translation>
     </message>
     <message>
-        <location filename="cnc.cpp" line="712"/>
+        <location filename="cnc.cpp" line="713"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>

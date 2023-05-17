@@ -78,8 +78,8 @@ void FormSettings::createSettingsWidget() {
 
     comboInputLevel = new QComboBox;
     comboInputLevel->addItem(tr(""));
-    comboInputLevel->addItem(tr("Metal"));
-    comboInputLevel->addItem(tr("Stone"));
+    comboInputLevel->addItem(tr("Type 1")); // Metal
+    comboInputLevel->addItem(tr("Type 2")); // Stone
     comboInputLevel->addItem(tr("Debug"));
 
     checkReverseMotorX = new QCheckBox(tr("Reverse motor X"));
