@@ -12,11 +12,11 @@ struct CncParam {
     static constexpr uint16_t INPUT_LEVEL_STONE = 0x010;
     static constexpr uint16_t INPUT_LEVEL_DEBUG = 0x300;
 
-#ifdef STONE
-    static constexpr uint16_t DEFAULT_INPUT_LEVEL = INPUT_LEVEL_STONE;
-#else
+//#ifdef STONE
+//    static constexpr uint16_t DEFAULT_INPUT_LEVEL = INPUT_LEVEL_STONE;
+//#else
     static constexpr uint16_t DEFAULT_INPUT_LEVEL = INPUT_LEVEL_METAL;
-#endif
+//#endif
 
     static constexpr bool DEFAULT_SD_ENA = false;
 

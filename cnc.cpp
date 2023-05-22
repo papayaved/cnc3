@@ -538,7 +538,7 @@ void Cnc::initialContext(const cnc_context_t& ctx) {
     writePulseWidth(ctx.field.pulse_width);
     writePulseRatio(ctx.field.pulse_ratio);
     writeSpeed( WireSpeed::TtoSpeed(ctx.field.T) );
-    writeEnableUV(ctx.field.uv_ena);
+    writeEnableUV(ctx.field.uv_ena); // todo: it needs more parameters from G-code LHT, D, roller_axis
 }
 
 cnc_adc_t Cnc::readADC() {

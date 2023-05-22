@@ -27,7 +27,8 @@ union cnc_context_t {
         uint32_t center_ena:1;
         uint32_t is_init:1;
 
-        uint32_t roll_vel:8;
+        uint32_t roll_vel:7;
+        uint32_t dia_ena:1;
 
         uint32_t uv_ena:1;
         uint32_t enc_mode:1;
@@ -163,6 +164,7 @@ public:
 
     uint8_t rollVelocity() const { return m_context.field.roll_vel; }
 
+    bool uvDiaEnabled() const { return m_context.field.dia_ena; }
     bool uvEnabled() const { return m_context.field.uv_ena; }
     bool reverse() const { return m_context.field.rev; }
 
@@ -248,22 +250,23 @@ public:
                 "Low High Voltage: " + (m_context.field.low_high_voltage_ena ? "Y" : "n") + "\n" +
                 "Current Index: " + std::to_string(m_context.field.current_index) + "\n" +
                 "Period : " + std::to_string(m_context.field.T) + "clock/mm\n" +
-                "UV Enable: " + std::to_string(m_context.field.uv_ena) + "\n" +
+                "UV Enable: " + std::to_string(m_context.field.uv_ena) + " Dia Enable: " + std::to_string(m_context.field.dia_ena) + "\n" +
                 "Valid: " + std::to_string(m_context.field.backup_valid) + "\n";
     }
 
     inline std::string toStringRunDebug() const {
         cnc_state_t state = static_cast<cnc_state_t>(m_context.field.state);
 
-        return  "State: "      + stateToString(state) + "\n" +
+        return  "State: "     + stateToString(state) + "\n" +
                 "Encoder "    + (m_context.field.enc_mode ? "(Yes)" : "(no)") + "\t" +
-                "UV "         + (m_context.field.uv_ena ? "(Yes)" : "(no)") + "\n" +
+                "UV "         + (m_context.field.uv_ena ? "(Yes)" : "(no)") + "\t" +
+                "Dia "        + (m_context.field.dia_ena ? "(Yes)" : "(no)") + "\n" +
                 "Feedback "   + (m_context.field.fb_ena ? "(Yes)" : "(no)") + "\t" +
                 "Reverse "    + (m_context.field.rev ? "(Yes)" : "(no)") + "\t" +
                 "Rollback "   + (m_context.field.rollback ? "(Yes)" : "(no)") + "\n" +
                 "HV Enabled " + (m_context.field.hv_ena ? "(Yes)" : "(no)") + "\t" +
-                "HV & FB "     + (m_context.field.hv_ena && m_context.field.fb_stop ? "(Yes)" : "(no)") + "\t" +
-                "Attempt:\t"    + std::to_string(m_context.field.attempt) + " (" + std::to_string(m_context.field.attempts) + ")" + "\n" +
+                "HV & FB "    + (m_context.field.hv_ena && m_context.field.fb_stop ? "(Yes)" : "(no)") + "\t" +
+                "Attempt:\t"  + std::to_string(m_context.field.attempt) + " (" + std::to_string(m_context.field.attempts) + ")" + "\n" +
                 "Cur. speed:\t" + std::to_string( int(round(WireSpeed::toUMS(WireSpeed::TtoSpeed(m_context.field.T_cur)))) ) + " um/sec\n";
     }
 

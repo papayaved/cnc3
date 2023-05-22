@@ -1,7 +1,7 @@
 #ifndef CONSTRAINTS_H
 #define CONSTRAINTS_H
 
-#define APP_VER ("3.0.0.22b")
+#define APP_VER ("3.1.1.3b")
 /*
     0.2.2.1 изменен информационный пакет ЧПУ
     0.2.2.2 попытка перевернуть оси в QWT
@@ -28,9 +28,9 @@
     3.0.0.17 Dark theme (test)
     3.0.0.18 Changed MCU project (Soft pult abort at alarm and wire break). Moved pult controls
     3.0.0.19 Generator wizards changed (added pause, save values, Undo)
-    3.0.0.20 changed M codes, pass panel, modes table
-    3.0.0.21 updated help, supported DXF lwpolyline, layers, enable dark theme for plot only, rename "drum" to "roll", work with UV in countor editor
-    3.0.0.22 Update the Contour editor, added contour multiplexor, select contours on plot, move segments
+    3.1.1.1 changed M codes, pass panel, modes table
+    3.1.1.2 updated help, supported DXF lwpolyline, layers, enable dark theme for plot only, rename "drum" to "roll", work with UV in countor editor
+    3.1.1.3 Update the Contour editor, added contour multiplexor, select contours on plot, move segments, accelaration
 */
 
 //#define STONE
