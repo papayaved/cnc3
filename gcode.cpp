@@ -987,29 +987,28 @@ GCodeSettings GCode::getSettings() const {
         list<GCommand> cmds = frame.get(G, axis_ena);
 
         for (const GCommand& cmd: cmds) {
-            if (!res.valid.uv) {
-                if (cmd.isUV()) {
-                    res.uv_ena = true;
-                    res.valid.uv = true;
-                }
-                else if (cmd.isXY()) {
-                    res.uv_ena = false;
-                    res.valid.uv = true;
-                }
-            }
-
-            if (!res.valid.L && !res.valid.H && cmd.isM() && cmd.M() == 106 && cmd.isP() && cmd.isQ()) {
+            if (!res.valid.LH && cmd.isM() && cmd.M() == 100 && cmd.isP() && cmd.isQ()) {
                 res.L = cmd.P();
                 res.H = cmd.Q();
-                res.valid.L = res.valid.H = true;
+                res.valid.LH = true;
             }
-            else if (!res.valid.D && cmd.isM() && cmd.M() == 107 && cmd.isP()) {
+            else if (!res.valid.T && cmd.isM() && cmd.M() == 101 && cmd.isP()) {
+                res.T = cmd.P();
+                res.valid.T = true;
+            }
+            else if (!res.D_ena && cmd.isM() && cmd.M() == 102 && cmd.isP() && cmd.isQ()) {
                 res.D = cmd.P();
-                res.valid.D = true;
+                res.axis = ((int)cmd.Q() & 1) ? AXIS::AXIS_Y : AXIS::AXIS_X;
+                res.D_ena = true;
+            }
+
+            if (!res.valid.uv) {
+                res.uv_ena = cmd.isUV();
+                res.valid.uv = true;
             }
         }
 
-        if (res.valid.uv && (!res.uv_ena || (res.valid.L && res.valid.H && res.valid.D)))
+        if (res.valid.uv && (!res.uv_ena || (res.valid.LH && res.valid.T)))
             break;
     }
 

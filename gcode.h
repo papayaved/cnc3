@@ -18,17 +18,18 @@ enum class LAYER_T : uint8_t {BOT, TOP};
 struct GCodeSettings {
     struct {
         uint8_t uv:1;
-        uint8_t L:1;
-        uint8_t H:1;
-        uint8_t D:1;
-    } valid;
-    bool uv_ena;
-    double L, H, D;
+        uint8_t LH:1;
+        uint8_t T:1;
+    } valid {0,0,0};
+    bool uv_ena {false}, D_ena {false};
+    AXIS axis {AXIS::AXIS_X};
+    double L{0}, H{0}, T{0}, D{0};
 
-    GCodeSettings() : valid({0,0,0,0}), uv_ena(false), L(0), H(0), D(0) {}
     bool isUV() const {
-        return valid.uv && valid.L && valid.H && valid.D && L > 0 && H > 0 && D > 0 && H + D < L;
+        return valid.uv && valid.LH && valid.T && L > 0 && H > 0 && T > 0 && H + T < L;
     }
+
+    bool isD() const { return isUV() && D_ena && D > 0; }
 
     void clear() { *this = GCodeSettings(); }
 };

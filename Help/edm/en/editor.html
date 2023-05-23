@@ -228,7 +228,7 @@
 						<ul>
 							<li><b>L</b> - distance between axes of the lower and upper rollers, mm;</li>
 							<li><b>H</b> - distance between the axis of the lower roller and the bottom plane of the workpiece, mm.</li>
-						</ul>						
+						</ul>
 						<h3><code>M101 P{D}</code> - workpiece thickness, mm</h3>
 						<p>
 							The taper cutting parameters must be set with M100 and M101 commands at the beginning of the G-code program, before the first G-commands.
@@ -237,6 +237,11 @@
 							<code>M100 P375 Q117</code><br>
 							<code>M101 P20</code><br>
 						</p>
+						<h3><code>M102 P{D} Q{Axis}</code> - take into account the roller's diameter for taper cutting</h3>
+						<ul>
+							<li><b>D</b> - the roller diameter plus a half of the wire diameter, mm;</li>
+							<li><b>Axis</b> - a plane of the roller: 0 - XZ plane, 1 - YZ plane.</li>
+						</ul>
 						<h3><code>M105 P{value}</code> – wire roll velocity</h3>
 						<p>Values within [1, 7]. 1 - minimal velocity, 7 - maximum velocity.</p>
 						<h3><code>M106 P{value}</code> – cutting current</h3>

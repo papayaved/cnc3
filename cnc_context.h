@@ -31,7 +31,7 @@ union cnc_context_t {
         uint32_t dia_ena:1;
 
         uint32_t uv_ena:1;
-        uint32_t enc_mode:1;
+        uint32_t enc_ena:1;
         uint32_t rev:1;
         uint32_t rollback:1;
         uint32_t attempt:3;
@@ -185,7 +185,7 @@ public:
     int32_t encoderX() const { return m_context.field.enc_x; }
     int32_t encoderY() const { return m_context.field.enc_y; }
 
-    bool isEncoderMode() const { return m_context.field.enc_mode; }
+    bool isEncoderMode() const { return m_context.field.enc_ena; }
 
     CncLimitSwitches limitSwitches() const {
         CncLimitSwitches ls;
@@ -258,7 +258,7 @@ public:
         cnc_state_t state = static_cast<cnc_state_t>(m_context.field.state);
 
         return  "State: "     + stateToString(state) + "\n" +
-                "Encoder "    + (m_context.field.enc_mode ? "(Yes)" : "(no)") + "\t" +
+                "Encoder "    + (m_context.field.enc_ena ? "(Yes)" : "(no)") + "\t" +
                 "UV "         + (m_context.field.uv_ena ? "(Yes)" : "(no)") + "\t" +
                 "Dia "        + (m_context.field.dia_ena ? "(Yes)" : "(no)") + "\n" +
                 "Feedback "   + (m_context.field.fb_ena ? "(Yes)" : "(no)") + "\t" +

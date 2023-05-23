@@ -247,8 +247,9 @@ void FormHome::createButtons() {
                 cnc_context_t mcu_ctx = par.cnc.readBackup();
                 toDebug(&mcu_ctx);
 
-                if (mcu_ctx.field.backup_valid) // todo: check parameters
+                if (mcu_ctx.field.backup_valid) { // todo: check parameters
                     par.cncContext.set(mcu_ctx);
+                }
             } else
                 toDebug(&par.cncContext.get());
 

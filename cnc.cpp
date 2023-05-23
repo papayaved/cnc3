@@ -538,7 +538,8 @@ void Cnc::initialContext(const cnc_context_t& ctx) {
     writePulseWidth(ctx.field.pulse_width);
     writePulseRatio(ctx.field.pulse_ratio);
     writeSpeed( WireSpeed::TtoSpeed(ctx.field.T) );
-    writeEnableUV(ctx.field.uv_ena); // todo: it needs more parameters from G-code LHT, D, roller_axis
+
+    writeEncXYEna( ctx.field.enc_ena );
 }
 
 cnc_adc_t Cnc::readADC() {
@@ -821,9 +822,9 @@ bool Cnc::writeEncXYEna(bool ena) {
     return writeSetBits(ADDR::BOOL_SET, 0, 1, ena);
 }
 
-bool Cnc::writeUVEna(bool ena) {
-    return writeSetBits(ADDR::BOOL_SET, 8, 1, ena);
-}
+//bool Cnc::writeUVEna(bool ena) {
+//    return writeSetBits(ADDR::BOOL_SET, 8, 1, ena);
+//}
 
 bool Cnc::writeRollVel(unsigned value) { return writeUInt32(ADDR::ROLL_VEL, value); }
 bool Cnc::writeEnableLowHighVolt(bool value) { return writeUInt32(ADDR::LOW_HV, value); }
@@ -843,7 +844,7 @@ bool Cnc::writeSpeed(const WireSpeed& value) { return writeSpeed( float(value.ge
 // mm
 bool Cnc::writeStep(float value) { return writeFloat(ADDR::STEP, value); }
 
-bool Cnc::writeEnableUV(bool ena) { return writeUInt32(ADDR::BOOL_SET, 1<<(16+8) | (uint32_t)ena<<8); }
+//bool Cnc::writeEnableUV(bool ena) { return writeUInt32(ADDR::BOOL_SET, 1<<(16+8) | (uint32_t)ena<<8); }
 
 bool Cnc::writeGoto(int32_t frame_num) {
     if (frame_num < 0)
@@ -1107,4 +1108,22 @@ bool Cnc::readFeedback(bool &enable, double &Vlow, double &Vhigh, double &to_sec
     }
 
     return false;
+}
+
+void Cnc::recoveryUV(const GCodeSettings& s) {
+    vector<uint32_t> data(5 * sizeof(uint32_t));
+
+    float L = s.L;
+    float H = s.H;
+    float T = s.T;
+    float D = s.D;
+
+    memcpy(&data[0], &L, sizeof(float));
+    memcpy(&data[1], &H, sizeof(float));
+    memcpy(&data[2], &T, sizeof(float));
+    memcpy(&data[3], &D, sizeof(float));
+
+    data[4] = (uint32_t)s.isD()<<2 | (uint32_t)s.isUV()<<1 | ((uint32_t)s.axis & 1);
+
+    m_com.write32(ADDR::UV_L, data);
 }

@@ -14,6 +14,7 @@
 #include "cnc_context.h"
 #include "fpoint_t.h"
 #include "cnc_param.h"
+#include "gcode.h"
 
 #define FPGA_CLOCK (72e6)
 
@@ -90,6 +91,12 @@ namespace ADDR {
 //    const uint32_t CENTER_ANGLE3    = 0x79 << 2;
     const uint32_t DIA              = 0x7a << 2;
     const uint32_t D_Y              = 0x7b << 2;
+
+    const uint32_t UV_L              = 0x80 << 2;
+    const uint32_t UV_H              = 0x81 << 2;
+    const uint32_t UV_T              = 0x82 << 2;
+    const uint32_t UV_D              = 0x83 << 2;
+    const uint32_t UV_AXIS_ENA       = 0x84 << 2;
 
     const uint32_t VER_DATE     = 0xF0 << 2;
     const uint32_t VER_TIME     = 0xF4 << 2;
@@ -306,6 +313,8 @@ public:
 
     static double umsec2_to_mmtick2(double value) { return COE_UMSEC2_TO_MMTICK2 * value; }
     static double mmtick2_to_umsec2(double value) { return (1.0 / COE_UMSEC2_TO_MMTICK2) * value; }
+
+    void recoveryUV(const GCodeSettings& s);
 
 signals:
     void writeBurstProcessing(int pct);

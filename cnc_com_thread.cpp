@@ -915,6 +915,10 @@ bool CncComThread::writeBurst(uint32_t addr, const vector<uint8_t>& bytes) {
     return writeBurst(addr, bytes.data(), bytes.size());
 }
 
+bool CncComThread::write32(uint32_t addr, const std::vector<uint32_t> &data) {
+    return write(addr, data.data(), data.size() << 2);
+}
+
 // Data don't reverse
 bool CncComThread::write16(uint32_t addr, uint16_t data) {
     return write255(addr, reinterpret_cast<uint8_t*>(&data), sizeof(uint16_t), 0, sizeof(uint16_t));

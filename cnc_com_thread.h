@@ -79,6 +79,8 @@ public:
     bool write(uint32_t addr, const std::vector<uint8_t>& bytes);
     bool writeBurst(uint32_t addr, const std::vector<uint8_t>& bytes);
 
+    bool write32(uint32_t addr, const std::vector<uint32_t>& data);
+
     bool write16(uint32_t addr, uint16_t data);
     bool write32(uint32_t addr, uint32_t data);
     bool writeFloat(uint32_t addr, float data);

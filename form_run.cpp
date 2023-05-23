@@ -570,6 +570,10 @@ void FormRun::init(bool recovery) {
                 if (OK) {
                     par.cnc.initialContext(par.cncContext.get());
 
+                    if (par.gcodeSettings.isUV()) {
+                        par.cnc.recoveryUV(par.gcodeSettings);
+                    }
+
                     par.appState.gotoPauseState();
                     updateButtons();
 
