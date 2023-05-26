@@ -533,7 +533,7 @@ void Cnc::initialContext(const cnc_context_t& ctx) {
 //    writeVoltageEnable(ctx.field.voltage_ena);
     writeHoldEnable(ctx.field.hold_ena);
     writeRollVel(ctx.field.roll_vel);
-    writeEnableLowHighVolt(ctx.field.low_high_voltage_ena);
+    writeEnableLowHighVolt(ctx.field.low_hv_ena);
     writeCurrentIndex(ctx.field.current_index);
     writePulseWidth(ctx.field.pulse_width);
     writePulseRatio(ctx.field.pulse_ratio);
@@ -1111,7 +1111,7 @@ bool Cnc::readFeedback(bool &enable, double &Vlow, double &Vhigh, double &to_sec
 }
 
 void Cnc::recoveryUV(const GCodeSettings& s) {
-    vector<uint32_t> data(5 * sizeof(uint32_t));
+    vector<uint32_t> data(5);
 
     float L = s.L;
     float H = s.H;
@@ -1123,7 +1123,7 @@ void Cnc::recoveryUV(const GCodeSettings& s) {
     memcpy(&data[2], &T, sizeof(float));
     memcpy(&data[3], &D, sizeof(float));
 
-    data[4] = (uint32_t)s.isD()<<2 | (uint32_t)s.isUV()<<1 | ((uint32_t)s.axis & 1);
+    data[4] = (uint32_t)s.isD()<<2 | ((uint32_t)s.axis & 1)<<1 | (uint32_t)s.isUV()<<0;
 
     m_com.write32(ADDR::UV_L, data);
 }

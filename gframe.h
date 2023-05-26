@@ -445,6 +445,11 @@ public:
         return GFrame(GEntity('M', uint8_t(101)), GEntity('P', double(Thickness)), "T");
     }
 
+    // Use the roller diameter
+    static GFrame M102(float rollerD, AXIS rollerAxis) {
+        return GFrame(GEntity('M', uint8_t(102)), GEntity('P', double(rollerD)), GEntity('Q', uint8_t(rollerAxis == AXIS::AXIS_Y ? 1 : 0)), "D, Axis");
+    }
+
     // roll velocity
     static GFrame M105(float value) { return GFrame(GEntity('M', uint8_t(105)), GEntity('P', double(value)), "Velocity"); }
 

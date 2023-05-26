@@ -141,9 +141,13 @@ bool GCode::generate(const cut_t& cut, const deque<ContourPair>& contours, const
                     init = false;
                     frames.push_back(GFrame::delimiter());
 
-                    if (cut.LHT_valid) {
+                    if (cut.uv_ena) {
                         frames.push_back(GFrame::M100(cut.L, cut.H));
                         frames.push_back(GFrame::M101(cut.T));
+
+                        if (cut.D_ena) {
+                            frames.push_back(GFrame::M102(cut.D + cut.wire_D / 2, cut.axis_D));
+                        }
                     }
 
                     frames.push_back(GFrame::M40()); // pump enable
@@ -340,6 +344,7 @@ void GCode::addG2G2(fpoint_t& A, const fpoint_t& B, fpoint_t& A2, const fpoint_t
     A2 = B2;
 }
 
+// Tapped cutting calibration
 bool GCode::generate(double d_top, double d_bot, double L, double H, double T, double cutline, AXIS axis) {
     frames.clear();
     frames.push_back(GFrame::delimiter());

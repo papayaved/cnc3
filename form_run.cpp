@@ -115,20 +115,22 @@ void FormRun::addButtons() {
     btnRollVelInc = new QPushButton(tr("INC"));
     btnRollVelInc->setStatusTip(tr("Roll velocity increment"));
 
-    btnHighVolt = new QPushButton;
-    btnHighVolt->setCheckable(true);
+    btnHighVolt = new QPushButton;    
 #ifndef STONE
+    btnHighVolt->setCheckable(true);
     btnHighVolt->setText(tr("High Voltage"));
     btnHighVolt->setStatusTip(tr("Enable High Voltage"));
 #else
     btnHighVolt->setEnabled(false);
 #endif
 
-#ifndef STONE
     btnLowHighVolt = new QPushButton;
+#ifndef STONE
     btnLowHighVolt->setCheckable(true);
     btnLowHighVolt->setText(tr("Low High Volt."));
     btnLowHighVolt->setStatusTip(tr("Enable Low High Voltage"));
+#else
+    btnLowHighVolt->setEnabled(false);
 #endif
 
     btnCurrentDec = new QPushButton;
@@ -176,10 +178,8 @@ void FormRun::addButtons() {
     buttons = {
         btnBreak, btnPump, btnRoll, btnRollVelDec, btnRollVelInc,\
         btnHighVolt, btnCurrentDec, btnCurrentInc, btnWidthDec, btnWidthInc, btnRatioInc, btnRatioDec,\
-        btnHome, btnHelp
-#ifndef STONE
-        , btnLowHighVolt
-#endif
+        btnHome, btnHelp,
+        btnLowHighVolt
     };
 
 #ifdef STONE
@@ -199,7 +199,7 @@ void FormRun::addButtons() {
 #else
     gridButtons->addWidget(btnHome, 0, 0);
 
-    gridButtons->addWidget(btnBreak , 1, 0);
+    gridButtons->addWidget(btnBreak, 1, 0);
     gridButtons->addWidget(btnPump, 1, 1);
     gridButtons->addWidget(btnRoll, 1, 2);
     gridButtons->addWidget(btnRollVelDec, 1, 3);
@@ -793,7 +793,7 @@ void FormRun::on_btnStart_clicked() {
                 qDebug("form_run::on_btnStart_clicked>>G-code is loaded");
 
                 m_info.chop(1); // clear \n
-                m_info += " ... " + tr("Loaded") + "\n";
+                m_info += ". " + tr("Loaded") + "\n";
                 runWidget->txtMsg->setText(m_info);
 
                 par.cnc.imitEna(false);

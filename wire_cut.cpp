@@ -21,6 +21,14 @@ cut_t::cut_t() :
     tab(DEFAULT_TAB),
     overcut(0),
     speed(cnc_param::SPEED),
+    L(cnc_param::L_DEFAULT),
+    H(cnc_param::H_DEFAULT),
+    T(cnc_param::T_DEFAULT),
+    D(cnc_param::D_DEFAULT),
+    wire_D(cnc_param::WIRE_DIAMETER),
+    uv_ena(false),
+    D_ena(false),
+    axis_D(cnc_param::AXIS_DEFAULT),
     tab_offset(offset_t())
   //        overcut_offset(offset_t()),
   //        out_offset(offset_t())
@@ -68,6 +76,16 @@ void cut_t::write(QXmlStreamWriter& xml) const {
 
         writeUInt(xml, "pump_delay", pump_delay);
         writeBool(xml, "pump_pause", pump_pause);
+
+        writeBool(xml, "uv_ena", uv_ena);
+        writeDouble(xml, "L", L);
+        writeDouble(xml, "H", H);
+        writeDouble(xml, "T", T);
+
+        writeBool(xml, "D_ena", D_ena);
+        writeDouble(xml, "D", D);
+        writeDouble(xml, "wire_D", wire_D);
+        writeElement(xml, "axis_D", "AXIS", axis_D == AXIS::AXIS_X ? "X" : "Y");
 
         xml.writeStartElement("offsets");
         for (const offset_t& o: offsets)
@@ -124,6 +142,22 @@ bool cut_t::read(QXmlStreamReader &xml) {
                 readUInt16(xml, pump_delay);
             else if (xml.name() == "pump_pause")
                 readBool(xml, pump_pause);
+            else if (xml.name() == "uv_ena")
+                readBool(xml, uv_ena);
+            else if (xml.name() == "L")
+                readDouble(xml, L);
+            else if (xml.name() == "H")
+                readDouble(xml, H);
+            else if (xml.name() == "T")
+                readDouble(xml, T);
+            else if (xml.name() == "D_ena")
+                readBool(xml, D_ena);
+            else if (xml.name() == "D")
+                readDouble(xml, D);
+            else if (xml.name() == "wire_D")
+                readDouble(xml, wire_D);
+            else if (xml.name() == "axis_D")
+                readAxisD(xml, axis_D);
             else if (xml.name() == "offsets") {
                 readOffsets(xml, offsets);
 

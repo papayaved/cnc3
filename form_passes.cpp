@@ -9,6 +9,7 @@
 #include "cnc_types.h"
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QScrollArea>
 
 using namespace std;
 
@@ -23,18 +24,22 @@ FormPasses::FormPasses(ProgramParam& par, QWidget *parent) : QWidget(parent), pa
     createButtons();
 
     buttons = {
-            btnBack, btnOpen, btnSave, btnSaveAs, btnDefault, btn5, btn6, btn7, btn8, btn9, btn10, btn11, btnGenerate, btnHelp,
+            btnBack, btnOpen, btnSave, btnSaveAs, btnDefault, btn5, btn6, btn7, btn8, btn9, btn10, btn11, btnGen, btnHelp,
             btnNewMode, btnDeleteMode, btnOpenModes, btnSaveModes, btnSaveAsModes, btnDefaultModes
         };
-    labels = {labelTimes, labelOvercut, labelTab, labelTabOffset, labelTabMode, labelCutMode, labelPumpDelay, labelSpeed, labelL, labelH, labelT, tableTitle};
-    radio = {radioLeftSide, radioRightSide, onePassTab, multiPassTab};
+    labels = {
+        labelTimes, labelOvercut, labelTab, labelTabOffset, labelTabMode, labelCutMode, labelPumpDelay, labelSpeed, tableTitle,
+        labelL, labelH, labelT, labelD, labelWireD, labelAxis
+    };
+    radio = {radioLeftSide, radioRightSide, onePassTab, multiPassTab, radioX, radioY};
     combo = {comboTimes, comboCutLineMode, comboTabMode};
     checks = {checkUseLastSeg, checkTabPause, checkTapered, checkPumpPause};
-    nums = {inputOvercut, inputTab, inputTabOffset, inputSpeed, inputL, inputH, inputT};
+    nums = {inputOvercut, inputTab, inputTabOffset, inputSpeed, inputL, inputH, inputT, inputD, inputWireD};
+    groups = {groupTab, groupD};
 
 //    setFontPointSize(14);
 
-    init();
+    init(par.cutParam.uv_ena);
 
     gridPassMode = new QGridLayout;
 
@@ -50,8 +55,17 @@ FormPasses::FormPasses(ProgramParam& par, QWidget *parent) : QWidget(parent), pa
 
     gridPassMode->setSizeConstraint(QLayout::SetFixedSize);
 
+    //
+    QWidget* widgetPassMode = new QWidget;
+    widgetPassMode->setLayout(gridPassMode);
+
+    QScrollArea* scrollArea = new QScrollArea;
+    scrollArea->setWidget(widgetPassMode);
+    scrollArea->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOn);
+
     mainLayout = new QVBoxLayout;
-    mainLayout->addLayout(gridPassMode);
+    mainLayout->addWidget(scrollArea, Qt::AlignTop | Qt::AlignHCenter);
     mainLayout->addLayout(gridButtons);
 
     this->setLayout(mainLayout);
@@ -210,11 +224,19 @@ void FormPasses::createPasses() {
     labelL = new QLabel(tr("Distance between rollers") + " (L):");
     labelH = new QLabel(tr("Workpiece bottom height") + " (H):");
     labelT = new QLabel(tr("Workpiece thickness") + " (T):");
+    labelD = new QLabel(tr("Roller diameter") + ":");
+    labelWireD = new QLabel(tr("Wire diameter") + ":");
+    labelAxis = new QLabel(tr("Roller plane") + ":");
 
-    par.cutParam.L = 190;
-    par.cutParam.H = 50;
-    par.cutParam.T = 30;
-    par.cutParam.LHT_valid = m_uv_ena = false;
+//    par.cutParam.L = 190;
+//    par.cutParam.H = 50;
+//    par.cutParam.T = 30;
+//    par.cutParam.uv_ena = m_uv_ena = false;
+
+//    par.cutParam.D = 29.5;
+//    par.cutParam.wire_D = 0.18;
+//    par.cutParam.axis_D = AXIS::AXIS_X;
+//    par.cutParam.D_ena = m_D_ena = false;
 
     checkTapered = new QCheckBox(tr("Tapered cutting"));
     checkTapered->setEnabled(false);
@@ -250,6 +272,53 @@ void FormPasses::createPasses() {
     inputT->setAccelerated(true);
     inputT->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
 
+    inputD = new QDoubleSpinBox;
+    labelD->setBuddy(inputD);
+    inputD->setSuffix(" " + tr("mm"));
+    inputD->setDecimals(3);
+    inputD->setSingleStep(0.001);
+    inputD->setRange(0, 200);
+    inputD->setValue(par.cutParam.D);
+    inputD->setAccelerated(true);
+    inputD->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
+
+    inputWireD = new QDoubleSpinBox;
+    labelWireD->setBuddy(inputWireD);
+    inputWireD->setSuffix(" " + tr("mm"));
+    inputWireD->setDecimals(3);
+    inputWireD->setSingleStep(0.001);
+    inputWireD->setRange(0, 200);
+    inputWireD->setValue(par.cutParam.wire_D);
+    inputWireD->setAccelerated(true);
+    inputWireD->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
+
+    radioX = new QRadioButton("XZ");
+    radioY = new QRadioButton("YZ");
+
+    groupAxis = new QGroupBox();
+    groupAxis->setLayout(new QHBoxLayout);
+    groupAxis->layout()->addWidget(radioX);
+    groupAxis->layout()->addWidget(radioY);
+
+    groupAxis->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    groupD = new QGroupBox(tr("Use the roller diameter") + " (D)");
+
+    QGridLayout* gridD = new QGridLayout;
+
+    gridD->addWidget(labelD, 0, 0, Qt::AlignRight);
+    gridD->addWidget(inputD, 0, 1, Qt::AlignLeft);
+
+    gridD->addWidget(labelWireD, 1, 0, Qt::AlignRight);
+    gridD->addWidget(inputWireD, 1, 1, Qt::AlignLeft);
+
+    gridD->addWidget(labelAxis, 2, 0, Qt::AlignRight);
+    gridD->addWidget(groupAxis, 2, 1, Qt::AlignLeft);
+
+    groupD->setLayout(gridD);
+    groupD->setCheckable(true);
+    groupD->setChecked(par.cutParam.D_ena);
+
     groupTapered = new QGroupBox;
 
     QGridLayout* gridTapered = new QGridLayout;
@@ -260,6 +329,8 @@ void FormPasses::createPasses() {
     gridTapered->addWidget(inputH, 1, 1, Qt::AlignLeft);
     gridTapered->addWidget(labelT, 2, 0, Qt::AlignRight);
     gridTapered->addWidget(inputT, 2, 1, Qt::AlignLeft);
+
+    gridTapered->addWidget(groupD, 3, 0, 1, 2);
 
     groupTapered->setLayout(gridTapered);
     groupTapered->setEnabled(false);
@@ -431,12 +502,18 @@ void FormPasses::createPasses() {
     connect(inputSpeed,     QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [&](double value)   { par.cutParam.speed = value; });
 
     connect(checkTapered,   &QCheckBox::clicked, this, [&](bool checked) {
-        par.cutParam.LHT_valid = checked;
+        par.cutParam.uv_ena = checked;
         groupTapered->setEnabled(checked);
+        groupD->setEnabled(checked);
     });
     connect(inputL,         QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [&](double value)   { par.cutParam.L = value; });
     connect(inputH,         QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [&](double value)   { par.cutParam.H = value; });
     connect(inputT,         QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [&](double value)   { par.cutParam.T = value; });
+
+    connect(inputD,         QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [&](double value)   { par.cutParam.D = value; });
+    connect(inputWireD,     QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [&](double value)   { par.cutParam.wire_D = value; });
+    connect(radioX,         &QRadioButton::clicked, this, [&]()                                             { par.cutParam.axis_D = AXIS::AXIS_X; });
+    connect(radioY,         &QRadioButton::clicked, this, [&]()                                             { par.cutParam.axis_D = AXIS::AXIS_Y; });
 }
 
 void FormPasses::initTableModes() {
@@ -494,15 +571,28 @@ void FormPasses::init(bool uv_ena) {
     inputSpeed->setValue(par.cutParam.speed);
 
     m_uv_ena = uv_ena;
-    par.cutParam.LHT_valid = m_uv_ena;
+    par.cutParam.uv_ena = m_uv_ena;
     checkTapered->setCheckState(m_uv_ena ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
     checkTapered->setEnabled(m_uv_ena);
     groupTapered->setEnabled(m_uv_ena);
+
+    inputL->setValue(par.cutParam.L);
+    inputH->setValue(par.cutParam.H);
+    inputT->setValue(par.cutParam.T);
 
     if (m_uv_ena) {
         par.cutParam.times = 1;
         comboTimes->setCurrentIndex(0);
     }
+
+    groupD->setEnabled(m_uv_ena);
+    groupD->setChecked(par.cutParam.D_ena);
+
+    inputD->setValue(par.cutParam.D);
+    inputWireD->setValue(par.cutParam.wire_D);
+
+    radioX->setChecked(par.cutParam.axis_D == AXIS::AXIS_X);
+    radioY->setChecked(par.cutParam.axis_D == AXIS::AXIS_Y);
 }
 
 void FormPasses::resizeModeView() {
@@ -767,6 +857,8 @@ void FormPasses::on_btnOpen_clicked() {
 }
 
 void FormPasses::on_btnSave_clicked() {
+    par.cutParam.D_ena = groupD->isChecked();
+
 //    if (!bindedModesFile() || par.fileDir.length() == 0 || par.modesFileName.length() == 0)
     if (par.projDir.length() == 0 || par.parFileName.length() == 0)
         on_btnSaveAs_clicked();
@@ -838,8 +930,8 @@ void FormPasses::createButtons() {
     btnDefault = new QPushButton(tr("Default"));
     btnDefault->setStatusTip(tr("Set default values"));
 
-    btnGenerate = new QPushButton(tr("Generate"));
-    btnGenerate->setStatusTip(tr("Generate G-code"));
+    btnGen = new QPushButton(tr("Generate"));
+    btnGen->setStatusTip(tr("Generate G-code"));
 
     btn6 = new QPushButton;
     btn6->setEnabled(false);
@@ -880,7 +972,7 @@ void FormPasses::createButtons() {
     gridButtons->addWidget(btn9, 0, 9);
     gridButtons->addWidget(btn10, 0, 10);
     gridButtons->addWidget(btn11, 0, 11);
-    gridButtons->addWidget(btnGenerate, 0, 12);
+    gridButtons->addWidget(btnGen, 0, 12);
     gridButtons->addWidget(btnHelp, 0, 13);
 
     connect(btnBack, &QPushButton::clicked, this, [&]() { emit backPageClicked(); });
@@ -893,7 +985,10 @@ void FormPasses::createButtons() {
         init(m_uv_ena);
     });
 
-    connect(btnGenerate, &QPushButton::clicked, this, [&]() { emit generateClicked(); });
+    connect(btnGen, &QPushButton::clicked, this, [&]() {
+        par.cutParam.D_ena = groupD->isChecked();
+        emit generateClicked();
+    });
 
     connect(btnHelp, &QPushButton::clicked, this, [&]() { emit helpPageClicked(help_file); });
 }
@@ -1045,13 +1140,15 @@ void FormPasses::setFontPointSize(int pointSize) {
         o->setFont(font);
     }
 
+    for (QGroupBox* o: groups) {
+        font = o->font();
+        font.setPointSize(pointSize);
+        o->setFont(font);
+    }
+
     font = inputPumpDelay->font();
     font.setPointSize(pointSize);
     inputPumpDelay->setFont(font);
-
-    font = groupTab->font();
-    font.setPointSize(pointSize);
-    groupTab->setFont(font);
 
     font = tableModes->font();
     font.setPointSize(pointSize);

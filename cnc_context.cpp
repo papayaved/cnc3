@@ -3,15 +3,15 @@
 
 void toDebug(const cnc_context_t * const ctx) {
     qDebug("pump:%x rollSt:%x wire:%x hv:%x hold:%x\n",
-           ctx->field.pump_ena, ctx->field.roll_state, ctx->field.wire_ena, ctx->field.hv_ena, ctx->field.hold_ena);
+           ctx->field.pump_ena, ctx->field.roll_state, ctx->field.wire_ena, ctx->field.hv_enabled, ctx->field.hold_ena);
     qDebug("rollVel:%x\n",
            ctx->field.roll_vel);
     qDebug("uv:%x dia:%x rev:%x enc:%x\n",
-           ctx->field.uv_ena, ctx->field.dia_ena, ctx->field.rev, ctx->field.enc_ena);
+           ctx->field.uv_ena, ctx->field.d_ena, ctx->field.rev, ctx->field.enc_ena);
     qDebug("St:%x\n",
            ctx->field.state);
     qDebug("pW:%d pR:%d hvLvl:%x I:%x\n",
-           ctx->field.pulse_width, ctx->field.pulse_ratio, ctx->field.low_high_voltage_ena, ctx->field.current_index);
+           ctx->field.pulse_width, ctx->field.pulse_ratio, ctx->field.low_hv_ena, ctx->field.current_index);
     qDebug("ID:%d X:%d Y:%d U:%d V:%d\n",
            (int)ctx->field.id, (int)ctx->field.x, (int)ctx->field.y, (int)ctx->field.u, (int)ctx->field.v);
     qDebug("encX:%d encY:%d\n",
@@ -48,11 +48,11 @@ cnc_context_t CncContext::defaultContext() {
     ctx.field.pump_ena = false;
     ctx.field.roll_state = static_cast<uint8_t>(roll_state_t::ROLL_DIS);
     ctx.field.wire_ena = false;
-    ctx.field.hv_ena = false;
+    ctx.field.hv_enabled = false;
     ctx.field.hold_ena = false;
 
     ctx.field.roll_vel = 0;
-    ctx.field.dia_ena = false;
+    ctx.field.d_ena = false;
 
     ctx.field.uv_ena = false;
     ctx.field.enc_ena = false;
@@ -65,7 +65,7 @@ cnc_context_t CncContext::defaultContext() {
 
     ctx.field.pulse_width = 0;
     ctx.field.pulse_ratio = 0;
-    ctx.field.low_high_voltage_ena = 0;
+    ctx.field.low_hv_ena = 0;
     ctx.field.current_index = 0;
 
     ctx.field.id = -1;
@@ -86,7 +86,7 @@ cnc_context_t CncContext::defaultContext() {
     ctx.field.pwr = 0;
     ctx.field.fb_stop = 0;
     ctx.field.fb_to = 0;
-    ctx.field.hv_ena = 0;
+    ctx.field.hv_enabled = 0;
 
     ctx.field.sem_ena = false;
     ctx.field.sem = 0;
@@ -106,13 +106,14 @@ cnc_context_t CncContext::parse(const std::vector<uint8_t> &v) {
         ctx.field.pump_ena = (v[0] & 1) != 0;
         ctx.field.roll_state = static_cast<uint8_t>(toRollState(v[0]>>1 & 3));
         ctx.field.wire_ena = (v[0] & 8) != 0;
-        ctx.field.hv_ena = (v[0] & 0x10) != 0;
+
+        ctx.field.voltage_ena = (v[0] & 0x10) != 0;
         ctx.field.hold_ena = (v[0] & 0x20) != 0;
         ctx.field.center_ena = (v[0] & 0x40) != 0;
         ctx.field.is_init = (v[0] & 0x80) != 0;
 
         ctx.field.roll_vel  = v[1] & 0x7F;
-        ctx.field.dia_ena   = (v[1] & 0x80) != 0;
+        ctx.field.d_ena   = (v[1] & 0x80) != 0;
 
         ctx.field.uv_ena    = (v[2] & 1) != 0;
         ctx.field.enc_ena  = (v[2] & 2) != 0;
@@ -125,7 +126,7 @@ cnc_context_t CncContext::parse(const std::vector<uint8_t> &v) {
 
         ctx.field.pulse_width = v[4];
         ctx.field.pulse_ratio = v[5];
-        ctx.field.low_high_voltage_ena = v[6] & 1;
+        ctx.field.low_hv_ena = v[6] & 1;
         ctx.field.current_index = v[7];
 
         ctx.field.id = BitConverter::toInt32(v, 2 * sizeof(uint32_t));
@@ -146,7 +147,7 @@ cnc_context_t CncContext::parse(const std::vector<uint8_t> &v) {
         ctx.field.pwr           = (v[48] & 0x10) != 0;
         ctx.field.fb_stop       = (v[48] & 0x20) != 0;
         ctx.field.fb_to         = (v[48] & 0x40) != 0;
-        ctx.field.hv_ena        = (v[48] & 0x80) != 0;
+        ctx.field.hv_enabled    = (v[48] & 0x80) != 0;
 
         ctx.field.sem_ena       = (v[49] & 1) != 0;
         ctx.field.sem           = v[49]>>1 & 7;
@@ -194,8 +195,8 @@ std::string CncContext::toStringCenterDebug(double dia) const {
 
     std::string s = "State: "       + stateToString(state) + "\t Center: " + stateToString(center_state) + "\n" +
             "Touch: " + stateToString(touch_state) + "\t Mode: " + stateToString(center_mode) + "\n" +
-            "Feedback: "    + (m_context.field.fb_ena ? "(Yes)" : "(no)") + " " +
-            "Weak HV: "     + (m_context.field.center_ena ? "(Yes)" : "(no)") + " " +
+            "Feedback: "    + (m_context.field.fb_ena ? "(Yes)" : "(no) ") + " " +
+            "Weak HV: "     + (m_context.field.center_ena ? "(Yes)" : "(no) ") + " " +
             "Attempt: "     + std::to_string(m_context.field.center_attempt) + " (" + std::to_string(m_context.field.center_attempts) + ")" + " " +
             "Touch: "       + std::to_string(m_context.field.touch) + " (" + std::to_string(m_context.field.touches) + ")";
     if (dia >= 0) {

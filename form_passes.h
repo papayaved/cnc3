@@ -51,12 +51,13 @@ class FormPasses : public QWidget {
     QLabel* labelSpeed {nullptr};
     QDoubleSpinBox* inputSpeed {nullptr};
 
-    QGroupBox *groupTapered {nullptr};
-    QLabel *labelL {nullptr}, *labelH {nullptr}, *labelT {nullptr};
-    QDoubleSpinBox *inputL {nullptr}, *inputH {nullptr}, *inputT {nullptr};
+    QGroupBox *groupTapered {nullptr}, *groupD {nullptr}, *groupAxis {nullptr};
+    QLabel *labelL {nullptr}, *labelH {nullptr}, *labelT {nullptr}, *labelD {nullptr}, *labelWireD {nullptr}, *labelAxis {nullptr};
+    QDoubleSpinBox *inputL {nullptr}, *inputH {nullptr}, *inputT {nullptr}, *inputD {nullptr}, *inputWireD {nullptr};
+    QRadioButton *radioX {nullptr}, *radioY {nullptr};
 
     QPushButton *btnBack {nullptr}, *btnOpen {nullptr}, *btnSave {nullptr}, *btnSaveAs {nullptr}, *btnDefault {nullptr},
-        *btn5 {nullptr}, *btn6 {nullptr}, *btn7 {nullptr}, *btn8 {nullptr}, *btn9 {nullptr}, *btn10 {nullptr}, *btn11 {nullptr}, *btnGenerate {nullptr}, *btnHelp {nullptr};
+        *btn5 {nullptr}, *btn6 {nullptr}, *btn7 {nullptr}, *btn8 {nullptr}, *btn9 {nullptr}, *btn10 {nullptr}, *btn11 {nullptr}, *btnGen {nullptr}, *btnHelp {nullptr};
     QGridLayout* gridButtons {nullptr};
 
     QGridLayout *gridPasses {nullptr}, *gridPassMode {nullptr};
@@ -74,11 +75,12 @@ class FormPasses : public QWidget {
     std::vector<QComboBox*> combo;
     std::vector<QCheckBox*> checks;
     std::vector<QDoubleSpinBox*> nums;
+    std::vector<QGroupBox*> groups;
 
     size_t m_pass_num {0};
     int m_row {0};
 
-    bool m_uv_ena {false};
+    bool m_uv_ena {false}, m_D_ena {false};
 
     void createPasses();
 

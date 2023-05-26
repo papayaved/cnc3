@@ -22,59 +22,72 @@ union cnc_context_t {
         uint32_t pump_ena:1;
         uint32_t roll_state:2;
         uint32_t wire_ena:1;
-        uint32_t high_voltage_ena:1;
+
+        uint32_t voltage_ena:1;
         uint32_t hold_ena:1;
         uint32_t center_ena:1;
         uint32_t is_init:1;
 
         uint32_t roll_vel:7;
-        uint32_t dia_ena:1;
+        uint32_t d_ena:1;
 
         uint32_t uv_ena:1;
         uint32_t enc_ena:1;
         uint32_t rev:1;
         uint32_t rollback:1;
+
         uint32_t attempt:3;
         uint32_t acc_ena:1;
 
         uint32_t state:8;
+
         // 1
         uint32_t pulse_width:8;
         uint32_t pulse_ratio:8;
-        uint32_t low_high_voltage_ena:1;
+        uint32_t low_hv_ena:1;
         uint32_t :7;
         uint32_t current_index:8;
+
         // 2, 3, 4, 5, 6
         int32_t id, x, y, u, v;
+
         // 7, 8
         int32_t enc_x, enc_y;
+
         // 9, 10
         float T, T_cur; // clocks/mm
+
         // 11
         float step; // mm
+
         // 12
         uint32_t limsw_fwd:1;
         uint32_t limsw_rev:1;
         uint32_t limsw_alm:1;
         uint32_t wire_break:1;
+
         uint32_t pwr:1;
         uint32_t fb_stop:1;
         uint32_t fb_to:1;
-        uint32_t hv_ena:1;
+        uint32_t hv_enabled:1;
 
         uint32_t sem_ena:1;
         uint32_t sem:3;
+
         uint32_t fb_ena:1;
         uint32_t attempts:3;
 
         uint32_t center_state:3;
         uint32_t touch_state:3;
         uint32_t center_mode:2;
+
         uint32_t center_attempt:8;
+
         // 13
         uint32_t backup_valid:1; // only for backup
         uint32_t read_valid:1;
         uint32_t :6;
+
         uint32_t center_attempts:8;
         uint32_t touch:8;
         uint32_t touches:8;
@@ -157,14 +170,14 @@ public:
     bool pumpEnabled() const { return m_context.field.pump_ena; }
     roll_state_t rollState() const { return static_cast<roll_state_t>(m_context.field.roll_state); }
     bool wireControlEnabled() const { return m_context.field.wire_ena; }
-    bool highVoltageEnabled() const { return m_context.field.high_voltage_ena; }
+    bool highVoltageEnabled() const { return m_context.field.voltage_ena; }
     bool hold() const { return m_context.field.hold_ena; }
     bool isInit() const { return m_context.field.is_init; }
     bool weakHV() const { return m_context.field.center_ena; }
 
     uint8_t rollVelocity() const { return m_context.field.roll_vel; }
 
-    bool uvDiaEnabled() const { return m_context.field.dia_ena; }
+    bool uvDiaEnabled() const { return m_context.field.d_ena; }
     bool uvEnabled() const { return m_context.field.uv_ena; }
     bool reverse() const { return m_context.field.rev; }
 
@@ -174,7 +187,7 @@ public:
 
     uint8_t pulseWidth() const { return m_context.field.pulse_width; }
     uint8_t pulseRatio() const { return m_context.field.pulse_ratio; }
-    bool lowHighVoltageEnabled() const { return m_context.field.low_high_voltage_ena; }
+    bool lowHighVoltageEnabled() const { return m_context.field.low_hv_ena; }
     uint8_t currentIndex() const { return m_context.field.current_index; }
 
     int32_t frameNum() const { return m_context.field.id; }
@@ -243,14 +256,14 @@ public:
                 "Pump Enable: " + std::to_string(m_context.field.pump_ena) + "\n" +
                 "Roll State: " + std::to_string(m_context.field.roll_state) + "\n" +
                 "Wire Break Control: " + std::to_string(m_context.field.wire_ena) + "\n" +
-                "Voltage Enable: " + std::to_string(m_context.field.high_voltage_ena) + "\n" +
+                "Voltage Enable: " + std::to_string(m_context.field.voltage_ena) + "\n" +
                 "Motor Hold Enable: " + std::to_string(m_context.field.hold_ena) + "\n" +
                 "Roll Velocity: " + std::to_string(m_context.field.roll_vel) + "\n" +
                 "Pulse Width: " + std::to_string(m_context.field.pulse_width) + " Ratio: " + std::to_string(m_context.field.pulse_ratio) + "\n" +
-                "Low High Voltage: " + (m_context.field.low_high_voltage_ena ? "Y" : "n") + "\n" +
+                "Low High Voltage: " + (m_context.field.low_hv_ena ? "Y" : "n") + "\n" +
                 "Current Index: " + std::to_string(m_context.field.current_index) + "\n" +
                 "Period : " + std::to_string(m_context.field.T) + "clock/mm\n" +
-                "UV Enable: " + std::to_string(m_context.field.uv_ena) + " Dia Enable: " + std::to_string(m_context.field.dia_ena) + "\n" +
+                "UV Enable: " + std::to_string(m_context.field.uv_ena) + " Dia Enable: " + std::to_string(m_context.field.d_ena) + "\n" +
                 "Valid: " + std::to_string(m_context.field.backup_valid) + "\n";
     }
 
@@ -258,14 +271,14 @@ public:
         cnc_state_t state = static_cast<cnc_state_t>(m_context.field.state);
 
         return  "State: "     + stateToString(state) + "\n" +
-                "Encoder "    + (m_context.field.enc_ena ? "(Yes)" : "(no)") + "\t" +
-                "UV "         + (m_context.field.uv_ena ? "(Yes)" : "(no)") + "\t" +
-                "Dia "        + (m_context.field.dia_ena ? "(Yes)" : "(no)") + "\n" +
-                "Feedback "   + (m_context.field.fb_ena ? "(Yes)" : "(no)") + "\t" +
-                "Reverse "    + (m_context.field.rev ? "(Yes)" : "(no)") + "\t" +
-                "Rollback "   + (m_context.field.rollback ? "(Yes)" : "(no)") + "\n" +
-                "HV Enabled " + (m_context.field.hv_ena ? "(Yes)" : "(no)") + "\t" +
-                "HV & FB "    + (m_context.field.hv_ena && m_context.field.fb_stop ? "(Yes)" : "(no)") + "\t" +
+                "Encoder "    + (m_context.field.enc_ena ? "(Yes)" : "(no) ") + "\t" +
+                "UV "         + (m_context.field.uv_ena ? "(Yes)" : "(no) ") + "\t" +
+                "D "          + (m_context.field.d_ena ? "(Yes)" : "(no) ") + "\n" +
+                "Feedback "   + (m_context.field.fb_ena ? "(Yes)" : "(no) ") + "\t" +
+                "Reverse "    + (m_context.field.rev ? "(Yes)" : "(no) ") + "\t" +
+                "Rollback "   + (m_context.field.rollback ? "(Yes)" : "(no) ") + "\n" +
+                "HV Enabled " + (m_context.field.hv_enabled ? "(Yes)" : "(no) ") + "\t" +
+                "HV & FB "    + (m_context.field.hv_enabled && m_context.field.fb_stop ? "(Yes)" : "(no) ") + "\t" +
                 "Attempt:\t"  + std::to_string(m_context.field.attempt) + " (" + std::to_string(m_context.field.attempts) + ")" + "\n" +
                 "Cur. speed:\t" + std::to_string( int(round(WireSpeed::toUMS(WireSpeed::TtoSpeed(m_context.field.T_cur)))) ) + " um/sec\n";
     }
@@ -274,8 +287,8 @@ public:
         cnc_state_t state = static_cast<cnc_state_t>(m_context.field.state);
 
         return  "State: "       + stateToString(state) + "\n" +
-                "Reverse "      + (m_context.field.rev ? "(Yes)" : "(no)") + "\t" +
-                "Acceleration " + (m_context.field.acc_ena ? "(Yes)" : "(no)") + "\n" +
+                "Reverse "      + (m_context.field.rev ? "(Yes)" : "(no) ") + "\t" +
+                "Acceleration " + (m_context.field.acc_ena ? "(Yes)" : "(no) ") + "\n" +
                 "Cur. speed:\t" + std::to_string( int(round(WireSpeed::toUMS(WireSpeed::TtoSpeed(m_context.field.T_cur)))) ) + " um/sec\n";
     }
 

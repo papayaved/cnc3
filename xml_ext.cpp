@@ -199,6 +199,25 @@ bool xml_ext::readOffsetSide(QXmlStreamReader &xml, OFFSET_SIDE &value) {
     return OK;
 }
 
+bool xml_ext::readAxisD(QXmlStreamReader &xml, AXIS &value) {
+    bool OK = false;
+    QString type, str;
+
+    xml_ext::readElement(xml, type, str);
+
+    if (type == "AXIS") {
+        if (str == "X") {
+            value = AXIS::AXIS_X;
+            OK = true;
+        } else if (str == "LEFT") {
+            value = AXIS::AXIS_Y;
+            OK = true;
+        }
+    }
+
+    return OK;
+}
+
 bool xml_ext::nextStartElement(QXmlStreamReader& xml) {
     while (xml.tokenType() != QXmlStreamReader::StartElement) {
         if (xml.atEnd() || xml.hasError())

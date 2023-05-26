@@ -21,8 +21,9 @@ struct cut_t {
     bool offset_ena, aux_offset_ena, tab_multi_pass, tab_pause, pump_pause, speed_ena;
     uint16_t pump_delay, seg_pause; // sec
     size_t tab_seg;
-    double aux_offset, tab, overcut, speed, L, H, T;
-    bool LHT_valid {false};
+    double aux_offset, tab, overcut, speed, L, H, T, D, wire_D;
+    bool uv_ena {false}, D_ena {false};
+    AXIS axis_D;
 
     std::vector<offset_t> offsets;
     offset_t tab_offset;

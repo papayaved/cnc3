@@ -991,7 +991,7 @@ bool Dxf::isLoop() const {
 }
 
 bool Dxf::hasOut() const {
-    return m_outIndex.valid && m_outIndex.data < m_entities.size();
+    return m_outIndex.valid && m_entities.size() != 0 && m_outIndex.data < (m_entities.size() - 1);
 }
 
 size_t Dxf::getOutNum() const {
