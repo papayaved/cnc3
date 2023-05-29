@@ -1223,10 +1223,11 @@ void FormContour::on_actUseAsEntryLine_clicked() {
 
     if (par.contours.size() == 1) {
         ContourPair incut(CONTOUR_TYPE::CUTLINE_CONTOUR);        
-        const ContourPair* const pair = par.contours.front();
+        ContourPair* const pair = par.contours.front();
 
-        if (pair && !pair->empty()) {
+        if (pair && !pair->empty()) {            
             saveUndo();
+            pair->checkSorted();
 
             if (!pair->botEmpty() && pair->bot()->isSorted() && !pair->bot()->isLoop()) {
                 if (m_row_num == 0)

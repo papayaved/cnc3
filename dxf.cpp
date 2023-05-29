@@ -952,6 +952,25 @@ bool Dxf::sort(const fpoint_valid_t& prev_pt, const fpoint_valid_t& next_pt) {
     return OK && free.empty() && tails.empty();
 }
 
+bool Dxf::checkSorted(fpoint_valid_t prev_pt, const fpoint_valid_t& next_pt) {
+    m_sorted = true;
+
+    for (list<DxfEntity*>::const_iterator it = m_entities.cbegin(); it != m_entities.cend(); ++it) {
+        if (prev_pt.valid && prev_pt != (*it)->point_0()) {
+            m_sorted = false;
+            break;
+        }
+
+        prev_pt = (*it)->point_1();
+        prev_pt.valid = true;
+    }
+
+    if (m_sorted && prev_pt.valid && next_pt.valid && prev_pt != next_pt)
+        m_sorted = false;
+
+    return m_sorted;
+}
+
 void Dxf::reverse() {
     m_entities.reverse();
     for (DxfEntity* ent: m_entities) {

@@ -118,6 +118,10 @@ public:
     bool botEmpty() const;
     bool topEmpty() const;
     bool empty() const;
+    bool checkSorted(
+            fpoint_valid_t bot_prev = fpoint_valid_t(false), const fpoint_valid_t& bot_next = fpoint_valid_t(false),
+            fpoint_valid_t top_prev = fpoint_valid_t(false), const fpoint_valid_t& top_next = fpoint_valid_t(false)
+            );
     bool isSorted() const;
     bool isLoop() const;
 

@@ -56,6 +56,10 @@ bool ContourPair::botEmpty() const { return m_bot == nullptr || m_bot->empty(); 
 bool ContourPair::topEmpty() const { return m_top == nullptr || m_top->empty(); }
 bool ContourPair::empty() const { return botEmpty() && topEmpty(); }
 
+bool ContourPair::checkSorted(fpoint_valid_t bot_prev, const fpoint_valid_t &bot_next, fpoint_valid_t top_prev, const fpoint_valid_t &top_next) {
+    return !botEmpty() && m_bot->checkSorted(bot_prev, bot_next) && (topEmpty() || m_top->checkSorted(top_prev, top_next));
+}
+
 bool ContourPair::isSorted() const {
     return !botEmpty() && m_bot->isSorted() && (topEmpty() || m_top->isSorted());
 }

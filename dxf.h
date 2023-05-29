@@ -116,6 +116,8 @@ public:
     bool sort(Dxf& free, Dxf& unused, const fpoint_valid_t& prev_pt = fpoint_valid_t(false), const fpoint_valid_t& next_pt = fpoint_valid_t(false));
     bool sort(const fpoint_valid_t& prev_pt = fpoint_valid_t(false), const fpoint_valid_t& next_pt = fpoint_valid_t(false));
 
+    bool checkSorted(fpoint_valid_t prev_pt = fpoint_valid_t(false), const fpoint_valid_t& next_pt = fpoint_valid_t(false));
+
     void reverse();
     static void shiftFirst(std::list<DxfEntity*>& entities, size_t index);
     void shiftFirst(size_t index);
@@ -145,6 +147,7 @@ public:
     fpoint_t getOutPoint() const;
 
     std::string lastError();
+
     bool isSorted() const { return m_sorted; }
 //    GCode moveToGCode();
 
