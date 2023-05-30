@@ -1007,13 +1007,11 @@ GCodeSettings GCode::getSettings() const {
                 res.D_ena = true;
             }
 
-            if (!res.valid.uv) {
-                res.uv_ena = cmd.isUV();
-                res.valid.uv = true;
-            }
+            if (res.valid.LH && res.valid.T && !res.uv_ena && cmd.isUV())
+                res.uv_ena = true;
         }
 
-        if (res.valid.uv && (!res.uv_ena || (res.valid.LH && res.valid.T)))
+        if (res.valid.LH && res.valid.T && res.uv_ena)
             break;
     }
 

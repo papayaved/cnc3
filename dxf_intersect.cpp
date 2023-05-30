@@ -8,7 +8,7 @@ void DxfIntersect::intersect(const DxfLine& A, const DxfLine& B, fpoint_t& pt) {
     if (A.point_1() == B.point_0())
         pt = A.point_1();
     else if ((A.vertical() && B.vertical()) || (A.horizontal() && B.horizontal()) || A.same(B))
-        pt = DxfLine::midpoint(A.point_1(), B.point_0());
+        pt = A.center();
     else if (A.vertical()) {
         pt.x = A.point_1().x;
         pt.y = B.y(pt.x);

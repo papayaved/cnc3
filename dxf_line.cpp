@@ -73,7 +73,8 @@ bool DxfLine::operator!=(const DxfEntity& other) const {
 
 // same line but different segments
 bool DxfLine::same(const DxfEntity& other) const {
-    if (m_type != other.type()) return false;
+    if (m_type != other.type())
+        return false;
 
     fpoint_t pt0(other.point_0());
     fpoint_t pt1(other.point_1());
@@ -128,7 +129,7 @@ fpoint_t DxfLine::point_0() const { return m_A; }
 fpoint_t DxfLine::point_1() const { return m_B; }
 
 fpoint_t DxfLine::midpoint(const fpoint_t& A, const fpoint_t& B) {
-    return fpoint_t((A.x + B.x)/ 2, (A.y + B.y)/ 2);
+    return fpoint_t((A.x + B.x) / 2, (A.y + B.y) / 2);
 }
 fpoint_t DxfLine::center() const { return midpoint(m_A, m_B); }
 

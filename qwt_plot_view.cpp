@@ -251,6 +251,8 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
         // TOP
         passed_reg = false;
         row = 0;
+        group_sel = false;
+
         for (const DxfEntity* ent: pair.top()->entities()) {
 //            if (contourList.isSegmentSelected() && ctr == contourList.selectedContour() && row == contourList.selectedRow())
 //                selTopEnt = ent;
@@ -259,10 +261,10 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
 
             if (!pts.empty()) {
                 if (group_sel)
-                    addPlot(m_qwtPlot, range, pts, m_swapXY, Qt::GlobalColor::darkYellow);
+                    addPlot(m_qwtPlot, range, pts, m_swapXY, Qt::GlobalColor::cyan);
                 else {
 #ifdef DARK_PLOT_THEME
-                    addPlot(m_qwtPlot, range, pts, m_swapXY, passed_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkGreen);
+                    addPlot(m_qwtPlot, range, pts, m_swapXY, passed_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkCyan);
 #else
                     addPlot(m_qwtPlot, range, pts_top, m_swapXY, passed_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkBlue);
 #endif
@@ -283,10 +285,10 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
 
         if (!pts.empty()) {
             if (group_sel)
-                addPlot(m_qwtPlot, range, pts, m_swapXY, Qt::GlobalColor::darkYellow);
+                addPlot(m_qwtPlot, range, pts, m_swapXY, Qt::GlobalColor::cyan);
             else {
 #ifdef DARK_PLOT_THEME
-                addPlot(m_qwtPlot, range, pts, m_swapXY, passed_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkGreen);
+                addPlot(m_qwtPlot, range, pts, m_swapXY, passed_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkCyan);
 #else
                 addPlot(m_qwtPlot, range, pts_top, m_swapXY, passed_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkBlue);
 #endif
@@ -298,7 +300,52 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
         ctr++;
     }
 
-    addPlot(m_qwtPlot, range, selPair, m_swapXY, Qt::GlobalColor::yellow, Qt::GlobalColor::darkYellow);
+    // BOT and TOP select again
+    // todo: skip points before
+    ctr = 0;
+    for (const ContourPair& pair: contourList.contours()) {
+
+        row = 0;
+        for (const DxfEntity* ent: pair.bot()->entities()) {
+            if (ent) {
+                group_sel = contourList.isSelected(ctr, row, 0);
+
+                if (group_sel) {
+                    copy_back(pts, ent->getPoints());
+
+                    if (!pts.empty())
+                        addPlot(m_qwtPlot, range, pts, m_swapXY, Qt::GlobalColor::yellow);
+
+                    pts.clear();
+                }
+            }
+
+            row++;
+        }
+
+        row = 0;
+        for (const DxfEntity* ent: pair.top()->entities()) {
+            if (ent) {
+                group_sel = contourList.isSelected(ctr, row, 1);
+
+                if (group_sel) {
+                    copy_back(pts, ent->getPoints());
+
+                    if (!pts.empty())
+                        addPlot(m_qwtPlot, range, pts, m_swapXY, Qt::GlobalColor::cyan);
+
+                    pts.clear();
+                }
+            }
+
+            row++;
+        }
+
+        ctr++;
+    }
+
+    //
+    addPlot(m_qwtPlot, range, selPair, m_swapXY, Qt::GlobalColor::yellow, Qt::GlobalColor::cyan);
 
 //    addPlot(m_qwtPlot, range, selBotEnt, m_swapXY, Qt::GlobalColor::yellow);
 //    addPlot(m_qwtPlot, range, selTopEnt, m_swapXY, Qt::GlobalColor::darkYellow);
@@ -307,14 +354,14 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
 //    range.append({pt});
 //    addPoint(newChart, &pt, nullptr);
 
+    if (contourList.hasUVPos()) {
+        addLine(m_qwtPlot, contourList.xyPos(), contourList.uvPos(), m_swapXY, Qt::GlobalColor::blue);
 #ifdef DARK_PLOT_THEME
-    addPoints(m_qwtPlot, contourList.xyPos(), contourList.uvPos(), m_swapXY, Qt::GlobalColor::green, Qt::GlobalColor::cyan);
+        addPoints(m_qwtPlot, contourList.xyPos(), contourList.uvPos(), m_swapXY, Qt::GlobalColor::green, Qt::GlobalColor::darkCyan);
 #else
-    addPoints(m_qwtPlot, contourList.xyPos(), contourList.uvPos(), m_swapXY, Qt::GlobalColor::blue, Qt::GlobalColor::cyan);
+        addPoints(m_qwtPlot, contourList.xyPos(), contourList.uvPos(), m_swapXY, Qt::GlobalColor::blue, Qt::GlobalColor::cyan);
 #endif
-
-    if (contourList.hasUVPos())
-        addSymbolCircle(m_qwtPlot, contourList.botPos(), m_swapXY, Qt::GlobalColor::red);
+    }
     else {
 #ifdef DARK_PLOT_THEME
         addPoint(m_qwtPlot, contourList.botPos(), m_swapXY, Qt::GlobalColor::green);
@@ -323,7 +370,7 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
 #endif
     }
 
-    addLine(m_qwtPlot, contourList.xyPos(), contourList.uvPos(), m_swapXY, Qt::GlobalColor::blue);
+    addSymbolCircle(m_qwtPlot, contourList.botPos(), m_swapXY, Qt::GlobalColor::red);
 
     tweakPlot(m_qwtPlot, range, frameSize);
 }
@@ -397,7 +444,8 @@ void QwtPlotView::plot(QVector<QPointF> &pts, const QColor& color, const QColor&
 void QwtPlotView::tweakPlot(QwtPlot* const plot, const ContourRange& range, const QSize& frameSize) {
     static QSize frameSize_old = {0, 0};
 
-    if (!m_qwtPlot) return;
+    if (!m_qwtPlot)
+        return;
 
     bool print_new = frameSize != frameSize_old || !range.equal(m_range);
     frameSize_old = frameSize;
@@ -429,7 +477,8 @@ void QwtPlotView::tweakPlot(QwtPlot* const plot, const ContourRange& range, cons
 
         m_range = range;
 
-        if (print_new) qDebug() << "Plot items: " << plot->itemList().count();
+        if (print_new)
+            qDebug() << "Plot items: " << plot->itemList().count();
 
         setAxis(frameSize);
 
@@ -437,7 +486,8 @@ void QwtPlotView::tweakPlot(QwtPlot* const plot, const ContourRange& range, cons
         plot->update();
         plot->show();
 
-        if (print_new) qDebug() << "Plot size: " << plot->size();
+        if (print_new)
+            qDebug() << "Plot size: " << plot->size();
     }
     else
         emptyPlot(frameSize);
