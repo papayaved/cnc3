@@ -345,18 +345,21 @@ void GCode::addG2G2(fpoint_t& A, const fpoint_t& B, fpoint_t& A2, const fpoint_t
 }
 
 // Tapped cutting calibration
-bool GCode::generate(double d_top, double d_bot, double L, double H, double T, double cutline, AXIS axis) {
+bool GCode::generate(double D_top, double D_bot, double L, double H, double T, bool D_ena, double D, AXIS roller_axis, double cutline, AXIS cutline_axis) {
     frames.clear();
     frames.push_back(GFrame::delimiter());
     frames.push_back(GFrame::M100(L, H));
     frames.push_back(GFrame::M101(T));
+
+    if (D_ena)
+        frames.push_back(GFrame::M102(D, roller_axis));
 
     frames.push_back(GFrame::G92(0,0,0,0));
 
     bool sign = cutline < 0;
     cutline = fabs(cutline);
 
-    double cutline_uv = cutline + (d_bot - d_top) / 2;
+    double cutline_uv = cutline + (D_bot - D_top) / 2;
 
     if (sign) {
         cutline = -cutline;
@@ -365,7 +368,7 @@ bool GCode::generate(double d_top, double d_bot, double L, double H, double T, d
 
     fpoint_t A(0,0), B, A2(0,0), B2, C;
 
-    switch (axis) {
+    switch (cutline_axis) {
     case AXIS::AXIS_X:
         B = fpoint_t(cutline, 0);
         B2 = fpoint_t(cutline_uv, 0);
@@ -383,15 +386,15 @@ bool GCode::generate(double d_top, double d_bot, double L, double H, double T, d
     A = B;
     A2 = B2;
 
-    if (axis == AXIS::AXIS_X)
-        C = !sign ? fpoint_t(A.x + d_bot/2, A.y) : fpoint_t(A.x - d_bot/2, A.y);
+    if (cutline_axis == AXIS::AXIS_X)
+        C = !sign ? fpoint_t(A.x + D_bot/2, A.y) : fpoint_t(A.x - D_bot/2, A.y);
     else
-        C = !sign ? fpoint_t(A.x, A.y + d_bot/2) : fpoint_t(A.x, A.y - d_bot/2);
+        C = !sign ? fpoint_t(A.x, A.y + D_bot/2) : fpoint_t(A.x, A.y - D_bot/2);
 
-    int i = axis == AXIS::AXIS_X ? (sign ? 3 : 1) : (sign ? 0 : 2);
+    int i = cutline_axis == AXIS::AXIS_X ? (sign ? 3 : 1) : (sign ? 0 : 2);
 
     for (int k = 0; k < 4; k++) {
-        cone_cw(C, d_bot, d_top, i, B, B2);
+        cone_cw(C, D_bot, D_top, i, B, B2);
         addG2G2(A, B, A2, B2, C);
     }
 

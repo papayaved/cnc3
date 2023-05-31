@@ -7,6 +7,7 @@
 //#include <QSpinBox>
 #include <QGroupBox>
 #include <QRadioButton>
+#include <QCheckBox>
 #include <QPushButton>
 #include <vector>
 
@@ -31,16 +32,18 @@ class UVSizingWidget : public QWidget {
     ProgramParam& par;
 
     QLabel *labelMeasuring, *labelRecalc, *labelResult, *labelWireD, *labelUMax, *labelL, *labelH, *labelT, *labelRollerD, *labelRollerPlane, *labelEntryLine, *labelDTop, *labelDBot, *labelResL, *labelResH;
-    QDoubleSpinBox *fnumWireD, *fnumUMax, *fnumL, *fnumH, *fnumT, *fnumRollerD, *fnumLine, *fnumDTop, *fnumDBot, *fnumResL, *fnumResH;
+    QDoubleSpinBox *fnumWireD, *fnumUMax, *fnumL, *fnumH, *fnumT, *fnumDRoller, *fnumLine, *fnumDTop, *fnumDBot, *fnumResL, *fnumResH;
     QRadioButton *radioXp, *radioXn, *radioYp, *radioYn, *radioXZ, *radioYZ;
+    QCheckBox *checkDEna;
     QGroupBox *groupMeasuring, *groupRecalc, *groupResult, *groupAxis, *groupRollerPlane;
-    QPushButton *btnGen, *btnRecalc;
+    QPushButton *btnReset, *btnGen, *btnRecalc;
 
     std::vector<QWidget*> widgets;
 
     static void setFontPointSize(QWidget* w, int pointSize);
 
 private slots:
+    void onReset();
     void onGenerate();
     void onRecalc();
 

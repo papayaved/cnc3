@@ -38,7 +38,7 @@ namespace cnc_param {
     constexpr static const uint8_t PULSE_RATIO_MAX = 32;
     constexpr static const uint8_t PULSE_RATIO_DEFAULT = 8;
 
-    constexpr static const double L_DEFAULT = 150;
+    constexpr static const double L_DEFAULT = 190;
     constexpr static const double H_DEFAULT = 50;
     constexpr static const double T_DEFAULT = 30;
     constexpr static const double D_DEFAULT = 29.5;

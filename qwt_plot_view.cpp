@@ -120,195 +120,72 @@ void QwtPlotView::emptyPlot() {
         emptyPlot(m_qwtPlot->size());
 }
 
-//void QwtPlotView::clearPoints() {
-//    for (QVector<QPointF>& ctr: m_pts_bot)
-//        ctr.clear();
-
-//    for (QVector<QPointF>& ctr: m_pts_top)
-//        ctr.clear();
-//}
-
 void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
     ContourRange range;
-    QVector<QPointF> pts;
-    bool passed {false}, passed_reg {false}, group_sel {false};
+    QVector<QPointF> pts;    
 
     if (!m_qwtPlot)
         return;
 
-//    clearPoints();
-//    m_pts_bot.resize( contourList.contours().size() );
-//    m_pts_top.resize( contourList.contours().size() );
+    m_qwtPlot->detachItems(QwtPlotItem::Rtti_PlotItem, true); // These are default parameters
 
-    m_qwtPlot->detachItems(QwtPlotItem::Rtti_PlotItem, true); // These are default parameters    
-
-//    for (const ContourPair& pair: contourList.contours()) {
-//        for (const DxfEntity* ent: pair.bot()->entities()) {
-//            bool passed = i < contourList.currentContourNumber() || (i == contourList.currentContourNumber() && j <= contourList.currentSegmentNumber());
-
-//            if (passed ^ passed_bot_reg) {
-//                if (!pts_bot.empty()) {
-//#ifdef DARK_PLOT_THEME
-//                    addPlot(m_qwtPlot, range, pts_bot, m_swapXY, passed_bot_reg ? Qt::GlobalColor::red : Qt::GlobalColor::green);
-//#else
-//                    addPlot(m_qwtPlot, range, pts_bot, m_swapXY, passed_bot_reg ? Qt::GlobalColor::red : Qt::GlobalColor::blue);
-//#endif
-//                    pts_bot.clear();
-//                }
-//                passed_bot_reg = passed;
-//            }
-
-//            if (ent)
-//                copy_back(pts_bot, ent->getPoints());
-
-//            j++;
-//        }
-
-//        for (const DxfEntity* ent: pair.top()->entities()) {
-//            bool passed = i < contourList.currentContourNumber() || (i == contourList.currentContourNumber() && k <= contourList.currentSegmentNumber());
-
-//            if (passed ^ passed_top_reg) {
-//                if (!pts_top.empty()) {
-//#ifdef DARK_PLOT_THEME
-//                    addPlot(m_qwtPlot, range, pts_top, m_swapXY, passed_top_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkGreen);
-//#else
-//                    addPlot(m_qwtPlot, range, pts_top, m_swapXY, passed_top_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkBlue);
-//#endif
-//                    pts_top.clear();
-//                }
-//                passed_top_reg = passed;
-//            }
-
-//            if (ent)
-//                copy_back(pts_top, ent->getPoints());
-
-//            k++;
-//        }
-
-//        i++;
-//    }
-
-//    const DxfEntity *selBotEnt {nullptr}, *selTopEnt {nullptr};
-    const ContourPair *selPair {nullptr};
-
-    size_t ctr {0}, row {0};
-
+    size_t ctr = 0, row = 0;
     for (const ContourPair& pair: contourList.contours()) {
-        if (contourList.isContourSelected() && ctr == contourList.selectedContour())
-            selPair = &pair;
-
         // BOT
         row = 0;
         for (const DxfEntity* ent: pair.bot()->entities()) {
-//            bool a = contourList.isSegmentSelected();
-//            bool b = ctr == contourList.selectedContour();
-//            bool c = row == contourList.selectedRow();
-
-////            if (contourList.isSegmentSelected() && ctr == contourList.selectedContour() && row == contourList.selectedRow())
-//            if (a && b && c)
-//                selBotEnt = ent;
-
-            passed = (int)ctr < contourList.currentContourNumber() || ((int)ctr == contourList.currentContourNumber() && (int)row <= contourList.currentSegmentNumber());
-
-            if (!pts.empty()) {
-                if (group_sel)
-                    addPlot(m_qwtPlot, range, pts, m_swapXY, Qt::GlobalColor::yellow);
-                else {
-#ifdef DARK_PLOT_THEME
-                    addPlot(m_qwtPlot, range, pts, m_swapXY, passed_reg ? Qt::GlobalColor::red : Qt::GlobalColor::green);
-#else
-                    addPlot(m_qwtPlot, range, pts_bot, m_swapXY, passed_reg ? Qt::GlobalColor::red : Qt::GlobalColor::blue);
-#endif
-                }
-
-                pts.clear();
-            }
-
-            passed_reg = passed;
+            bool passed = (int)ctr < contourList.currentContourNumber() || ((int)ctr == contourList.currentContourNumber() && (int)row <= contourList.currentSegmentNumber());
 
             if (ent)
                 copy_back(pts, ent->getPoints());
 
-            group_sel = contourList.isSelected(ctr, row, 0);
-
-            row++;
-        }
-
-        if (!pts.empty()) {
-            if (group_sel)
-                addPlot(m_qwtPlot, range, pts, m_swapXY, Qt::GlobalColor::yellow);
-            else {
+            if (!pts.empty()) {
 #ifdef DARK_PLOT_THEME
-                addPlot(m_qwtPlot, range, pts, m_swapXY, passed_reg ? Qt::GlobalColor::red : Qt::GlobalColor::green);
+                addPlot(m_qwtPlot, range, pts, m_swapXY, passed ? Qt::GlobalColor::red : Qt::GlobalColor::green);
 #else
-                addPlot(m_qwtPlot, range, pts_bot, m_swapXY, passed_reg ? Qt::GlobalColor::red : Qt::GlobalColor::blue);
+                addPlot(m_qwtPlot, range, pts_bot, m_swapXY, passed ? Qt::GlobalColor::red : Qt::GlobalColor::blue);
 #endif
+                pts.clear();
             }
 
-            pts.clear();
+            row++;
         }
 
         // TOP
-        passed_reg = false;
         row = 0;
-        group_sel = false;
-
         for (const DxfEntity* ent: pair.top()->entities()) {
-//            if (contourList.isSegmentSelected() && ctr == contourList.selectedContour() && row == contourList.selectedRow())
-//                selTopEnt = ent;
-
-            passed = (int)ctr < contourList.currentContourNumber() || ((int)ctr == contourList.currentContourNumber() && (int)row <= contourList.currentSegmentNumber());
-
-            if (!pts.empty()) {
-                if (group_sel)
-                    addPlot(m_qwtPlot, range, pts, m_swapXY, Qt::GlobalColor::cyan);
-                else {
-#ifdef DARK_PLOT_THEME
-                    addPlot(m_qwtPlot, range, pts, m_swapXY, passed_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkCyan);
-#else
-                    addPlot(m_qwtPlot, range, pts_top, m_swapXY, passed_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkBlue);
-#endif
-                }
-
-                pts.clear();
-            }
-
-            passed_reg = passed;
+            bool passed = (int)ctr < contourList.currentContourNumber() || ((int)ctr == contourList.currentContourNumber() && (int)row <= contourList.currentSegmentNumber());
 
             if (ent)
                 copy_back(pts, ent->getPoints());
 
-            group_sel = contourList.isSelected(ctr, row, 1);
-
-            row++;
-        }
-
-        if (!pts.empty()) {
-            if (group_sel)
-                addPlot(m_qwtPlot, range, pts, m_swapXY, Qt::GlobalColor::cyan);
-            else {
+            if (!pts.empty()) {
 #ifdef DARK_PLOT_THEME
-                addPlot(m_qwtPlot, range, pts, m_swapXY, passed_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkCyan);
+                addPlot(m_qwtPlot, range, pts, m_swapXY, passed ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkCyan);
 #else
-                addPlot(m_qwtPlot, range, pts_top, m_swapXY, passed_reg ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkBlue);
+                addPlot(m_qwtPlot, range, pts_top, m_swapXY, passed ? Qt::GlobalColor::darkRed : Qt::GlobalColor::darkBlue);
 #endif
+                pts.clear();
             }
 
-            pts.clear();
+            row++;
         }
 
         ctr++;
     }
 
     // BOT and TOP select again
-    // todo: skip points before
+    const ContourPair *selPair = nullptr;
     ctr = 0;
+
     for (const ContourPair& pair: contourList.contours()) {
+        if (contourList.isContourSelected() && ctr == contourList.selectedContour())
+            selPair = &pair;
 
         row = 0;
         for (const DxfEntity* ent: pair.bot()->entities()) {
             if (ent) {
-                group_sel = contourList.isSelected(ctr, row, 0);
+                bool group_sel = contourList.isSelected(ctr, row, 0);
 
                 if (group_sel) {
                     copy_back(pts, ent->getPoints());
@@ -326,7 +203,7 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
         row = 0;
         for (const DxfEntity* ent: pair.top()->entities()) {
             if (ent) {
-                group_sel = contourList.isSelected(ctr, row, 1);
+                bool group_sel = contourList.isSelected(ctr, row, 1);
 
                 if (group_sel) {
                     copy_back(pts, ent->getPoints());
@@ -347,30 +224,25 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
     //
     addPlot(m_qwtPlot, range, selPair, m_swapXY, Qt::GlobalColor::yellow, Qt::GlobalColor::cyan);
 
-//    addPlot(m_qwtPlot, range, selBotEnt, m_swapXY, Qt::GlobalColor::yellow);
-//    addPlot(m_qwtPlot, range, selTopEnt, m_swapXY, Qt::GlobalColor::darkYellow);
-
-//    fpoint_t pt(0,0);
-//    range.append({pt});
-//    addPoint(newChart, &pt, nullptr);
-
+    //
     if (contourList.hasUVPos()) {
         addLine(m_qwtPlot, contourList.xyPos(), contourList.uvPos(), m_swapXY, Qt::GlobalColor::blue);
+
 #ifdef DARK_PLOT_THEME
         addPoints(m_qwtPlot, contourList.xyPos(), contourList.uvPos(), m_swapXY, Qt::GlobalColor::green, Qt::GlobalColor::darkCyan);
 #else
         addPoints(m_qwtPlot, contourList.xyPos(), contourList.uvPos(), m_swapXY, Qt::GlobalColor::blue, Qt::GlobalColor::cyan);
 #endif
+
+        addSymbolCircle(m_qwtPlot, contourList.botPos(), m_swapXY, Qt::GlobalColor::red);
     }
     else {
 #ifdef DARK_PLOT_THEME
-        addPoint(m_qwtPlot, contourList.botPos(), m_swapXY, Qt::GlobalColor::green);
+        addPoint(m_qwtPlot, contourList.botPos(), m_swapXY, Qt::GlobalColor::red);
 #else
         addPoint(m_qwtPlot, contourList.botPos(), m_swapXY, Qt::GlobalColor::blue);
 #endif
     }
-
-    addSymbolCircle(m_qwtPlot, contourList.botPos(), m_swapXY, Qt::GlobalColor::red);
 
     tweakPlot(m_qwtPlot, range, frameSize);
 }

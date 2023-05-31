@@ -579,9 +579,10 @@ void FormRun::init(bool recovery) {
 
                     m_report.writeLine(tr("G-code is loaded"));
                     par.cnc.imitEna(false);
+                    m_full_length_valid = false;
 
                     if (timer) {
-//                        timer->clear();
+//                        timer->clear();                        
                         timer->start();
                     }
 
@@ -625,6 +626,7 @@ void FormRun::_init() {
     runWidget->setElapsedTime(0);
     runWidget->setRemainTime(0);
     timer->clear();
+    m_full_length_valid = false;
 
     if (par.gcode.empty())
         m_info = tr("Error") + ": " + tr("No G-code") + "\n";
@@ -805,6 +807,7 @@ void FormRun::on_btnStart_clicked() {
                     par.cnc.runReq();
                     if (timer) {
                         timer->clear();
+                        m_full_length_valid = false;
                         timer->start();
                     }
                 }
@@ -829,7 +832,8 @@ void FormRun::on_btnStart_clicked() {
     case AppState::STATES::ST_RUN:
     case AppState::STATES::ST_REV:
         par.cnc.stopReq();
-        if (timer) timer->stop();
+        if (timer)
+            timer->stop();
         break;
 
     case AppState::STATES::ST_PAUSE:
@@ -838,7 +842,8 @@ void FormRun::on_btnStart_clicked() {
                 par.cnc.writeHoldEnable(true);
 
             par.cnc.runReq();
-            if (timer) timer->start();
+            if (timer)
+                timer->start();
         }
         break;
 
@@ -862,7 +867,9 @@ void FormRun::on_btnReverse_clicked() {
             par.cnc.writeHoldEnable(true);
 
         par.cnc.revReq();
-        if (timer) timer->start();
+        if (timer)
+            timer->start();
+
         par.appState.next(AppState::BUTTON::SIG_REVERSE);
         updateButtons();
     } catch (...) {}
@@ -924,6 +931,7 @@ void FormRun::startCncReader() {
         qDebug()<<"CNC reader: Start";
         cncReaderEna = true;
         remain_tmr = 0;
+        m_full_length_valid = false;
         readCncContext();
     }
 }
@@ -933,6 +941,7 @@ void FormRun::stopCncReader() {
     cncReaderEna = false;
     remain_tmr = 0;
     timer->clear();
+    m_full_length_valid = false;
 }
 
 void FormRun::readCncContext() {
@@ -1051,16 +1060,25 @@ void FormRun::readCncContext() {
 
                 if (remain_tmr >= REMAIN_TIMER_MAX) {
                     remain_tmr = 0;
-                    double length = par.workContours.botLength();
-                    double speed = ms ? length / ms : 0;
 
-                    double full_length = par.workContours.botLengthFull();
+                    if (!m_full_length_valid) {
+                        m_full_length = par.workContours.botLengthFull();
+                        m_full_length_valid = true;
+                    }
 
-                    double remain_length = full_length - length;
+                    double length = par.workContours.botLength();...
+
+                    double speed = ms > 0 ? length / (double)ms : 0;
+
+                    double remain_length = m_full_length - length;
                     double remain_time = remain_length / speed;
 
-                    if (remain_time < 0) remain_time = 0;
+                    if (remain_time < 0)
+                        remain_time = 0;
+
                     runWidget->setRemainTime(static_cast<qint64>(remain_time));
+
+                    qDebug("Remain: %0.3f mm, %0.3f mm, %d ms, %d ms", m_full_length, length, (int)ms, (int)remain_time);
                 }
                 else
                     ++remain_tmr;
@@ -1084,13 +1102,17 @@ void FormRun::readCncContext() {
                     cutStateAbortReq = false;
                 }
 
-                if (timer) timer->stop();
+                if (timer)
+                    timer->stop();
             }
             else if (par.appState.isWork() && !ctx.isWork()) {
                 par.appState.reset();
                 updateButtons();                
-                setCursorToEnd();                
-                if (timer) timer->stop();
+                setCursorToEnd();
+
+                if (timer)
+                    timer->stop();
+
                 runWidget->setRemainTime(0);
             }
             else {

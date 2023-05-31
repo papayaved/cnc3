@@ -48,6 +48,9 @@ class FormRun : public QWidget {
     StartStopElapsedTimer* timer;
     unsigned remain_tmr;
 
+    bool m_full_length_valid {false};
+    double m_full_length {0};
+
     auxItems::Reporter m_report;
 
     QString m_info;
