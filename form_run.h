@@ -13,42 +13,40 @@
 class FormRun : public QWidget {
     Q_OBJECT
 
-    const QString help_file = "run.html";
+    const QString m_help_file = "run.html";
     const unsigned POLLING_TIME = 1000 / 5; // ms
     const unsigned REMAIN_TIMER_MAX = 2000 / POLLING_TIME - 1;
     const unsigned ADC_POLLING_TIME = 1000; // ms
 
-    ProgramParam& par;
-    RunWidget* runWidget;
-    bool cncReaderEna {false}, adcEnable {false};
+    ProgramParam& m_par;
+    RunWidget* m_runWidget;
+    bool m_cncReaderEna {false}, m_adcEnable {false};
     std::list<std::string> m_gframes;
 
-    QLabel *labelWidth, *labelRatio, *labelCurrent, *labelRoll;
-    QSpinBox *numWidth, *numRatio, *numCurrent, *numRollVel;
-    std::vector<QSpinBox*> numBoxes;
-    QGroupBox *groupWidth, *groupRatio, *groupCurrent, *groupRoll;
+    QLabel *m_labelWidth, *m_labelRatio, *m_labelCurrent, *m_labelRoll;
+    QSpinBox *m_numWidth, *m_numRatio, *m_numCurrent, *m_numRollVel;
+    std::vector<QSpinBox*> m_numBoxes;
+    QGroupBox *m_groupWidth, *m_groupRatio, *m_groupCurrent, *m_groupRoll;
 
-    QPushButton *btnHome, *btnRoll, *btnPump, *btnBreak, *btnHighVolt, *btnWidthDec, *btnWidthInc, *btnRatioInc, *btnRatioDec,\
-        *btnCurrentDec, *btnCurrentInc, *btnRollVelDec, *btnRollVelInc, *btnHelp;
+    QPushButton *m_btnHome, *m_btnRoll, *m_btnPump, *m_btnBreak, *m_btnHighVolt, *m_btnWidthDec, *m_btnWidthInc, *m_btnRatioInc, *m_btnRatioDec,\
+        *m_btnCurrentDec, *m_btnCurrentInc, *m_btnRollVelDec, *m_btnRollVelInc, *m_btnHelp;
 
 #ifndef STONE
-    QPushButton *btnLowHighVolt {nullptr};
+    QPushButton *m_btnLowHighVolt {nullptr};
 #endif
 
-    std::vector<QPushButton*> buttons;
+    std::vector<QPushButton*> m_buttons;
 
-    QGridLayout* gridButtons;
-    QVBoxLayout* mainLayout;
+    QGridLayout* m_gridButtons;
+    QVBoxLayout* m_mainLayout;
 
-    int currentCursorPosition;
+    int m_currentCursorPosition;
 
-    bool cutStateAbortReq = false;
+    bool m_cutStateAbortReq = false;
     WireSpeed m_speed;
 
-    StartStopElapsedTimer* timer;
-    unsigned remain_tmr;
-
-    bool m_full_length_valid {false};
+    StartStopElapsedTimer* m_timer;
+    unsigned m_remain_tmr;
     double m_full_length {0};
 
     auxItems::Reporter m_report;

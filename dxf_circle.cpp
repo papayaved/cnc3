@@ -10,9 +10,9 @@ DxfCircle::~DxfCircle() {}
 
 DxfEntity* DxfCircle::clone() const { return new DxfCircle(*this); }
 
-void DxfCircle::setStartAngle(double degree) { beta = alpha = range360(degree); }
+void DxfCircle::setStartAngle(double degree) { m_beta = m_alpha = range360(degree); }
 
-bool DxfCircle::isPoint() const { return R < M_PRECISION; }
+bool DxfCircle::isPoint() const { return m_R < M_PRECISION; }
 bool DxfCircle::isCircle() const { return true; }
 
 vector<fpoint_t> DxfCircle::getPoints() const {
@@ -20,8 +20,8 @@ vector<fpoint_t> DxfCircle::getPoints() const {
 
     for (double a = 0; a < 2 * M_PI; a += ANGLE_STEP) {
         fpoint_t pt;
-        pt.x = C.x + R * cos(a);
-        pt.y = C.y + R * sin(a);
+        pt.x = m_C.x + m_R * cos(a);
+        pt.y = m_C.y + m_R * sin(a);
         res.push_back(pt);
     }
 
@@ -29,81 +29,81 @@ vector<fpoint_t> DxfCircle::getPoints() const {
 }
 
 void DxfCircle::set(const fpoint_t& C, double R, double angle, bool ccw) {
-    flags.valid = 1;
-    flags.circle = 1;
-    flags.ccw = ccw;    
-    this->R = fabs(R);
-    alpha = beta = range360(angle);
-    this->C = C;
+    m_flags.valid = 1;
+    m_flags.circle = 1;
+    m_flags.ccw = ccw;    
+    this->m_R = fabs(R);
+    m_alpha = m_beta = range360(angle);
+    this->m_C = C;
 }
 
 void DxfCircle::set(const fpoint_t& A, const fpoint_t& C, bool ccw) {
-    flags.valid = 1;
+    m_flags.valid = 1;
 
     if (A == C) { // point
-        flags.circle = 0;
-        flags.ccw = ccw;
-        R = 0;
-        alpha = 0;
-        beta = 0;
-        this->C = C;
+        m_flags.circle = 0;
+        m_flags.ccw = ccw;
+        m_R = 0;
+        m_alpha = 0;
+        m_beta = 0;
+        this->m_C = C;
     }
     else { // circle
-        flags.circle = 1;
-        flags.ccw = ccw;
-        polar(C, A, R, alpha);
-        beta = alpha;
-        this->C = C;
+        m_flags.circle = 1;
+        m_flags.ccw = ccw;
+        polar(C, A, m_R, m_alpha);
+        m_beta = m_alpha;
+        this->m_C = C;
     }
 }
 
-double DxfCircle::length() const { return 2 * M_PI * R; }
+double DxfCircle::length() const { return 2 * M_PI * m_R; }
 
 void DxfCircle::offset(OFFSET_SIDE side, double offset, const DxfEntity* /*prev*/, const DxfEntity* /*next*/) {
-    if ((flags.ccw && side == OFFSET_SIDE::RIGHT) || (!flags.ccw && side == OFFSET_SIDE::LEFT))
-        R += offset;
+    if ((m_flags.ccw && side == OFFSET_SIDE::RIGHT) || (!m_flags.ccw && side == OFFSET_SIDE::LEFT))
+        m_R += offset;
     else {
-        R -= offset;
-        if (R < 0) R = 0;
+        m_R -= offset;
+        if (m_R < 0) m_R = 0;
     }
 }
 
-void DxfCircle::shift(const fpoint_t& value) { C.shift(value); }
+void DxfCircle::shift(const fpoint_t& value) { m_C.shift(value); }
 
-void DxfCircle::reverse() { flags.ccw = !flags.ccw; }
+void DxfCircle::reverse() { m_flags.ccw = !m_flags.ccw; }
 
 string DxfCircle::toString() const {
-    return flags.valid ? "Circle: Center " + C.toString() +
-            ", Radius " + to_string(R) +
-            ", Start Angle " + to_string(alpha / M_PI * 180) +
-            ", CCW " + to_string(flags.ccw) : "Not valid";
+    return m_flags.valid ? "Circle: Center " + m_C.toString() +
+            ", Radius " + to_string(m_R) +
+            ", Start Angle " + to_string(m_alpha / M_PI * 180) +
+            ", CCW " + to_string(m_flags.ccw) : "Not valid";
 }
 
 string DxfCircle::toString2() const {
-    return flags.valid ? "Circle: Center " + C.toString() +
-            ", Radius " + to_string(R) +
-            ", Start Angle " + to_string(alpha / M_PI * 180) +
-            ", CCW " + to_string(flags.ccw) : "Not valid";
+    return m_flags.valid ? "Circle: Center " + m_C.toString() +
+            ", Radius " + to_string(m_R) +
+            ", Start Angle " + to_string(m_alpha / M_PI * 180) +
+            ", CCW " + to_string(m_flags.ccw) : "Not valid";
 }
 
-double DxfCircle::deltaAngle() const { return flags.ccw ? 2 * M_PI : -2 * M_PI; }
+double DxfCircle::deltaAngle() const { return m_flags.ccw ? 2 * M_PI : -2 * M_PI; }
 
 bool DxfCircle::check() {
-    if (!flags.valid && flags.Cx && flags.Cy && flags.R) {
-        flags.Cx = 0;
-        flags.Cy = 0;
-        flags.R = 0;        
-        flags.valid = 1;
-        flags.circle = 1;
+    if (!m_flags.valid && m_flags.Cx && m_flags.Cy && m_flags.R) {
+        m_flags.Cx = 0;
+        m_flags.Cy = 0;
+        m_flags.R = 0;        
+        m_flags.valid = 1;
+        m_flags.circle = 1;
     }
-    return flags.valid;
+    return m_flags.valid;
 }
 
 void DxfCircle::clear() {
     DxfArc::clear();
-    flags = {0,0,0,0,0,0,1,1};
-    R = 0;
-    alpha = 0;
-    beta = 0;
-    C = fpoint_t();
+    m_flags = {0,0,0,0,0,0,1,1};
+    m_R = 0;
+    m_alpha = 0;
+    m_beta = 0;
+    m_C = fpoint_t();
 }

@@ -16,9 +16,9 @@ protected:
         uint8_t valid:1;
         uint8_t circle:1;
         uint8_t ccw:1;
-    } flags;
-    double R, alpha, beta; // start & end angles, radius
-    fpoint_t C;
+    } m_flags;
+    double m_R, m_alpha, m_beta; // start & end angles, radius
+    fpoint_t m_C;
 
 public:
     DxfArc();
@@ -57,9 +57,9 @@ public:
     void set(const fpoint_t& A, const fpoint_t& B, const fpoint_t& center, bool ccw = true);
     void set(const fpoint_t& A, const fpoint_t& B, double radius, bool ccw = true);
 
-    virtual double startAngle() const { return alpha; }
-    inline double endAngle() const { return beta; }
-    virtual bool CCW() const override { return flags.ccw; }
+    virtual double startAngle() const { return m_alpha; }
+    inline double endAngle() const { return m_beta; }
+    virtual bool CCW() const override { return m_flags.ccw; }
 
     virtual double point_X0() const;
     virtual double point_Y0() const;
@@ -68,7 +68,7 @@ public:
 
     fpoint_t point_0() const override;
     fpoint_t point_1() const override;
-    fpoint_t center() const override { return C; }
+    fpoint_t center() const override { return m_C; }
     double radius() const override;
     double tangent_0() const override;
     double tangent_1() const override;

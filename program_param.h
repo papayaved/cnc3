@@ -111,7 +111,7 @@ public:
     GCodeSettings gcodeSettings; // extracted common parameters
     ContourList contours; // one pass contour from file or generated from templates
 
-    ContourList workContours; // work multi-pass contour for cutting
+    ContourList workContours; // a work multi-pass contour for cutting
     std::vector<std::pair<size_t, size_t>> mapGcodeToContours; // relation between G-code frame (string) number and contour segment.
 
     Cnc cnc; // CNC programming interface (API)

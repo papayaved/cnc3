@@ -964,7 +964,7 @@ bool CncComThread::read(uint32_t addr, size_t len, vector<uint8_t>& data) {
 // 3 attempts to write request but 1 attempt to read
 bool CncComThread::readBurst(uint32_t addr, size_t len, vector<uint8_t>& data) {
     data.resize(len);
-    data.clear(); // Leaves the capacity
+    data.clear(); // Leave the capacity
     clear();
 
     size_t rem = len;

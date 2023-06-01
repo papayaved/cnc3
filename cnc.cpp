@@ -165,9 +165,15 @@ vector<uint8_t> Cnc::readProgArray() {
 }
 
 vector<uint8_t> Cnc::readProgArrayBurst(size_t len) {
+    vector<uint8_t> bytes;
+
     qDebug("cnc::readProgArrayBurst>>Read request %d bytes\n", (int)len);
 
-    vector<uint8_t> bytes;
+    if (!len) {
+        qDebug("PA is empty");
+        return bytes;
+    }
+
     bool OK = m_com.readBurst(ADDR::PA, len, bytes); // one attempt, try again manually
 
     if (!OK)
@@ -181,9 +187,13 @@ vector<uint8_t> Cnc::readProgArrayBurst() {
     uint32_t len;
     vector<uint8_t> bytes;
 
-    if (!m_com.read32(ADDR::PA_WRADDR, len))
+    // Read last write address in Program Array
+    if (!m_com.read32(ADDR::PA_WRADDR, len)) {
+        qDebug("Read PA length error");
         return bytes;
+    }
 
+    // Read all data from program array
     bytes = readProgArrayBurst(len);
     return bytes;
 }
