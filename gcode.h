@@ -25,10 +25,10 @@ struct GCodeSettings {
     double L{0}, H{0}, T{0}, D{0};
 
     bool isUV() const {
-        return uv_ena && valid.LH && valid.T && L > 0 && H > 0 && T > 0 && H + T < L;
+        return uv_ena && valid.LH && valid.T && L > 0.001 && H > 0.001 && T > 0.001 && H + T < L;
     }
 
-    bool isD() const { return isUV() && D_ena && D > 0; }
+    bool isD() const { return isUV() && D_ena && D > 0.001; }
 
     void clear() { *this = GCodeSettings(); }
 };

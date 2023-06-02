@@ -619,7 +619,7 @@
         <translation>У слоёв нет имен</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="1358"/>
+        <location filename="form_contour.cpp" line="1359"/>
         <source>Delete selected segment</source>
         <translation>Удалить выделенный сегмент</translation>
     </message>
@@ -729,7 +729,7 @@
     </message>
     <message>
         <location filename="form_contour.cpp" line="586"/>
-        <location filename="form_contour.cpp" line="1843"/>
+        <location filename="form_contour.cpp" line="1844"/>
         <source>All files</source>
         <translation>Все файлы</translation>
     </message>
@@ -756,13 +756,13 @@
         <translation type="vanished">Нет контура, имеется только линия захода</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="1841"/>
+        <location filename="form_contour.cpp" line="1842"/>
         <source>Open project</source>
         <translation>Открыть проект из файла</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="1840"/>
-        <location filename="form_contour.cpp" line="1945"/>
+        <location filename="form_contour.cpp" line="1841"/>
+        <location filename="form_contour.cpp" line="1946"/>
         <source>Project files</source>
         <translation>Файлы проектов</translation>
     </message>
@@ -771,23 +771,23 @@
         <translation type="vanished">Загрузить DXF файл. Слой 0 - плоскость XY, слой 1 (не обязательный) - плоскость UV</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="1855"/>
+        <location filename="form_contour.cpp" line="1856"/>
         <source>Contour: Open project file error</source>
         <translation>Контур: Ошибка открытия файла проекта</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="1891"/>
+        <location filename="form_contour.cpp" line="1892"/>
         <source>Contour: Parse project file error</source>
         <oldsource>Cut settings: Parse file error</oldsource>
         <translation>Контур: Ошибка разбора файла проекта</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="1910"/>
+        <location filename="form_contour.cpp" line="1911"/>
         <source>Contour: Save project file error</source>
         <translation>Контур: Ошибка сохранения проекта</translation>
     </message>
     <message>
-        <location filename="form_contour.cpp" line="1943"/>
+        <location filename="form_contour.cpp" line="1944"/>
         <source>Save project</source>
         <translation>Сохранить проект</translation>
     </message>
@@ -1017,7 +1017,7 @@
     </message>
     <message>
         <location filename="form_contour.cpp" line="305"/>
-        <location filename="form_contour.cpp" line="1360"/>
+        <location filename="form_contour.cpp" line="1361"/>
         <source>Delete selected contour</source>
         <translation>Удалить выбранный контур</translation>
     </message>
@@ -2127,76 +2127,76 @@
         <translation>Учитывать диаметр ролика</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="611"/>
+        <location filename="form_passes.cpp" line="613"/>
         <source>Generator Operation Modes</source>
         <translation>Режимы работы генератора</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="628"/>
+        <location filename="form_passes.cpp" line="630"/>
         <source>New</source>
         <translation>Новый</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="629"/>
+        <location filename="form_passes.cpp" line="631"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="630"/>
-        <location filename="form_passes.cpp" line="917"/>
+        <location filename="form_passes.cpp" line="632"/>
+        <location filename="form_passes.cpp" line="919"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="631"/>
-        <location filename="form_passes.cpp" line="921"/>
+        <location filename="form_passes.cpp" line="633"/>
+        <location filename="form_passes.cpp" line="923"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="633"/>
+        <location filename="form_passes.cpp" line="635"/>
         <source>Save As</source>
         <translation>Сохр. как</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="708"/>
-        <location filename="form_passes.cpp" line="803"/>
+        <location filename="form_passes.cpp" line="710"/>
+        <location filename="form_passes.cpp" line="805"/>
         <source>All files</source>
         <translation>Все файлы</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="720"/>
+        <location filename="form_passes.cpp" line="722"/>
         <source>Operation modes: Open file error</source>
         <oldsource>Modes: Open file error</oldsource>
         <translation>Режимы работы: Ошибка открытия файла</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="726"/>
+        <location filename="form_passes.cpp" line="728"/>
         <source>Operation modes: Parse file error</source>
         <oldsource>Modes: Parse file error</oldsource>
         <translation>Режимы работы: Ошибка разбора файла</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="747"/>
+        <location filename="form_passes.cpp" line="749"/>
         <source>Operation modes: Save file error</source>
         <oldsource>Modes: Save file error</oldsource>
         <translation>Режимы работы: Ошибка сохранения файла</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="801"/>
+        <location filename="form_passes.cpp" line="803"/>
         <source>Open cutting settings file</source>
         <oldsource>Open cut settings file</oldsource>
         <translation>Открыть файл параметров реза</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="926"/>
+        <location filename="form_passes.cpp" line="928"/>
         <source>Save cutting settings into a new file</source>
         <oldsource>Save cut settings into a new file</oldsource>
         <translation>Сохранить параметры реза как новый файл</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="800"/>
-        <location filename="form_passes.cpp" line="900"/>
+        <location filename="form_passes.cpp" line="802"/>
+        <location filename="form_passes.cpp" line="902"/>
         <source>Cutting settings files</source>
         <oldsource>Cut settings files</oldsource>
         <translation>Файлы параметров реза</translation>
@@ -2207,26 +2207,26 @@
         <translation>Количество проходов</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="815"/>
+        <location filename="form_passes.cpp" line="817"/>
         <source>Cutting settings: Open file error</source>
         <oldsource>Cut settings: Open file error</oldsource>
         <translation>Настройки реза: Ошибка открытия файла</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="847"/>
+        <location filename="form_passes.cpp" line="849"/>
         <source>Cutting settings: Parse file error</source>
         <oldsource>Cut settings: Parse file error</oldsource>
         <translation>Настройки реза: Ошибка разбора файла</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="867"/>
+        <location filename="form_passes.cpp" line="869"/>
         <source>Cutting settigns: Save file error</source>
         <oldsource>Cut settigns: Save file error</oldsource>
         <translation>Настройки река: Ошибка сохранения файла</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="898"/>
-        <location filename="form_passes.cpp" line="922"/>
+        <location filename="form_passes.cpp" line="900"/>
+        <location filename="form_passes.cpp" line="924"/>
         <source>Save cutting settings</source>
         <oldsource>Save cut settings</oldsource>
         <translation>Сохранить параметры реза</translation>
@@ -2236,13 +2236,13 @@
         <translation type="vanished">Сброс</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="706"/>
+        <location filename="form_passes.cpp" line="708"/>
         <source>Open modes file</source>
         <translation>Открыть файл режимов</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="705"/>
-        <location filename="form_passes.cpp" line="773"/>
+        <location filename="form_passes.cpp" line="707"/>
+        <location filename="form_passes.cpp" line="775"/>
         <source>Modes files</source>
         <oldsource>Modes file (*.xmd *.XMD)</oldsource>
         <translation>Файлы режимов</translation>
@@ -2260,7 +2260,7 @@
         <translation type="vanished">Режимы: Ошибка сохранения файла</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="771"/>
+        <location filename="form_passes.cpp" line="773"/>
         <source>Save modes file</source>
         <translation>Сохранение режимов работы</translation>
     </message>
@@ -2269,30 +2269,30 @@
         <translation type="vanished">Рез: Ошибка сохранения файла</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="913"/>
+        <location filename="form_passes.cpp" line="915"/>
         <source>Back</source>
         <translation>Назад</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="914"/>
+        <location filename="form_passes.cpp" line="916"/>
         <source>Return to Contour editor</source>
         <oldsource>Return to Contour panel</oldsource>
         <translation>Вернуться в панель редактора контура реза</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="918"/>
+        <location filename="form_passes.cpp" line="920"/>
         <source>Open cutting settings from file</source>
         <oldsource>Open cut settings from file</oldsource>
         <translation>Открыть параметры реза из файла</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="925"/>
+        <location filename="form_passes.cpp" line="927"/>
         <source>Save as</source>
         <translation>Сохр. как</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="634"/>
-        <location filename="form_passes.cpp" line="928"/>
+        <location filename="form_passes.cpp" line="636"/>
+        <location filename="form_passes.cpp" line="930"/>
         <source>Default</source>
         <translation>Сброс</translation>
     </message>
@@ -2301,32 +2301,32 @@
         <translation type="vanished">Недорез</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="929"/>
+        <location filename="form_passes.cpp" line="931"/>
         <source>Set default values</source>
         <translation>Установить значения по умолчанию</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="931"/>
+        <location filename="form_passes.cpp" line="933"/>
         <source>Generate</source>
         <translation>Генер.</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="932"/>
+        <location filename="form_passes.cpp" line="934"/>
         <source>Generate G-code</source>
         <translation>Генерировать G-код</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="955"/>
+        <location filename="form_passes.cpp" line="957"/>
         <source>Help</source>
         <translation>Помощь</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="956"/>
+        <location filename="form_passes.cpp" line="958"/>
         <source>Open Help</source>
         <translation>Открыть помощь</translation>
     </message>
     <message>
-        <location filename="form_passes.cpp" line="1000"/>
+        <location filename="form_passes.cpp" line="1002"/>
         <source>Mode</source>
         <translation>Режим</translation>
     </message>
@@ -2806,9 +2806,9 @@
     </message>
     <message>
         <location filename="form_run.cpp" line="112"/>
-        <location filename="form_run.cpp" line="136"/>
-        <location filename="form_run.cpp" line="150"/>
-        <location filename="form_run.cpp" line="164"/>
+        <location filename="form_run.cpp" line="138"/>
+        <location filename="form_run.cpp" line="152"/>
+        <location filename="form_run.cpp" line="166"/>
         <source>DEC</source>
         <translation>Умен.</translation>
     </message>
@@ -2820,9 +2820,9 @@
     </message>
     <message>
         <location filename="form_run.cpp" line="115"/>
-        <location filename="form_run.cpp" line="143"/>
-        <location filename="form_run.cpp" line="157"/>
-        <location filename="form_run.cpp" line="171"/>
+        <location filename="form_run.cpp" line="145"/>
+        <location filename="form_run.cpp" line="159"/>
+        <location filename="form_run.cpp" line="173"/>
         <source>INC</source>
         <translation>Увел.</translation>
     </message>
@@ -2877,66 +2877,66 @@
         <translation>Ток</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="469"/>
-        <location filename="form_run.cpp" line="478"/>
-        <location filename="form_run.cpp" line="552"/>
+        <location filename="form_run.cpp" line="470"/>
+        <location filename="form_run.cpp" line="479"/>
+        <location filename="form_run.cpp" line="554"/>
         <source>G-code size is too big</source>
         <translation>Размер G-кода слишком большой</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="470"/>
-        <location filename="form_run.cpp" line="479"/>
-        <location filename="form_run.cpp" line="485"/>
-        <location filename="form_run.cpp" line="543"/>
-        <location filename="form_run.cpp" line="553"/>
+        <location filename="form_run.cpp" line="471"/>
+        <location filename="form_run.cpp" line="480"/>
+        <location filename="form_run.cpp" line="486"/>
+        <location filename="form_run.cpp" line="545"/>
+        <location filename="form_run.cpp" line="555"/>
         <source>G-code size</source>
         <translation>Размер G-кода</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="470"/>
         <location filename="form_run.cpp" line="471"/>
-        <location filename="form_run.cpp" line="479"/>
-        <location filename="form_run.cpp" line="485"/>
+        <location filename="form_run.cpp" line="472"/>
+        <location filename="form_run.cpp" line="480"/>
         <location filename="form_run.cpp" line="486"/>
-        <location filename="form_run.cpp" line="543"/>
-        <location filename="form_run.cpp" line="544"/>
-        <location filename="form_run.cpp" line="553"/>
+        <location filename="form_run.cpp" line="487"/>
+        <location filename="form_run.cpp" line="545"/>
+        <location filename="form_run.cpp" line="546"/>
+        <location filename="form_run.cpp" line="555"/>
         <source>bytes</source>
         <translation>байт</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="471"/>
-        <location filename="form_run.cpp" line="479"/>
-        <location filename="form_run.cpp" line="486"/>
-        <location filename="form_run.cpp" line="544"/>
-        <location filename="form_run.cpp" line="553"/>
+        <location filename="form_run.cpp" line="472"/>
+        <location filename="form_run.cpp" line="480"/>
+        <location filename="form_run.cpp" line="487"/>
+        <location filename="form_run.cpp" line="546"/>
+        <location filename="form_run.cpp" line="555"/>
         <source>CNC program array size</source>
         <translation>Размер памяти ЧПУ</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="510"/>
+        <location filename="form_run.cpp" line="512"/>
         <source>Read G-code error</source>
         <translation>Ошибка чтения G-кода</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="630"/>
-        <location filename="form_run.cpp" line="642"/>
-        <location filename="form_run.cpp" line="653"/>
+        <location filename="form_run.cpp" line="634"/>
+        <location filename="form_run.cpp" line="647"/>
+        <location filename="form_run.cpp" line="658"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="630"/>
+        <location filename="form_run.cpp" line="634"/>
         <source>No G-code</source>
         <translation>Нет  G-кода</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="642"/>
+        <location filename="form_run.cpp" line="647"/>
         <source>G-code normalization error</source>
         <translation>Ошибка нормализации G-кода</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="796"/>
+        <location filename="form_run.cpp" line="803"/>
         <source>Loaded</source>
         <translation>Загружено</translation>
     </message>
@@ -2945,30 +2945,30 @@
         <translation type="vanished">Ошибка G-код</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="653"/>
+        <location filename="form_run.cpp" line="658"/>
         <source>No CNC connection</source>
         <translation>Нет связи с ЧПУ</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="699"/>
-        <location filename="form_run.cpp" line="710"/>
-        <location filename="form_run.cpp" line="727"/>
+        <location filename="form_run.cpp" line="704"/>
+        <location filename="form_run.cpp" line="715"/>
+        <location filename="form_run.cpp" line="732"/>
         <source>Start</source>
         <translation>Пуск</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="776"/>
+        <location filename="form_run.cpp" line="781"/>
         <source>Loading</source>
         <translation>Загрузка</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="580"/>
+        <location filename="form_run.cpp" line="584"/>
         <source>G-code is loaded</source>
         <translation>G-код загружен</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="591"/>
-        <location filename="form_run.cpp" line="814"/>
+        <location filename="form_run.cpp" line="595"/>
+        <location filename="form_run.cpp" line="821"/>
         <source>Load G-code error</source>
         <translation>Ошибка загрузки G-кода</translation>
     </message>
@@ -2977,21 +2977,21 @@
         <translation type="vanished">Реверс</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="699"/>
-        <location filename="form_run.cpp" line="710"/>
-        <location filename="form_run.cpp" line="727"/>
+        <location filename="form_run.cpp" line="704"/>
+        <location filename="form_run.cpp" line="715"/>
+        <location filename="form_run.cpp" line="732"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="699"/>
-        <location filename="form_run.cpp" line="710"/>
-        <location filename="form_run.cpp" line="727"/>
+        <location filename="form_run.cpp" line="704"/>
+        <location filename="form_run.cpp" line="715"/>
+        <location filename="form_run.cpp" line="732"/>
         <source>Back</source>
         <translation>Назад</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="694"/>
+        <location filename="form_run.cpp" line="699"/>
         <source>Start cutting</source>
         <translation>Начать рез</translation>
     </message>
@@ -3001,33 +3001,33 @@
         <translation>Барабан</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="693"/>
+        <location filename="form_run.cpp" line="698"/>
         <source>Start/Stop running</source>
         <translation>Начать/остановить работу</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="695"/>
+        <location filename="form_run.cpp" line="700"/>
         <source>Stop cutting</source>
         <translation>Остановить рез</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="700"/>
-        <location filename="form_run.cpp" line="711"/>
-        <location filename="form_run.cpp" line="728"/>
+        <location filename="form_run.cpp" line="705"/>
+        <location filename="form_run.cpp" line="716"/>
+        <location filename="form_run.cpp" line="733"/>
         <source>Go to back</source>
         <translation>Двигаться в обратную сторону</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="700"/>
-        <location filename="form_run.cpp" line="711"/>
-        <location filename="form_run.cpp" line="728"/>
+        <location filename="form_run.cpp" line="705"/>
+        <location filename="form_run.cpp" line="716"/>
+        <location filename="form_run.cpp" line="733"/>
         <source>Cancel program</source>
         <translation>Отменить программу</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="721"/>
-        <location filename="form_run.cpp" line="738"/>
-        <location filename="form_run.cpp" line="750"/>
+        <location filename="form_run.cpp" line="726"/>
+        <location filename="form_run.cpp" line="743"/>
+        <location filename="form_run.cpp" line="755"/>
         <source>Stop</source>
         <translation>Стоп</translation>
     </message>
@@ -3036,23 +3036,23 @@
         <translation type="vanished">Сделать паузу</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="744"/>
+        <location filename="form_run.cpp" line="749"/>
         <source>Shortcut</source>
         <translation>Коротко</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="745"/>
+        <location filename="form_run.cpp" line="750"/>
         <source>Fast return to start position</source>
         <translation>Быстрый возврат на начальную позицию</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="745"/>
-        <location filename="form_run.cpp" line="757"/>
+        <location filename="form_run.cpp" line="750"/>
+        <location filename="form_run.cpp" line="762"/>
         <source>Reset CNC</source>
         <translation>Сброс ЧПУ</translation>
     </message>
     <message>
-        <location filename="form_run.cpp" line="756"/>
+        <location filename="form_run.cpp" line="761"/>
         <source>Reset</source>
         <translation>Сброс</translation>
     </message>
@@ -3926,7 +3926,7 @@
         <translation>ЧПУ Меатэк</translation>
     </message>
     <message>
-        <location filename="cnc.cpp" line="707"/>
+        <location filename="cnc.cpp" line="717"/>
         <source>CNC</source>
         <translation>ЧПУ</translation>
     </message>
@@ -3939,7 +3939,7 @@
         <translation type="vanished">от</translation>
     </message>
     <message>
-        <location filename="cnc.cpp" line="710"/>
+        <location filename="cnc.cpp" line="720"/>
         <source>built on</source>
         <translation>от</translation>
     </message>
@@ -3948,18 +3948,18 @@
         <translation type="vanished">на</translation>
     </message>
     <message>
-        <location filename="cnc.cpp" line="707"/>
+        <location filename="cnc.cpp" line="717"/>
         <location filename="fpga.cpp" line="153"/>
         <source>ver.</source>
         <translation>вер.</translation>
     </message>
     <message>
-        <location filename="cnc.cpp" line="709"/>
+        <location filename="cnc.cpp" line="719"/>
         <source>MHz</source>
         <translation>МГц</translation>
     </message>
     <message>
-        <location filename="cnc.cpp" line="714"/>
+        <location filename="cnc.cpp" line="724"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
@@ -4639,7 +4639,22 @@
         <translation>Длина линии захода</translation>
     </message>
     <message>
-        <location filename="uv_sizing_widget.cpp" line="102"/>
+        <location filename="uv_sizing_widget.cpp" line="21"/>
+        <source>Reset</source>
+        <translation>Сброс</translation>
+    </message>
+    <message>
+        <location filename="uv_sizing_widget.cpp" line="22"/>
+        <source>Set default values</source>
+        <translation>Установить значения по умолчанию</translation>
+    </message>
+    <message>
+        <location filename="uv_sizing_widget.cpp" line="25"/>
+        <source>Generate contour</source>
+        <translation>Генерировать контур</translation>
+    </message>
+    <message>
+        <location filename="uv_sizing_widget.cpp" line="104"/>
         <source>Cutting direction</source>
         <oldsource>Cut direction</oldsource>
         <translation>Направление реза</translation>
@@ -4649,45 +4664,45 @@
         <translation type="vanished">Длина линии захода</translation>
     </message>
     <message>
-        <location filename="uv_sizing_widget.cpp" line="21"/>
+        <location filename="uv_sizing_widget.cpp" line="24"/>
         <source>Generate</source>
         <translation>Генерировать</translation>
     </message>
     <message>
-        <location filename="uv_sizing_widget.cpp" line="23"/>
-        <location filename="uv_sizing_widget.cpp" line="28"/>
+        <location filename="uv_sizing_widget.cpp" line="27"/>
+        <location filename="uv_sizing_widget.cpp" line="32"/>
         <source>Recalculate</source>
         <translation>Пересчёт</translation>
     </message>
     <message>
-        <location filename="uv_sizing_widget.cpp" line="25"/>
+        <location filename="uv_sizing_widget.cpp" line="29"/>
         <source>Measured top diameter</source>
         <oldsource>Measuring top diameter</oldsource>
         <translation>Измеренные верхний диаметр</translation>
     </message>
     <message>
-        <location filename="uv_sizing_widget.cpp" line="26"/>
+        <location filename="uv_sizing_widget.cpp" line="30"/>
         <source>Measured bottom diameter</source>
         <oldsource>Measuring bot diameter</oldsource>
         <translation>Измеренный нижний диаметр</translation>
     </message>
     <message>
-        <location filename="uv_sizing_widget.cpp" line="30"/>
+        <location filename="uv_sizing_widget.cpp" line="34"/>
         <source>Result</source>
         <translation>Результат</translation>
     </message>
     <message>
-        <location filename="uv_sizing_widget.cpp" line="37"/>
-        <location filename="uv_sizing_widget.cpp" line="45"/>
-        <location filename="uv_sizing_widget.cpp" line="53"/>
-        <location filename="uv_sizing_widget.cpp" line="61"/>
+        <location filename="uv_sizing_widget.cpp" line="41"/>
+        <location filename="uv_sizing_widget.cpp" line="48"/>
+        <location filename="uv_sizing_widget.cpp" line="55"/>
+        <location filename="uv_sizing_widget.cpp" line="62"/>
         <location filename="uv_sizing_widget.cpp" line="69"/>
-        <location filename="uv_sizing_widget.cpp" line="77"/>
-        <location filename="uv_sizing_widget.cpp" line="96"/>
-        <location filename="uv_sizing_widget.cpp" line="141"/>
-        <location filename="uv_sizing_widget.cpp" line="149"/>
-        <location filename="uv_sizing_widget.cpp" line="169"/>
-        <location filename="uv_sizing_widget.cpp" line="178"/>
+        <location filename="uv_sizing_widget.cpp" line="82"/>
+        <location filename="uv_sizing_widget.cpp" line="99"/>
+        <location filename="uv_sizing_widget.cpp" line="144"/>
+        <location filename="uv_sizing_widget.cpp" line="152"/>
+        <location filename="uv_sizing_widget.cpp" line="171"/>
+        <location filename="uv_sizing_widget.cpp" line="180"/>
         <source>mm</source>
         <translation>мм</translation>
     </message>
