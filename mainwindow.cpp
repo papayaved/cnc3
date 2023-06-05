@@ -337,6 +337,7 @@ void MainWindow::onHomePageClickedUnlocked() {
         labelTitle->setText("");
         this->setWindowTitle(m_formHome->objectName());
         m_stackedWidget->setCurrentWidget(m_formHome);
+        m_formHome->moveToWelcomeWidget();
     }
 }
 
@@ -346,17 +347,16 @@ void MainWindow::onHomePageClicked() {
 }
 
 void MainWindow::onCncError(const string &s) {
+    std::cerr << ("CNC connection failed: " + s) << std::endl;
+
+    QMessageBox::critical(
+        this,
+        "CNC connection failed",
+        "CNC connection failed.\nApp will try to reconnect.\n\nError message: " + QString::fromStdString(s)
+    );
+
     if (m_stackedWidget && m_formHome && m_stackedWidget->currentWidget() != m_formHome) {
-        std::cerr << ("CNC connection failed: " + s) << std::endl;
-
-        QMessageBox::critical(
-            this,
-            "CNC connection failed",
-            "CNC connection failed.\nApp will try to reconnect.\n\nError message: " + QString::fromStdString(s)
-        );
-
         onHomePageClickedUnlocked();
-
         connectCnc();
     }
 }

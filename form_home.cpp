@@ -140,6 +140,12 @@ void FormHome::onItemClicked(QTreeWidgetItem *item, int) {
     }
 }
 
+void FormHome::moveToWelcomeWidget() {
+    stackedWidget->setCurrentWidget(widgetWelcome);
+    treeApps->clearSelection();
+    itemWelcome->setSelected(true);
+}
+
 FormHome::~FormHome() {}
 
 void FormHome::createButtons() {

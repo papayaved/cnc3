@@ -1162,14 +1162,10 @@ void FormRun::onFrameChanged(int frame_num, const fpoint_t& bot_pos, const fpoin
                 m_par.workContours.setXYPos(bot_pos);
                 m_par.workContours.setUVPos(bot_pos + top_pos);
 
-                double L = m_par.gcodeSettings.L;
-                double H = m_par.gcodeSettings.H;
+                const double& k = m_par.gcodeSettings.bot_coe;
+                fpoint_t dXY = fpoint_t(k * top_pos.x, k * top_pos.y);
 
-                fpoint_t dXY = fpoint_t(H/L * top_pos.x, H/L * top_pos.y);
                 m_par.workContours.setBotPos(bot_pos + dXY);
-
-//                fpoint_t xy = m_par.workContours.intersectUV();
-//                m_par.workContours.setBotPos(xy);
             }
             else {
                 m_par.workContours.setBotPos(bot_pos);

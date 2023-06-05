@@ -23,6 +23,7 @@ struct GCodeSettings {
     bool uv_ena {false}, D_ena {false};
     AXIS axis {AXIS::AXIS_X};
     double L{0}, H{0}, T{0}, D{0};
+    double bot_coe {0}; // H/L
 
     bool isUV() const {
         return uv_ena && valid.LH && valid.T && L > 0.001 && H > 0.001 && T > 0.001 && H + T < L;

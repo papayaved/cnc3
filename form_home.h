@@ -73,6 +73,7 @@ public:
     ~FormHome();
 
     void setFontPointSize(int pointSize);
+    void moveToWelcomeWidget();
 
 signals:
     void contourPageClicked();

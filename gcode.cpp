@@ -1018,5 +1018,7 @@ GCodeSettings GCode::getSettings() const {
             break;
     }
 
+    res.bot_coe = res.isUV() ? res.H / res.L : 0;
+
     return res;
 }
