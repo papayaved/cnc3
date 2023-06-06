@@ -970,8 +970,10 @@ bool CncComThread::readBurst(uint32_t addr, size_t len, vector<uint8_t>& data) {
     size_t rem = len;
     int pct_reg = 0;
 
-    if (!readBurstReq(addr, len)) // 3 attempts to write, emit error signal if error
+    if (!readBurstReq(addr, len)) { // 3 attempts to write, emit error signal if error
+        qDebug("Read burst request error");
         return false;
+    }
 
     while (rem > 0) {
         if ( readBurstPacket(m_rxpack) ) {

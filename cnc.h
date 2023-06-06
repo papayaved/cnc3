@@ -172,7 +172,7 @@ public:
     inline CncCom& com() { return m_com; }
     void reconnect();
 
-    bool stateClear();
+    bool stateReset();
     bool reset();
 
     void clear();

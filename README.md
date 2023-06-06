@@ -1,3 +1,3 @@
-# cnc3
-EDM machine Qt desktop app
-Based on QwtPlot library
+# CNC3
+Qt desktop program for Meatec (Russia) EDM CNC machine (prototype).
+Based on QwtPlot library.

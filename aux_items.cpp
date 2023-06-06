@@ -15,13 +15,14 @@ namespace auxItems {
         swap(p[1], p[2]);
     }
 
-    // Swap two bytes. Fast memory saving version for integer numbers
+    // Swap two bytes. Fast, memory saving version for integer numbers
     void swap(uint8_t& a, uint8_t& b) {
         a = a ^ b;
         b = a ^ b;
         a = b ^ a;
     }
 
+    // Print bytes in HEX format by 16 numbers in row
     string toString(const uint8_t * const bytes, size_t size) {
         size_t i;
         QString s;
@@ -38,11 +39,12 @@ namespace auxItems {
         return s.toStdString();
     }
 
+    // Print bytes in a debug console in HEX format by 16 numbers in row
     void print_array(const uint8_t * const bytes, size_t size) {
         qDebug("%s", toString(bytes, size).c_str());
     }
 
-    // Print the vector to the debug console
+    // Print a vector to the debug console
     void print_vector(const vector<uint8_t>& data) {
         print_array(data.data(), data.size());
     }
@@ -60,7 +62,7 @@ namespace auxItems {
                 txt->write( QString::asprintf("%s\n", s.c_str()) );
     }
 
-    // Add data to the vector of bytes to tail from src
+    // Add data to the vector "dst" to tail from "src"
     void push_back_range(vector<uint8_t>& dst, const vector<uint8_t>& src, const size_t& src_begin, const size_t& src_length) {
 //        size_t size = dst.size();
 //        dst.resize(dst.size() + src_length);
@@ -70,6 +72,7 @@ namespace auxItems {
             dst.push_back(src[i]);
     }
 
+    // Add data to the vector "dst" to tail from "src"
     void push_back_range(std::vector<uint8_t> &dst, const ComPacket &src) {
         size_t size = dst.size();
         dst.resize(dst.size() + src.size());
@@ -141,6 +144,7 @@ namespace auxItems {
         return false;
     }
 
+    // Read a number from the given byte possition
      uint16_t BitConverter::toUInt16(const vector<uint8_t>& v, size_t pos) {
          uint16_t res;
          if (pos + sizeof(res) <= v.size()) {
@@ -150,6 +154,7 @@ namespace auxItems {
          return 0;
      }
 
+     // Read a number from the given byte possition
      uint32_t BitConverter::toUInt32(const vector<uint8_t>& v, size_t pos) {
          uint32_t res;
          if (pos + sizeof(res) <= v.size()) {
@@ -159,6 +164,7 @@ namespace auxItems {
          return 0;
      }
 
+     // Read a number from the given byte possition
      uint64_t BitConverter::toUInt48(const vector<uint8_t>& v, size_t pos) {
          uint64_t res;
          const size_t size = sizeof(uint32_t) + sizeof(uint16_t);
@@ -170,6 +176,7 @@ namespace auxItems {
          return 0;
      }
 
+     // Read a number from the given byte possition
      uint64_t BitConverter::toUInt64(const vector<uint8_t>& v, size_t pos) {
          uint64_t res;
          if (pos + sizeof(res) <= v.size()) {
@@ -179,6 +186,7 @@ namespace auxItems {
          return 0;
      }
 
+     // Read a number from the given byte possition
      int32_t BitConverter::toInt32(const vector<uint8_t>& v, size_t pos) {
          int32_t res;
          if (pos + sizeof(res) <= v.size()) {
@@ -188,6 +196,7 @@ namespace auxItems {
          return 0;
      }
 
+     // Read a number from the given byte possition
      float BitConverter::toFloat(const vector<uint8_t>& v, size_t pos) {
          float res;
          if (pos + sizeof(res) <= v.size()) {
@@ -197,6 +206,7 @@ namespace auxItems {
          return 0;
      }
 
+     // Boolean value to string
      std::string toString(const bool& value) noexcept {
          return value ? "true" : "false";
      }
@@ -222,6 +232,7 @@ namespace auxItems {
 //         }
 //     }
 
+     // Print message to std::string use printf format. Maximum message size 256 bytes
      std::string string_format(const char *format, ...) {
         const size_t BUF_SIZE = 256;
 
@@ -260,6 +271,7 @@ namespace auxItems {
              m_txt->clear();
      }
 
+     // Write to the end and repaint
      void Reporter::write(const QString& s) {
          if (m_txt) {
              m_txt->append(s);
@@ -269,13 +281,14 @@ namespace auxItems {
      }
 
      void Reporter::write(const char* const s) {
-         writeLine( QString(s) );
+         write( QString(s) );
      }
 
      void Reporter::write(const string& s) {
-         writeLine( QString::fromStdString(s) );
+         write( QString::fromStdString(s) );
      }
 
+     // Write the string and start a new line
      void Reporter::writeLine(const QString& s) {
          write(s + "\n");
      }
@@ -288,6 +301,7 @@ namespace auxItems {
          writeLine( QString::fromStdString(s) );
      }
 
+     // Convert double into int32_t with rounding and limits
      int32_t double_to_int32(double value) {
          double res = round(value);
          if (res > INT32_MAX)
@@ -298,11 +312,12 @@ namespace auxItems {
          return int32_t(res);
      }
 
+     //  Size of a list of strings in CNC program memory. Size including newlines
      size_t sizeOf(const std::list<std::string>& gframes) {
          size_t size = 0;
 
          for (const string& s : gframes) {
-             size += s.size() + 1;
+             size += s.size() + 1; // + "/n"
          }
 
          return size;

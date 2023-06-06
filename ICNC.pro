@@ -47,7 +47,6 @@ CONFIG += qwt
 QT += xml
 
 SOURCES += \
-    amp.cpp \
     aux_items.cpp \
     center_widget.cpp \
     checkbox_delegate.cpp \

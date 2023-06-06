@@ -1416,7 +1416,7 @@
     </message>
     <message>
         <location filename="form_home.cpp" line="14"/>
-        <location filename="form_home.cpp" line="146"/>
+        <location filename="form_home.cpp" line="152"/>
         <source>Home</source>
         <translation>Главная</translation>
     </message>
@@ -1470,17 +1470,17 @@
         <translation>Михаил Меньшиков</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="149"/>
+        <location filename="form_home.cpp" line="155"/>
         <source>Contour</source>
         <translation>Контур</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="152"/>
+        <location filename="form_home.cpp" line="158"/>
         <source>G-code</source>
         <translation>G-код</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="155"/>
+        <location filename="form_home.cpp" line="161"/>
         <source>Run</source>
         <translation>Работа</translation>
     </message>
@@ -1489,7 +1489,7 @@
         <translation type="vanished">Настройки</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="367"/>
+        <location filename="form_home.cpp" line="373"/>
         <source>Serial port is not found</source>
         <translation>Последовательный порт не найден</translation>
     </message>
@@ -1498,12 +1498,12 @@
         <translation type="vanished">Восстановить G-код</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="171"/>
+        <location filename="form_home.cpp" line="177"/>
         <source>Recovery</source>
         <translation>Восстан.</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="161"/>
+        <location filename="form_home.cpp" line="167"/>
         <source>Pult</source>
         <translation>Пульт</translation>
     </message>
@@ -1513,7 +1513,7 @@
         <translation>Версия приложения</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="181"/>
+        <location filename="form_home.cpp" line="187"/>
         <source>Test</source>
         <translation>Тест</translation>
     </message>
@@ -1522,22 +1522,22 @@
         <translation type="vanished">Свернуть программу</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="188"/>
+        <location filename="form_home.cpp" line="194"/>
         <source>Minimize</source>
         <translation>Свернуть</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="191"/>
+        <location filename="form_home.cpp" line="197"/>
         <source>Shutdown</source>
         <translation>Выкл.</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="192"/>
+        <location filename="form_home.cpp" line="198"/>
         <source>Turn off the computer</source>
         <translation>Выключить компьютер</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="195"/>
+        <location filename="form_home.cpp" line="201"/>
         <source>Help</source>
         <translation>Помощь</translation>
     </message>
@@ -1561,75 +1561,75 @@
         <translation type="vanished">Калибровка</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="150"/>
+        <location filename="form_home.cpp" line="156"/>
         <source>Load and edit contour</source>
         <oldsource>Load and edit a contour</oldsource>
         <translation>Редактировать контур</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="153"/>
+        <location filename="form_home.cpp" line="159"/>
         <source>Open G-code editor</source>
         <translation>Редактировать программу G-код</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="156"/>
+        <location filename="form_home.cpp" line="162"/>
         <source>Open Work panel</source>
         <oldsource>Open Run panel</oldsource>
         <translation>Открыть рабочую панель</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="158"/>
+        <location filename="form_home.cpp" line="164"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="159"/>
+        <location filename="form_home.cpp" line="165"/>
         <source>Change CNC settings</source>
         <translation>Изменить настройки ЧПУ</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="162"/>
+        <location filename="form_home.cpp" line="168"/>
         <source>Manual ruling of the CNC</source>
         <translation>Открыть панель ручного управления</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="165"/>
+        <location filename="form_home.cpp" line="171"/>
         <source>Center</source>
         <translation>Центр</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="172"/>
+        <location filename="form_home.cpp" line="178"/>
         <source>Recovery the last job</source>
         <translation>Восстановить последнее прерванное задание</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="182"/>
+        <location filename="form_home.cpp" line="188"/>
         <source>Diagnostic Panel</source>
         <translation>Панель диагностики</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="189"/>
+        <location filename="form_home.cpp" line="195"/>
         <source>Minimize CNC program and open Linux desktop</source>
         <translation>Свернуть программу и показать рабочий стол</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="196"/>
+        <location filename="form_home.cpp" line="202"/>
         <source>Open Help</source>
         <translation>Открыть помощь</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="270"/>
+        <location filename="form_home.cpp" line="276"/>
         <source>Power off dialog</source>
         <oldsource>Shut down dialog</oldsource>
         <translation>Выключение компьютера</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="273"/>
+        <location filename="form_home.cpp" line="279"/>
         <source>Yes</source>
         <translation>Да</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="274"/>
+        <location filename="form_home.cpp" line="280"/>
         <source>No</source>
         <translation>Нет</translation>
     </message>
@@ -1638,7 +1638,7 @@
         <translation type="vanished">Выключение</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="271"/>
+        <location filename="form_home.cpp" line="277"/>
         <source>Are you sure you want to turn off the computer now</source>
         <translation>Вы уверены, что хотите выключить компьютер</translation>
     </message>
@@ -1656,18 +1656,18 @@
         <translation type="vanished">Соединение...</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="351"/>
+        <location filename="form_home.cpp" line="357"/>
         <source>Connecting</source>
         <translation>Соединение</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="351"/>
+        <location filename="form_home.cpp" line="357"/>
         <source>Attempt</source>
         <translation>Попытка</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="365"/>
-        <location filename="form_home.cpp" line="382"/>
+        <location filename="form_home.cpp" line="371"/>
+        <location filename="form_home.cpp" line="388"/>
         <source>Error</source>
         <oldsource>Error: </oldsource>
         <translation>Ошибка</translation>
@@ -1677,7 +1677,7 @@
         <translation type="vanished">Последовательный порт не найден</translation>
     </message>
     <message>
-        <location filename="form_home.cpp" line="384"/>
+        <location filename="form_home.cpp" line="390"/>
         <source>No connection. Check conection between computer and CNC board</source>
         <translation>Нет соединения. Проверьте соединение между компьютером и платой ЧПУ</translation>
     </message>
@@ -3926,7 +3926,7 @@
         <translation>ЧПУ Меатэк</translation>
     </message>
     <message>
-        <location filename="cnc.cpp" line="717"/>
+        <location filename="cnc.cpp" line="719"/>
         <source>CNC</source>
         <translation>ЧПУ</translation>
     </message>
@@ -3939,7 +3939,7 @@
         <translation type="vanished">от</translation>
     </message>
     <message>
-        <location filename="cnc.cpp" line="720"/>
+        <location filename="cnc.cpp" line="722"/>
         <source>built on</source>
         <translation>от</translation>
     </message>
@@ -3948,18 +3948,18 @@
         <translation type="vanished">на</translation>
     </message>
     <message>
-        <location filename="cnc.cpp" line="717"/>
+        <location filename="cnc.cpp" line="719"/>
         <location filename="fpga.cpp" line="153"/>
         <source>ver.</source>
         <translation>вер.</translation>
     </message>
     <message>
-        <location filename="cnc.cpp" line="719"/>
+        <location filename="cnc.cpp" line="721"/>
         <source>MHz</source>
         <translation>МГц</translation>
     </message>
     <message>
-        <location filename="cnc.cpp" line="724"/>
+        <location filename="cnc.cpp" line="726"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>

@@ -121,81 +121,81 @@ void FormRun::addButtons() {
     m_btnHighVolt->setText(tr("High Voltage"));
     m_btnHighVolt->setStatusTip(tr("Enable High Voltage"));
 #else
-    btnHighVolt->setEnabled(false);
+    m_btnHighVolt->setEnabled(false);
 #endif
 
-    m_btnLowHighVolt = new QPushButton;
 #ifndef STONE
+    m_btnLowHighVolt = new QPushButton;
     m_btnLowHighVolt->setCheckable(true);
     m_btnLowHighVolt->setText(tr("Low High Volt."));
     m_btnLowHighVolt->setStatusTip(tr("Enable Low High Voltage"));
-#else
-    btnLowHighVolt->setEnabled(false);
 #endif
 
     m_btnCurrentDec = new QPushButton;
 #ifndef STONE
     m_btnCurrentDec->setText(tr("DEC"));
 #else
-    btnCurrentDec->setEnabled(false);
+    m_btnCurrentDec->setEnabled(false);
 #endif
 
     m_btnCurrentInc = new QPushButton;
 #ifndef STONE
     m_btnCurrentInc->setText(tr("INC"));
 #else
-    btnCurrentInc->setEnabled(false);
+    m_btnCurrentInc->setEnabled(false);
 #endif
 
     m_btnWidthDec = new QPushButton;
 #ifndef STONE
     m_btnWidthDec->setText(tr("DEC"));
 #else
-    btnWidthDec->setEnabled(false);
+    m_btnWidthDec->setEnabled(false);
 #endif
 
     m_btnWidthInc = new QPushButton;
 #ifndef STONE
     m_btnWidthInc->setText(tr("INC"));
 #else
-    btnWidthInc->setEnabled(false);
+    m_btnWidthInc->setEnabled(false);
 #endif
 
     m_btnRatioDec = new QPushButton;
 #ifndef STONE
     m_btnRatioDec->setText(tr("DEC"));
 #else
-    btnRatioDec->setEnabled(false);
+    m_btnRatioDec->setEnabled(false);
 #endif
 
     m_btnRatioInc = new QPushButton;
 #ifndef STONE
     m_btnRatioInc->setText(tr("INC"));
 #else
-    btnRatioInc->setEnabled(false);
+    m_btnRatioInc->setEnabled(false);
 #endif
 
     m_buttons = {
         m_btnBreak, m_btnPump, m_btnRoll, m_btnRollVelDec, m_btnRollVelInc,\
         m_btnHighVolt, m_btnCurrentDec, m_btnCurrentInc, m_btnWidthDec, m_btnWidthInc, m_btnRatioInc, m_btnRatioDec,\
-        m_btnHome, m_btnHelp,
-        m_btnLowHighVolt
+        m_btnHome, m_btnHelp
+#ifndef STONE
+        , m_btnLowHighVolt
+#endif
     };
 
 #ifdef STONE
-    gridButtons->addWidget(btnHome, 1, 0);
-    gridButtons->addWidget(btnBreak, 1, 1);
-    gridButtons->addWidget(btnPump, 1, 2);
-    gridButtons->addWidget(btnRoll, 1, 3);
-    gridButtons->addWidget(btnRollVelDec, 1, 4);
-    gridButtons->addWidget(btnRollVelInc, 1, 5);
-    gridButtons->addWidget(btnHighVolt, 1, 6);
-    gridButtons->addWidget(btnCurrentDec, 1, 7);
-    gridButtons->addWidget(btnCurrentInc, 1, 8);
-    gridButtons->addWidget(btnWidthDec, 1, 9);
-    gridButtons->addWidget(btnWidthInc, 1, 10);
-    gridButtons->addWidget(btnRatioDec, 1, 11);
-    gridButtons->addWidget(btnRatioInc, 1, 12);
+    m_gridButtons->addWidget(m_btnHome, 1, 0);
+    m_gridButtons->addWidget(m_btnBreak, 1, 1);
+    m_gridButtons->addWidget(m_btnPump, 1, 2);
+    m_gridButtons->addWidget(m_btnRoll, 1, 3);
+    m_gridButtons->addWidget(m_btnRollVelDec, 1, 4);
+    m_gridButtons->addWidget(m_btnRollVelInc, 1, 5);
+    m_gridButtons->addWidget(m_btnHighVolt, 1, 6);
+    m_gridButtons->addWidget(m_btnCurrentDec, 1, 7);
+    m_gridButtons->addWidget(m_btnCurrentInc, 1, 8);
+    m_gridButtons->addWidget(m_btnWidthDec, 1, 9);
+    m_gridButtons->addWidget(m_btnWidthInc, 1, 10);
+    m_gridButtons->addWidget(m_btnRatioDec, 1, 11);
+    m_gridButtons->addWidget(m_btnRatioInc, 1, 12);
 #else
     m_gridButtons->addWidget(m_btnHome, 0, 0);
 
@@ -332,7 +332,7 @@ void FormRun::createSpinBoxes() {
     m_gridButtons = new QGridLayout;
 
 #ifdef STONE
-    gridButtons->addWidget(groupRoll, 0, 4, 1, 2);
+    m_gridButtons->addWidget(m_groupRoll, 0, 4, 1, 2);
 #else
     m_gridButtons->addWidget(m_groupRoll, 0, 3, 1, 2);
 
@@ -534,7 +534,7 @@ void FormRun::init(bool recovery) {
     _init();
 
     try {
-        m_par.cnc.stateClear();
+        m_par.cnc.stateReset();
 
         // check G-code size
         m_gframes = m_par.gcode.toFrameList();
@@ -560,7 +560,7 @@ void FormRun::init(bool recovery) {
             if (m_par.cncContext.valid()) {
                 m_par.cnc.reset(); // includes Input Levels
 #if defined(STONE)
-                par.cnc.writeSemaphoreCncEnable(true);
+                m_par.cnc.writeSemaphoreCncEnable(true);
 #else
                 m_par.cnc.writeCncEnable(true);
 #endif
@@ -958,7 +958,7 @@ void FormRun::readCncContext() {
 #ifndef STONE
             m_runWidget->txtMsg->setText(m_info + QString( ctx.toStringRunDebug().c_str() ));
 #else
-            runWidget->txtMsg->setText(m_info + QString( ctx.toStringRunStoneDebug().c_str() ));
+            m_runWidget->txtMsg->setText(m_info + QString( ctx.toStringRunStoneDebug().c_str() ));
 #endif
 //            qDebug() << "CNC reader: " + QString(ctx.toString().c_str());
 

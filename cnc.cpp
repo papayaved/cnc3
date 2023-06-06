@@ -53,10 +53,12 @@ void Cnc::reconnect() {
     m_com.open();
 }
 
-bool Cnc::stateClear() {
+// Reset CNC cutting state machine
+bool Cnc::stateReset() {
     return m_com.write32(ADDR::CLEAR, ADDR::STATE_RESET_MASK);
 }
 
+// Set CNC parameter from settigs
 bool Cnc::reset() {
 //    com.write32(ADDR::CLEAR, ADDR::RESET_MASK);
 
@@ -87,10 +89,12 @@ bool Cnc::reset() {
     return OK;
 }
 
+// Clear communication interface
 void Cnc::clear() {
     m_com.clear();
 }
 
+// Write the array into CNC starting at the given address
 bool Cnc::writeArray(uint32_t addr, const vector<uint32_t>& data) {
     qDebug("cnc::writeArray>>Address 0x%08x, %d DWords: ", int(addr), int(data.size()));
 
@@ -103,6 +107,7 @@ bool Cnc::writeArray(uint32_t addr, const vector<uint32_t>& data) {
     return OK;
 }
 
+// Write the array into CNC G-code program memory in write-acknowledge mode
 bool Cnc::writeProgArray(const vector<uint8_t>& bytes) {
     static vector<uint32_t> addr_ar(2);
     addr_ar[0] = 0;
@@ -120,6 +125,7 @@ bool Cnc::writeProgArray(const vector<uint8_t>& bytes) {
     return OK;
 }
 
+// Write the array into CNC G-code program memory in burst mode
 bool Cnc::writeProgArrayBurst(const vector<uint8_t>& bytes) {
     qDebug("cnc::writeProgArrayBurst>>Write to Program Array %d bytes (burst): ", int(bytes.size()));
 
@@ -136,12 +142,14 @@ bool Cnc::writeProgArrayBurst(const vector<uint8_t>& bytes) {
     return OK;
 }
 
+// Read program array size (not capacity)
 uint32_t Cnc::readProgArraySize() {
     uint32_t data;
     m_com.read32(ADDR::PA_SIZE, data);
     return data;
 }
 
+// Read program array memory pack by pack
 vector<uint8_t> Cnc::readProgArray(size_t len) {
     vector<uint8_t> bytes;
 
@@ -152,6 +160,7 @@ vector<uint8_t> Cnc::readProgArray(size_t len) {
     return bytes;
 }
 
+// Read program array memory pack by pack
 vector<uint8_t> Cnc::readProgArray() {
     uint32_t len;
     vector<uint8_t> bytes;
@@ -170,7 +179,7 @@ vector<uint8_t> Cnc::readProgArrayBurst(size_t len) {
     qDebug("cnc::readProgArrayBurst>>Read request %d bytes\n", (int)len);
 
     if (!len) {
-        qDebug("PA is empty");
+        qDebug("G-code in PA is empty");
         return bytes;
     }
 
@@ -189,9 +198,11 @@ vector<uint8_t> Cnc::readProgArrayBurst() {
 
     // Read last write address in Program Array
     if (!m_com.read32(ADDR::PA_WRADDR, len)) {
-        qDebug("Read PA length error");
+        qDebug("Read PA program length error");
         return bytes;
     }
+
+    qDebug("PA program length: %d bytes", len);
 
     // Read all data from program array
     bytes = readProgArrayBurst(len);
