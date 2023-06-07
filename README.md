@@ -1,3 +1,3 @@
 # CNC3
-Qt desktop program for Meatec (Russia) EDM CNC machine (prototype).
+Wire-cut CNC machine (EDM and stone). Qt desktop project
 Based on QwtPlot library.
