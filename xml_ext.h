@@ -45,7 +45,8 @@ namespace xml_ext {
     bool nextEndElement(QXmlStreamReader& xml);
 
     bool readOffsetSide(QXmlStreamReader& xml, OFFSET_SIDE& value);
-    bool readAxisD(QXmlStreamReader& xml, AXIS& value);
+    bool readDAxis(QXmlStreamReader& xml, AXIS& value);
+    bool readDWireSide(QXmlStreamReader& xml, DIR& value);
 
     bool readOffset(QXmlStreamReader& xml, offset_t& value);
     bool readOffsets(QXmlStreamReader& xml, std::vector<offset_t>& v);

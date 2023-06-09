@@ -42,7 +42,7 @@ class FormPasses : public QWidget {
     QGroupBox *groupTab {nullptr};
     QDoubleSpinBox* inputTabOffset {nullptr};
     QComboBox* comboTabMode {nullptr};
-    QCheckBox *checkUseLastSeg {nullptr}, *checkTabPause {nullptr}, *checkTapered {nullptr};
+    QCheckBox *checkUseLastSeg {nullptr}, *checkTabPause {nullptr}, *checkTapered {nullptr}, *checkTilted {nullptr};
 
     QLabel* labelPumpDelay {nullptr};
     QSpinBox* inputPumpDelay {nullptr};
@@ -51,10 +51,10 @@ class FormPasses : public QWidget {
     QLabel* labelSpeed {nullptr};
     QDoubleSpinBox* inputSpeed {nullptr};
 
-    QGroupBox *groupTapered {nullptr}, *groupD {nullptr}, *groupAxis {nullptr};
-    QLabel *labelL {nullptr}, *labelH {nullptr}, *labelT {nullptr}, *labelD {nullptr}, *labelWireD {nullptr}, *labelAxis {nullptr};
+    QGroupBox *groupTapered {nullptr}, *groupD {nullptr}, *groupAxis {nullptr}, *groupWireSide {nullptr};
+    QLabel *labelL {nullptr}, *labelH {nullptr}, *labelT {nullptr}, *labelD {nullptr}, *labelWireD {nullptr}, *labelAxis {nullptr}, *labelWireSide {nullptr};
     QDoubleSpinBox *inputL {nullptr}, *inputH {nullptr}, *inputT {nullptr}, *inputD {nullptr}, *inputWireD {nullptr};
-    QRadioButton *radioX {nullptr}, *radioY {nullptr};
+    QRadioButton *radioX {nullptr}, *radioY {nullptr}, *radioWireSidePlus {nullptr}, *radioWireSideMinus {nullptr};
 
     QPushButton *btnBack {nullptr}, *btnOpen {nullptr}, *btnSave {nullptr}, *btnSaveAs {nullptr}, *btnDefault {nullptr},
         *btn5 {nullptr}, *btn6 {nullptr}, *btn7 {nullptr}, *btn8 {nullptr}, *btn9 {nullptr}, *btn10 {nullptr}, *btn11 {nullptr}, *btnGen {nullptr}, *btnHelp {nullptr};

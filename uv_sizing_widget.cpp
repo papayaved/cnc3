@@ -15,7 +15,8 @@ UVSizingWidget::UVSizingWidget(ProgramParam& par, QWidget *parent) : QWidget(par
     labelH = new QLabel(tr("Workpiece bottom height") + " (H):");
     labelT = new QLabel(tr("Workpiece thickness") + " (T):");
     labelRollerD = new QLabel(tr("Roller diameter") + ":");
-    labelRollerPlane = new QLabel(tr("Roller plane") + ":");
+    labelDAxis = new QLabel(tr("Roller plane") + ":");
+    labelDWireSide = new QLabel(tr("Wire side") + ":");
     labelEntryLine = new QLabel(tr("Entry line length") + ":");
 
     btnReset = new QPushButton(tr("Reset"));
@@ -84,15 +85,27 @@ UVSizingWidget::UVSizingWidget(ProgramParam& par, QWidget *parent) : QWidget(par
     fnumDRoller->setSingleStep(0.1);
     fnumDRoller->setRange(0, 200);
 
-    groupRollerPlane = new QGroupBox;
+    groupDAxis = new QGroupBox;
     radioXZ = new QRadioButton("XZ");
     radioYZ = new QRadioButton("YZ");
     {
         QHBoxLayout* hbox = new QHBoxLayout;
         hbox->addWidget(radioXZ);
         hbox->addWidget(radioYZ);
-        groupRollerPlane->setLayout(hbox);
+        groupDAxis->setLayout(hbox);
     }
+
+    groupDWireSide = new QGroupBox;
+    radioDWireSidePlus = new QRadioButton("Plus");
+    radioDWireSideMinus = new QRadioButton("Minus");
+    {
+        QHBoxLayout* hbox = new QHBoxLayout;
+        hbox->addWidget(radioDWireSidePlus);
+        hbox->addWidget(radioDWireSideMinus);
+        groupDWireSide->setLayout(hbox);
+    }
+
+    checkDTilted = new QCheckBox(tr("Tilted rollers"));
 
     fnumLine = new QDoubleSpinBox;
     labelEntryLine->setBuddy(fnumLine);
@@ -128,14 +141,18 @@ UVSizingWidget::UVSizingWidget(ProgramParam& par, QWidget *parent) : QWidget(par
     gridMeasuring->addWidget(fnumT, 4, 1);
     gridMeasuring->addLayout(hbox_D, 5, 0, Qt::AlignRight);
     gridMeasuring->addWidget(fnumDRoller, 5, 1);
-    gridMeasuring->addWidget(labelRollerPlane, 5, 2);
-    gridMeasuring->addWidget(groupRollerPlane, 5, 3, 1, 2);
-    gridMeasuring->addWidget(labelEntryLine, 6, 0, Qt::AlignRight);
-    gridMeasuring->addWidget(fnumLine, 6, 1);
-    gridMeasuring->addWidget(groupAxis, 7, 0, 1, 2);
+    gridMeasuring->addWidget(labelDAxis, 5, 2);
+    gridMeasuring->addWidget(groupDAxis, 5, 3, 1, 2);
 
-    gridMeasuring->addWidget(btnReset, 8, 0, Qt::AlignLeft | Qt::AlignBottom);
-    gridMeasuring->addWidget(btnGen, 8, 1, Qt::AlignRight | Qt::AlignBottom);
+    gridMeasuring->addWidget(groupDWireSide, 6, 3, 1, 2);
+    gridMeasuring->addWidget(checkDTilted, 7, 3, 1, 2);
+
+    gridMeasuring->addWidget(labelEntryLine, 8, 0, Qt::AlignRight);
+    gridMeasuring->addWidget(fnumLine, 8, 1);
+    gridMeasuring->addWidget(groupAxis, 9, 0, 1, 2);
+
+    gridMeasuring->addWidget(btnReset, 10, 0, Qt::AlignLeft | Qt::AlignBottom);
+    gridMeasuring->addWidget(btnGen, 10, 1, Qt::AlignRight | Qt::AlignBottom);
 
     groupMeasuring->setLayout(gridMeasuring);
 
@@ -217,8 +234,13 @@ UVSizingWidget::UVSizingWidget(ProgramParam& par, QWidget *parent) : QWidget(par
     connect(checkDEna, &QCheckBox::clicked, this, [&](bool checked) {
         labelRollerD->setEnabled(checked);
         fnumDRoller->setEnabled(checked);
-        labelRollerPlane->setEnabled(checked);
-        groupRollerPlane->setEnabled(checked);
+        labelDAxis->setEnabled(checked);
+        groupDAxis->setEnabled(checked);
+
+        labelDWireSide->setEnabled(checked);
+        groupDWireSide->setEnabled(checked);
+
+        checkDTilted->setEnabled(checked);
     });
 
     widgets = {
@@ -245,7 +267,10 @@ void UVSizingWidget::onReset() {
 
     fnumDRoller->setValue(cnc_param::D_DEFAULT);
 
-    cnc_param::AXIS_DEFAULT == AXIS::AXIS_Y ? radioYZ->setChecked(true) : radioXZ->setChecked(true);
+    cnc_param::D_AXIS_DEFAULT == AXIS::AXIS_X ? radioXZ->setChecked(true) : radioYZ->setChecked(true);
+    cnc_param::D_WIRE_SIDE_DEFAULT == DIR::DIR_PLUS ? radioDWireSidePlus->setChecked(true) : radioDWireSideMinus->setChecked(true);
+
+    checkDTilted->setChecked(false);
 
     fnumLine->setValue(5);
     radioYn->setChecked(true);
@@ -260,7 +285,11 @@ void UVSizingWidget::onGenerate() {
 
     bool D_ena = checkDEna->isChecked();
     double D = fnumDRoller->value() - fnumWireD->value() / 2;
-    AXIS roller_axis = radioYZ->isChecked() ? AXIS::AXIS_Y : AXIS::AXIS_X;
+
+    AXIS D_axis = radioXZ->isChecked() ? AXIS::AXIS_X : AXIS::AXIS_Y;
+    DIR D_wire_side = radioDWireSidePlus->isChecked() ? DIR::DIR_PLUS : DIR::DIR_MINUS;
+
+    bool D_tilted = checkDTilted->isChecked();
 
     double cutline = fnumLine->value();
     AXIS cutline_axis = radioYp->isChecked() || radioYn->isChecked() ? AXIS::AXIS_Y : AXIS::AXIS_X;
@@ -268,7 +297,7 @@ void UVSizingWidget::onGenerate() {
     if (radioXn->isChecked() || radioYn->isChecked())
         cutline = -cutline;
 
-    if (par.gcode.generate(dia.top, dia.bot, p.L, p.H, p.T, D_ena, D, roller_axis, cutline, cutline_axis)) {
+    if (par.gcode.generate(dia.top, dia.bot, p.L, p.H, p.T, D_ena, D, D_tilted, D_axis, D_wire_side, cutline, cutline_axis)) {
         par.gcodeText = par.gcode.toText().c_str();
         par.gcodeSettings = par.gcode.getSettings();
 

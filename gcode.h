@@ -72,7 +72,7 @@ public:
 
     int parse(const std::string& gcode);
     bool generate(const cut_t& cut, const std::deque<ContourPair>& contours, const CncParam& par);
-    bool generate(double D_top, double D_bot, double L, double H, double T, bool D_ena, double D, AXIS roller_axis, double cutline, AXIS cutline_axis);
+    bool generate(double D_top, double D_bot, double L, double H, double T, bool D_ena, double D, bool D_tilted, AXIS D_axis, DIR D_wire_side, double cutline, AXIS cutline_axis);
 
     void removeComments();
     void gNormalize();

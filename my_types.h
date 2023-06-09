@@ -42,7 +42,8 @@ namespace cnc_param {
     constexpr static const double H_DEFAULT = 50;
     constexpr static const double T_DEFAULT = 30;
     constexpr static const double D_DEFAULT = 29.5;
-    constexpr static const AXIS AXIS_DEFAULT = AXIS::AXIS_Y;
+    constexpr static const AXIS D_AXIS_DEFAULT = AXIS::AXIS_Y;
+    constexpr static const DIR D_WIRE_SIDE_DEFAULT = DIR::DIR_MINUS;
 }
 
 struct snake_t {

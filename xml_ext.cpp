@@ -199,7 +199,7 @@ bool xml_ext::readOffsetSide(QXmlStreamReader &xml, OFFSET_SIDE &value) {
     return OK;
 }
 
-bool xml_ext::readAxisD(QXmlStreamReader &xml, AXIS &value) {
+bool xml_ext::readDAxis(QXmlStreamReader &xml, AXIS &value) {
     bool OK = false;
     QString type, str;
 
@@ -211,6 +211,25 @@ bool xml_ext::readAxisD(QXmlStreamReader &xml, AXIS &value) {
             OK = true;
         } else if (str == "LEFT") {
             value = AXIS::AXIS_Y;
+            OK = true;
+        }
+    }
+
+    return OK;
+}
+
+bool xml_ext::readDWireSide(QXmlStreamReader &xml, DIR &value) {
+    bool OK = false;
+    QString type, str;
+
+    xml_ext::readElement(xml, type, str);
+
+    if (type == "DIR") {
+        if (str == "PLUS") {
+            value = DIR::DIR_PLUS;
+            OK = true;
+        } else if (str == "MINUS") {
+            value = DIR::DIR_MINUS;
             OK = true;
         }
     }

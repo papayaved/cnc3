@@ -31,11 +31,11 @@ class UVSizingWidget : public QWidget {
 
     ProgramParam& par;
 
-    QLabel *labelMeasuring, *labelRecalc, *labelResult, *labelWireD, *labelUMax, *labelL, *labelH, *labelT, *labelRollerD, *labelRollerPlane, *labelEntryLine, *labelDTop, *labelDBot, *labelResL, *labelResH;
+    QLabel *labelMeasuring, *labelRecalc, *labelResult, *labelWireD, *labelUMax, *labelL, *labelH, *labelT, *labelRollerD, *labelDAxis, *labelDWireSide, *labelEntryLine, *labelDTop, *labelDBot, *labelResL, *labelResH;
     QDoubleSpinBox *fnumWireD, *fnumUMax, *fnumL, *fnumH, *fnumT, *fnumDRoller, *fnumLine, *fnumDTop, *fnumDBot, *fnumResL, *fnumResH;
-    QRadioButton *radioXp, *radioXn, *radioYp, *radioYn, *radioXZ, *radioYZ;
-    QCheckBox *checkDEna;
-    QGroupBox *groupMeasuring, *groupRecalc, *groupResult, *groupAxis, *groupRollerPlane;
+    QRadioButton *radioXp, *radioXn, *radioYp, *radioYn, *radioXZ, *radioYZ, *radioDWireSidePlus, *radioDWireSideMinus;
+    QCheckBox *checkDEna, *checkDTilted;
+    QGroupBox *groupMeasuring, *groupRecalc, *groupResult, *groupAxis, *groupDWireSide, *groupDAxis;
     QPushButton *btnReset, *btnGen, *btnRecalc;
 
     std::vector<QWidget*> widgets;

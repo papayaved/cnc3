@@ -23,7 +23,9 @@ struct cut_t {
     size_t tab_seg;
     double aux_offset, tab, overcut, speed, L, H, T, D, wire_D;
     bool uv_ena {false}, D_ena {false};
-    AXIS axis_D;
+    AXIS D_axis;
+    DIR D_wire_side;
+    bool D_tilted {false};
 
     std::vector<offset_t> offsets;
     offset_t tab_offset;

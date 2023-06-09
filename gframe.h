@@ -446,8 +446,12 @@ public:
     }
 
     // Use the roller diameter
-    static GFrame M102(float rollerD, AXIS rollerAxis) {
-        return GFrame(GEntity('M', uint8_t(102)), GEntity('P', double(rollerD)), GEntity('Q', uint8_t(rollerAxis == AXIS::AXIS_Y ? 1 : 0)), "D, Axis");
+    static GFrame M102(float rollerD, bool tiltedEna) {
+        return GFrame(GEntity('M', uint8_t(102)), GEntity('P', double(rollerD)), GEntity('Q', uint8_t(tiltedEna ? 1 : 0)), "D, Tilted");
+    }
+
+    static GFrame M103(AXIS rollerAxis, DIR wireSide) {
+        return GFrame(GEntity('M', uint8_t(103)), GEntity('P', uint8_t(rollerAxis == AXIS::AXIS_X ? 0 : 1)), GEntity('Q', uint8_t(wireSide == DIR::DIR_PLUS ? 0 : 1)), "Axis, Wire side");
     }
 
     // roll velocity

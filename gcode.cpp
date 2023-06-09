@@ -146,7 +146,8 @@ bool GCode::generate(const cut_t& cut, const deque<ContourPair>& contours, const
                         frames.push_back(GFrame::M101(cut.T));
 
                         if (cut.D_ena) {
-                            frames.push_back(GFrame::M102(cut.D + cut.wire_D / 2, cut.axis_D));
+                            frames.push_back(GFrame::M102(cut.D + cut.wire_D / 2, cut.D_tilted));
+                            frames.push_back(GFrame::M103(cut.D_axis, cut.D_wire_side));
                         }
                     }
 
@@ -345,14 +346,16 @@ void GCode::addG2G2(fpoint_t& A, const fpoint_t& B, fpoint_t& A2, const fpoint_t
 }
 
 // Tapped cutting calibration
-bool GCode::generate(double D_top, double D_bot, double L, double H, double T, bool D_ena, double D, AXIS roller_axis, double cutline, AXIS cutline_axis) {
+bool GCode::generate(double D_top, double D_bot, double L, double H, double T, bool D_ena, double D, bool D_tilted, AXIS D_axis, DIR D_wire_side, double cutline, AXIS cutline_axis) {
     frames.clear();
     frames.push_back(GFrame::delimiter());
     frames.push_back(GFrame::M100(L, H));
     frames.push_back(GFrame::M101(T));
 
-    if (D_ena)
-        frames.push_back(GFrame::M102(D, roller_axis));
+    if (D_ena) {
+        frames.push_back(GFrame::M102(D, D_tilted));
+        frames.push_back(GFrame::M103(D_axis, D_wire_side));
+    }
 
     frames.push_back(GFrame::G92(0,0,0,0));
 

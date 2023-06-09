@@ -28,7 +28,9 @@ cut_t::cut_t() :
     wire_D(cnc_param::WIRE_DIAMETER),
     uv_ena(false),
     D_ena(false),
-    axis_D(cnc_param::AXIS_DEFAULT),
+    D_axis(cnc_param::D_AXIS_DEFAULT),
+    D_wire_side(cnc_param::D_WIRE_SIDE_DEFAULT),
+    D_tilted(false),
     tab_offset(offset_t())
   //        overcut_offset(offset_t()),
   //        out_offset(offset_t())
@@ -85,7 +87,9 @@ void cut_t::write(QXmlStreamWriter& xml) const {
         writeBool(xml, "D_ena", D_ena);
         writeDouble(xml, "D", D);
         writeDouble(xml, "wire_D", wire_D);
-        writeElement(xml, "axis_D", "AXIS", axis_D == AXIS::AXIS_X ? "X" : "Y");
+        writeElement(xml, "D_axis", "AXIS", D_axis == AXIS::AXIS_X ? "X" : "Y");
+        writeElement(xml, "D_wire_side", "DIR", D_wire_side == DIR::DIR_PLUS ? "PLUS" : "MINUS");
+        writeBool(xml, "D_tilted_ena", D_tilted);
 
         xml.writeStartElement("offsets");
         for (const offset_t& o: offsets)
@@ -156,8 +160,12 @@ bool cut_t::read(QXmlStreamReader &xml) {
                 readDouble(xml, D);
             else if (xml.name() == "wire_D")
                 readDouble(xml, wire_D);
-            else if (xml.name() == "axis_D")
-                readAxisD(xml, axis_D);
+            else if (xml.name() == "D_axis")
+                readDAxis(xml, D_axis);
+            else if (xml.name() == "D_wire_side")
+                readDWireSide(xml, D_wire_side);
+            else if (xml.name() == "D_tilted_ena")
+                readBool(xml, D_tilted);
             else if (xml.name() == "offsets") {
                 readOffsets(xml, offsets);
 

@@ -29,11 +29,11 @@ FormPasses::FormPasses(ProgramParam& par, QWidget *parent) : QWidget(parent), pa
         };
     labels = {
         labelTimes, labelOvercut, labelTab, labelTabOffset, labelTabMode, labelCutMode, labelPumpDelay, labelSpeed, tableTitle,
-        labelL, labelH, labelT, labelD, labelWireD, labelAxis
+        labelL, labelH, labelT, labelD, labelWireD, labelAxis, labelWireSide
     };
-    radio = {radioLeftSide, radioRightSide, onePassTab, multiPassTab, radioX, radioY};
+    radio = {radioLeftSide, radioRightSide, onePassTab, multiPassTab, radioX, radioY, radioWireSidePlus, radioWireSideMinus};
     combo = {comboTimes, comboCutLineMode, comboTabMode};
-    checks = {checkUseLastSeg, checkTabPause, checkTapered, checkPumpPause};
+    checks = {checkUseLastSeg, checkTabPause, checkTapered, checkPumpPause, checkTilted};
     nums = {inputOvercut, inputTab, inputTabOffset, inputSpeed, inputL, inputH, inputT, inputD, inputWireD};
     groups = {groupTab, groupD};
 
@@ -227,6 +227,7 @@ void FormPasses::createPasses() {
     labelD = new QLabel(tr("Roller diameter") + ":");
     labelWireD = new QLabel(tr("Wire diameter") + ":");
     labelAxis = new QLabel(tr("Roller plane") + ":");
+    labelWireSide = new QLabel(tr("Wire side") + ":");
 
 //    par.cutParam.L = 190;
 //    par.cutParam.H = 50;
@@ -302,6 +303,19 @@ void FormPasses::createPasses() {
 
     groupAxis->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
+    radioWireSidePlus = new QRadioButton("Plus");
+    radioWireSideMinus = new QRadioButton("Minus");
+
+    groupWireSide = new QGroupBox();
+    groupWireSide->setLayout(new QHBoxLayout);
+    groupWireSide->layout()->addWidget(radioWireSidePlus);
+    groupWireSide->layout()->addWidget(radioWireSideMinus);
+
+    groupWireSide->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    checkTilted = new QCheckBox(tr("Tilted rollers"));
+    checkTilted->setCheckState(Qt::CheckState::Unchecked);
+
     groupD = new QGroupBox(tr("Use the roller diameter") + " (D)");
 
     QGridLayout* gridD = new QGridLayout;
@@ -314,6 +328,11 @@ void FormPasses::createPasses() {
 
     gridD->addWidget(labelAxis, 2, 0, Qt::AlignRight);
     gridD->addWidget(groupAxis, 2, 1, Qt::AlignLeft);
+
+    gridD->addWidget(labelWireSide, 3, 0, Qt::AlignRight);
+    gridD->addWidget(groupWireSide, 3, 1, Qt::AlignLeft);
+
+    gridD->addWidget(checkTilted, 4, 1, Qt::AlignLeft);
 
     groupD->setLayout(gridD);
     groupD->setCheckable(true);
@@ -512,8 +531,13 @@ void FormPasses::createPasses() {
 
     connect(inputD,         QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [&](double value)   { par.cutParam.D = value; });
     connect(inputWireD,     QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [&](double value)   { par.cutParam.wire_D = value; });
-    connect(radioX,         &QRadioButton::clicked, this, [&]()                                             { par.cutParam.axis_D = AXIS::AXIS_X; });
-    connect(radioY,         &QRadioButton::clicked, this, [&]()                                             { par.cutParam.axis_D = AXIS::AXIS_Y; });
+    connect(radioX,         &QRadioButton::clicked, this, [&]()                                             { par.cutParam.D_axis = AXIS::AXIS_X; });
+    connect(radioY,         &QRadioButton::clicked, this, [&]()                                             { par.cutParam.D_axis = AXIS::AXIS_Y; });
+
+    connect(radioWireSidePlus,  &QRadioButton::clicked, this, [&]()                                         { par.cutParam.D_wire_side = DIR::DIR_PLUS; });
+    connect(radioWireSideMinus, &QRadioButton::clicked, this, [&]()                                         { par.cutParam.D_wire_side = DIR::DIR_MINUS; });
+
+    connect(checkTilted,    &QCheckBox::clicked, this, [&](bool checked)                                    { par.cutParam.D_tilted = checked; });
 }
 
 void FormPasses::initTableModes() {
@@ -591,8 +615,13 @@ void FormPasses::init(bool uv_ena) {
     inputD->setValue(par.cutParam.D);
     inputWireD->setValue(par.cutParam.wire_D);
 
-    radioX->setChecked(par.cutParam.axis_D == AXIS::AXIS_X);
-    radioY->setChecked(par.cutParam.axis_D == AXIS::AXIS_Y);
+    radioX->setChecked(par.cutParam.D_axis == AXIS::AXIS_X);
+    radioY->setChecked(par.cutParam.D_axis == AXIS::AXIS_Y);
+
+    radioWireSidePlus->setChecked(par.cutParam.D_wire_side == DIR::DIR_PLUS);
+    radioWireSideMinus->setChecked(par.cutParam.D_wire_side == DIR::DIR_MINUS);
+
+    checkTilted->setCheckState(par.cutParam.D_tilted ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
 }
 
 void FormPasses::resizeModeView() {

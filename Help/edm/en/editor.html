@@ -237,14 +237,26 @@
 							<code>M100 P190 Q50</code><br>
 							<code>M101 P30</code><br>
 						</p>
-						<h3><code>M102 P{D} Q{Axis}</code> - take into account the roller's diameter for tapered cutting</h3>
+						<h3><code>M102 P{D} Q{Tilt}</code> - take into account the rollers' diameter for tapered cutting</h3>
 						<ul>
-							<li><b>D</b> - the roller diameter plus a half of the wire diameter, mm;</li>
-							<li><b>Axis</b> - a plane of the roller: 0 - XZ plane, 1 - YZ plane.</li>
+							<li>
+								<b>D</b> - the rollers diameter plus a half of the wire diameter, mm;
+							</li><li>
+								<b>Tilt</b> - the rollers can tilt: 0 - No (default), 1 - Yes.
+							</li>
+						</ul>
+						<h3><code>M103 P{Axis} Q{Side}</code> - rollers parameters for tapered cutting</h3>
+						<ul>
+							<li>
+								<b>Axis</b> - the plane of the rollers: 0 - XZ plane, 1 - YZ plane (default);
+							</li><li>
+								<b>Side</b> - which side is the wire on the rollers: 0 - in the direction of the positive half-plane, 1 - in the direction of the negative half-plane (default).
+							</li>
 						</ul>
 						<p>
 							<i>Example:</i><br>
-							<code>M102 P29.59 Q1</code><br>
+							<code>M102 P29.59 Q1 (tilted rollers)</code><br>
+							<code>M103 P1 Q1</code><br>
 						</p>
 						<h3><code>M105 P{value}</code> – wire roll velocity</h3>
 						<p>Values within [1, 7]. 1 - minimal velocity, 7 - maximum velocity.</p>
