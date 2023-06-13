@@ -364,11 +364,14 @@ void MainWindow::onCncError(const string &s) {
 void MainWindow::connectCnc() {
     if (m_formHome) {
         m_formHome->connectCnc();
+
+        if (par.cncConnected) {
 #if defined(STONE)
-        par.cnc.writeSemaphoreCncEnable(true);
+            par.cnc.writeSemaphoreCncEnable(true);
 #else
-        par.cnc.writeCncEnable(true);
+            par.cnc.writeCncEnable(true);
 #endif
+        }
     }
 }
 

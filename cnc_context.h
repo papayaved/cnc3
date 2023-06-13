@@ -28,7 +28,8 @@ union cnc_context_t {
         uint32_t center_ena:1;
         uint32_t is_init:1;
 
-        uint32_t roll_vel:7;
+        uint32_t roll_vel:6;
+        uint32_t tilted_ena:1;
         uint32_t d_ena:1;
 
         uint32_t uv_ena:1;
@@ -178,6 +179,7 @@ public:
     uint8_t rollVelocity() const { return m_context.field.roll_vel; }
 
     bool uvDiaEnabled() const { return m_context.field.d_ena; }
+    bool uvRollerTiltedEnabled() const { return m_context.field.tilted_ena; }
     bool uvEnabled() const { return m_context.field.uv_ena; }
     bool reverse() const { return m_context.field.rev; }
 
@@ -263,7 +265,9 @@ public:
                 "Low High Voltage: " + (m_context.field.low_hv_ena ? "Y" : "n") + "\n" +
                 "Current Index: " + std::to_string(m_context.field.current_index) + "\n" +
                 "Period : " + std::to_string(m_context.field.T) + "clock/mm\n" +
-                "UV Enable: " + std::to_string(m_context.field.uv_ena) + " Dia Enable: " + std::to_string(m_context.field.d_ena) + "\n" +
+                "UV Enable: " + std::to_string(m_context.field.uv_ena) +
+                    " D Enable: " + std::to_string(m_context.field.d_ena) +
+                    " Tilted ena: " + std::to_string(m_context.field.tilted_ena) + "\n" +
                 "Valid: " + std::to_string(m_context.field.backup_valid) + "\n";
     }
 
@@ -273,7 +277,8 @@ public:
         return  "State: "     + stateToString(state) + "\n" +
                 "Encoder "    + (m_context.field.enc_ena ? "(Yes)" : "(no) ") + "\t" +
                 "UV "         + (m_context.field.uv_ena ? "(Yes)" : "(no) ") + "\t" +
-                "D "          + (m_context.field.d_ena ? "(Yes)" : "(no) ") + "\n" +
+                "D "          + (m_context.field.d_ena ? "(Yes)" : "(no) ") + "\t" +
+                "Tilted "     + (m_context.field.tilted_ena ? "(Yes)" : "(no) ") + "\n" +
                 "Feedback "   + (m_context.field.fb_ena ? "(Yes)" : "(no) ") + "\t" +
                 "Reverse "    + (m_context.field.rev ? "(Yes)" : "(no) ") + "\t" +
                 "Rollback "   + (m_context.field.rollback ? "(Yes)" : "(no) ") + "\n" +

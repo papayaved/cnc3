@@ -259,6 +259,7 @@ void FormHome::createButtons() {
             } else
                 toDebug(&par.cncContext.get());
 
+            // upload backup to MCU
             emit runPageClicked(true);
         }
 

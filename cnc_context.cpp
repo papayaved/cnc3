@@ -6,8 +6,8 @@ void toDebug(const cnc_context_t * const ctx) {
            ctx->field.pump_ena, ctx->field.roll_state, ctx->field.wire_ena, ctx->field.hv_enabled, ctx->field.hold_ena);
     qDebug("rollVel:%x\n",
            ctx->field.roll_vel);
-    qDebug("uv:%x dia:%x rev:%x enc:%x\n",
-           ctx->field.uv_ena, ctx->field.d_ena, ctx->field.rev, ctx->field.enc_ena);
+    qDebug("uv:%x dia:%x tilted:%x rev:%x enc:%x\n",
+           ctx->field.uv_ena, ctx->field.d_ena, ctx->field.tilted_ena, ctx->field.rev, ctx->field.enc_ena);
     qDebug("St:%x\n",
            ctx->field.state);
     qDebug("pW:%d pR:%d hvLvl:%x I:%x\n",
@@ -52,6 +52,7 @@ cnc_context_t CncContext::defaultContext() {
     ctx.field.hold_ena = false;
 
     ctx.field.roll_vel = 0;
+    ctx.field.tilted_ena = false;
     ctx.field.d_ena = false;
 
     ctx.field.uv_ena = false;
@@ -112,8 +113,9 @@ cnc_context_t CncContext::parse(const std::vector<uint8_t> &v) {
         ctx.field.center_ena = (v[0] & 0x40) != 0;
         ctx.field.is_init = (v[0] & 0x80) != 0;
 
-        ctx.field.roll_vel  = v[1] & 0x7F;
-        ctx.field.d_ena   = (v[1] & 0x80) != 0;
+        ctx.field.roll_vel  = v[1] & 0x3F;
+        ctx.field.tilted_ena = (v[1] & 0x40) != 0;
+        ctx.field.d_ena     = (v[1] & 0x80) != 0;
 
         ctx.field.uv_ena    = (v[2] & 1) != 0;
         ctx.field.enc_ena  = (v[2] & 2) != 0;

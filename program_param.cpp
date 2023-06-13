@@ -145,6 +145,7 @@ void ProgramParam::saveGcode() {
 //    saveInputLevel(CncParam::inputLevel);
 }
 
+// Load G-code from local settings file
 QString ProgramParam::loadGcode() {
     QSettings settings(org, app);
     bool OK = true;

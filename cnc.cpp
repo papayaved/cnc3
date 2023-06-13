@@ -72,18 +72,18 @@ bool Cnc::reset() {
     ); // reset included
 
     if (OK)
-        OK = writeStep(
-            CncParam::step,
-            CncParam::scaleX, CncParam::scaleY, CncParam::scaleU, CncParam::scaleV,
-            CncParam::scaleEncX, CncParam::scaleEncY, CncParam::encXY
-        );
-
-    if (OK)
         OK = writeFeedback(
             CncParam::fb_ena,
             CncParam::low_thld[0], CncParam::high_thld[1],
             CncParam::rb_to, CncParam::rb_attempts, CncParam::rb_len, CncParam::rb_speed,
             CncParam::fb_acc, CncParam::fb_dec
+        );
+
+    if (OK)
+        OK = writeStep(
+            CncParam::step,
+            CncParam::scaleX, CncParam::scaleY, CncParam::scaleU, CncParam::scaleV,
+            CncParam::scaleEncX, CncParam::scaleEncY, CncParam::encXY
         );
 
     return OK;
@@ -1131,6 +1131,7 @@ bool Cnc::readFeedback(bool &enable, double &Vlow, double &Vhigh, double &to_sec
     return false;
 }
 
+// Recovery UV parameters read from G-code
 void Cnc::recoveryUV(const GCodeSettings& s) {
     vector<uint32_t> data(5);
 
@@ -1144,7 +1145,7 @@ void Cnc::recoveryUV(const GCodeSettings& s) {
     memcpy(&data[2], &T, sizeof(float));
     memcpy(&data[3], &D, sizeof(float));
 
-    data[4] = (uint32_t)s.isD()<<2 | ((uint32_t)s.axis & 1)<<1 | (uint32_t)s.isUV()<<0;
+    data[4] = ((uint32_t)s.isTiltedRollers() & 1)<<4 | ((uint32_t)s.D_dir & 1)<<3 | ((uint32_t)s.D_axis & 1)<<2 | (uint32_t)s.isD()<<1 | (uint32_t)s.isUV()<<0;
 
     m_com.write32(ADDR::UV_L, data);
 }

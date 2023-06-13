@@ -20,8 +20,10 @@ struct GCodeSettings {
         uint8_t LH:1;
         uint8_t T:1;
     } valid {0,0};
-    bool uv_ena {false}, D_ena {false};
-    AXIS axis {AXIS::AXIS_X};
+
+    bool uv_ena {false}, D_ena {false}, D_tilted_ena {false};
+    AXIS D_axis {AXIS::AXIS_Y};
+    DIR D_dir {DIR::DIR_MINUS};
     double L{0}, H{0}, T{0}, D{0};
     double bot_coe {0}; // H/L
 
@@ -30,6 +32,7 @@ struct GCodeSettings {
     }
 
     bool isD() const { return isUV() && D_ena && D > 0.001; }
+    bool isTiltedRollers() const { return isD() && D_tilted_ena; }
 
     void clear() { *this = GCodeSettings(); }
 };

@@ -989,6 +989,7 @@ pair<pair<double, double>, pair<double, double>> GCode::MinMaxPlotAxis(const vec
 void GCode::clear() { frames.clear(); }
 bool GCode::empty() const { return frames.empty(); }
 
+// Read UV settings from G-code
 GCodeSettings GCode::getSettings() const {
     GCodeSettings res = GCodeSettings();
     int G = -1;
@@ -1007,20 +1008,35 @@ GCodeSettings GCode::getSettings() const {
                 res.T = cmd.P();
                 res.valid.T = true;
             }
-            else if (!res.D_ena && cmd.isM() && cmd.M() == 102 && cmd.isP() && cmd.isQ()) {
+            else if (!res.D_ena && cmd.isM() && cmd.M() == 102 && cmd.isP()) {
                 res.D = cmd.P();
-                res.axis = ((int)cmd.Q() & 1) ? AXIS::AXIS_Y : AXIS::AXIS_X;
                 res.D_ena = true;
+
+                if (cmd.isQ()) {
+                    res.D_tilted_ena = (int)cmd.Q() != 0;
+                }
+
+                res.D_axis = AXIS::AXIS_Y;
+                res.D_dir = DIR::DIR_MINUS;
+            } else if (res.D_ena && cmd.isM() && cmd.M() == 103 && cmd.isP()) {
+                res.D_axis = ((int)cmd.P() == 0) ? AXIS::AXIS_X : AXIS::AXIS_Y;
+
+                if (cmd.isQ()) {
+                    res.D_dir = ((int)cmd.Q() == 0) ? DIR::DIR_PLUS : DIR::DIR_MINUS;
+                }
             }
 
-            if (res.valid.LH && res.valid.T && !res.uv_ena && cmd.isUV())
+            if (!res.uv_ena && res.valid.LH && res.valid.T && cmd.isUV()) { // first UV command
                 res.uv_ena = true;
+                break;
+            }
         }
 
-        if (res.valid.LH && res.valid.T && res.uv_ena)
+        if (res.uv_ena)
             break;
     }
 
+    res.D_ena &= res.isUV();
     res.bot_coe = res.isUV() ? res.H / res.L : 0;
 
     return res;
