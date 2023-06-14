@@ -542,7 +542,7 @@ void GUV(vector<GFrame>::iterator it, int G, bool isR2, double U, double V, doub
 void GCode::gNormalize() {
     bool inc_ena = false, uv_ena = false, first_xyuv = true, erase = false;
     int G = -1;
-    AXIS_ENA axis_ena = AXIS_ENA::NO_AXIS;
+    UV_ENA axis_ena = UV_ENA::UNKNOWN;
     double X = 0, Y = 0, U = 0, V = 0, I = 0, J = 0, R = 0, I2 = 0, J2 = 0, R2 = 0;
 
     for (auto it = frames.begin(); it < frames.end();) {
@@ -668,7 +668,7 @@ void GCode::gNormalize() {
 void GCode::RtoIJ() {
     double X = 0, Y = 0, U = 0, V = 0;
     int G = -1; // not valid
-    AXIS_ENA axis_ena = AXIS_ENA::NO_AXIS;
+    UV_ENA axis_ena = UV_ENA::UNKNOWN;
 
     for (GFrame& frame: frames) {
         list<GCommand> cmdList = frame.get(G, axis_ena);
@@ -754,7 +754,7 @@ void GCode::normalize() {
 deque<ContourPair> GCode::getContours(vector<pair<size_t, size_t>>* const map) const {
     double X = 0, Y = 0, U = 0, V = 0;
     int G = -1; // not valid
-    AXIS_ENA axis_ena = AXIS_ENA::NO_AXIS;
+    UV_ENA axis_ena = UV_ENA::UNKNOWN;
     fpoint_t offset_xy(0, 0), offset_uv(0, 0);
     bool inc_ena = false;
 
@@ -993,7 +993,7 @@ bool GCode::empty() const { return frames.empty(); }
 GCodeSettings GCode::getSettings() const {
     GCodeSettings res = GCodeSettings();
     int G = -1;
-    AXIS_ENA axis_ena = AXIS_ENA::NO_AXIS;
+    UV_ENA axis_ena = UV_ENA::UNKNOWN;
 
     for (const GFrame& frame: frames) {
         list<GCommand> cmds = frame.get(G, axis_ena);

@@ -401,11 +401,11 @@ GFrame::PragmaType GFrame::toPragma(string& comment) {
 //const double* GFrame::V() const { return find(GEntity::CommandType::V); }
 
 // todo: read all command param by patern, if error finish
-list<GCommand> GFrame::get(int& G, AXIS_ENA& axis_ena) const {
+list<GCommand> GFrame::get(int& G, UV_ENA& uv_ena) const {
     list<GCommand> list;
     GCommand cmd = GCommand();
     bool uv_reg = false;
-    AXIS_ENA _axis_ena = AXIS_ENA::NO_AXIS;
+    UV_ENA _uv_ena = UV_ENA::UNKNOWN;
 
     if (!(G >= 1 && G <= 3))
         G = -1;
@@ -494,8 +494,8 @@ list<GCommand> GFrame::get(int& G, AXIS_ENA& axis_ena) const {
             break;
 
         case GEntityType::X:
-            if (_axis_ena == AXIS_ENA::NO_AXIS)
-                _axis_ena = AXIS_ENA::XY_AXIS;
+            if (_uv_ena == UV_ENA::UNKNOWN)
+                _uv_ena = UV_ENA::DISABLE;
 
             uv_reg = false;
             cmd.setX(it->code());
@@ -505,8 +505,8 @@ list<GCommand> GFrame::get(int& G, AXIS_ENA& axis_ena) const {
             break;
 
         case GEntityType::Y:
-            if (_axis_ena == AXIS_ENA::NO_AXIS)
-                _axis_ena = AXIS_ENA::XY_AXIS;
+            if (_uv_ena == UV_ENA::UNKNOWN)
+                _uv_ena = UV_ENA::DISABLE;
 
             uv_reg = false;
             cmd.setY(it->code());
@@ -516,7 +516,7 @@ list<GCommand> GFrame::get(int& G, AXIS_ENA& axis_ena) const {
             break;
 
         case GEntityType::U:
-            _axis_ena = AXIS_ENA::UV_AXIS;
+            _uv_ena = UV_ENA::ENABLE;
             uv_reg = true;
             cmd.setU(it->code());
 
@@ -525,7 +525,7 @@ list<GCommand> GFrame::get(int& G, AXIS_ENA& axis_ena) const {
             break;
 
         case GEntityType::V:
-            _axis_ena = AXIS_ENA::UV_AXIS;
+            _uv_ena = UV_ENA::ENABLE;
             uv_reg = true;
             cmd.setV(it->code());
 
@@ -586,8 +586,8 @@ list<GCommand> GFrame::get(int& G, AXIS_ENA& axis_ena) const {
     if (!list.empty())
         list.back().setEOF();
 
-    if (axis_ena == AXIS_ENA::NO_AXIS)
-        axis_ena = _axis_ena;
+    if (uv_ena == UV_ENA::UNKNOWN)
+        uv_ena = _uv_ena;
 
     return list;
 }

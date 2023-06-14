@@ -8,7 +8,7 @@
 #include "fpoint_t.h"
 
 enum class GEntityType : uint8_t { NONE, G, M, X, Y, U, V, I, J, R, F, P, Q };
-enum class AXIS_ENA : uint8_t {NO_AXIS, XY_AXIS, UV_AXIS};
+enum class UV_ENA : int8_t { UNKNOWN = -1, DISABLE, ENABLE };
 
 class GEntity {
     GEntityType m_type;
@@ -530,7 +530,7 @@ public:
 //    const double* U() const;
 //    const double* V() const;
 
-    std::list<GCommand> get(int& G, AXIS_ENA& axis_ena) const;
+    std::list<GCommand> get(int& G, UV_ENA& uv_ena) const;
 
     bool any(const GEntityType type, const std::list<uint8_t>& codes) const;
 

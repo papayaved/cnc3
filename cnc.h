@@ -95,8 +95,8 @@ namespace ADDR {
     const uint32_t UV_L              = 0x80 << 2;
     const uint32_t UV_H              = 0x81 << 2;
     const uint32_t UV_T              = 0x82 << 2;
-    const uint32_t UV_D              = 0x83 << 2;
-    const uint32_t UV_AXIS_ENA       = 0x84 << 2;
+    const uint32_t UV_D             = 0x83 << 2;
+    const uint32_t UV_ENA           = 0x84 << 2;
 
     const uint32_t VER_DATE     = 0xF0 << 2;
     const uint32_t VER_TIME     = 0xF4 << 2;
