@@ -1,5 +1,5 @@
 #include "dialog_move_seg.h"
-#include "dxf_arc.h"
+#include "segment_arc.h"
 
 using namespace std;
 

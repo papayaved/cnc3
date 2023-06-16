@@ -145,7 +145,7 @@ void FormContour::createButtons() {
 
     connect(btnLoadDxf, &QPushButton::clicked, this, &FormContour::on_btnLoadDxf_clicked);    
     connect(btnMulti, &QPushButton::clicked, this, [&]() {
-        on_btnSortClicked();
+        on_actSortSegClicked();
 //        updateCurrentViewPos(); // updated
 
         const ContourPair* const pair = par.contours.at(m_ctr_num);
@@ -158,7 +158,10 @@ void FormContour::createButtons() {
         }
     });
 
-    connect(btnGenerate, &QPushButton::clicked, this, [&]() { emit passesPageClicked( par.contours.hasAnyTop() ); });
+    connect(btnGenerate, &QPushButton::clicked, this, [&]() {
+        saveUndo();
+        emit passesPageClicked( par.contours.hasAnyTop() );
+    });
     connect(btnHelp, &QPushButton::clicked, this, [&](){ emit helpPageClicked(help_file); });
 }
 
@@ -183,8 +186,8 @@ void FormContour::createGridView() {
     act_bold_font.setBold(true);
     actPropCtr->setFont(act_bold_font);
 
-    actSortCtr = new QAction(tr("Auto sort"), this);
-    actSortCtr->setStatusTip(tr("Auto sort segments in the current contour"));
+    actSortCtr = new QAction(tr("Sort all"), this);
+    actSortCtr->setStatusTip(tr("Sort all contours"));
 
     actChangeDirCtr = new QAction(tr("Change Direction"), this);
     actChangeDirCtr->setStatusTip(tr("Change the current contour direction"));
@@ -206,13 +209,14 @@ void FormContour::createGridView() {
 
     viewContours->setContextMenuPolicy(Qt::ContextMenuPolicy::ActionsContextMenu);
     viewContours->addAction(actPropCtr);
-    viewContours->addAction(actSortCtr);
     viewContours->addAction(actChangeDirCtr);
 
+    viewContours->addAction(actSortCtr);
     viewContours->addAction(actFirstCtr);
     viewContours->addAction(actUpCtr);
     viewContours->addAction(actDownCtr);
     viewContours->addAction(actLastCtr);
+
     viewContours->addAction(actDeleteCtr);
 
     actPropSeg = new QAction(tr("Properties"), this);
@@ -221,6 +225,9 @@ void FormContour::createGridView() {
 
     actUseAsEntryLineSeg = new QAction(tr("Use as Entry line"), this);
     actUseAsEntryLineSeg->setStatusTip(tr("Use selected segment as the Entry line for a simple contour"));
+
+    actMoveSeg = new QAction(tr("Move to"), this);
+    actMoveSeg->setStatusTip(tr("Move selected segments to another contour"));
 
     actFirstSeg = new QAction(tr("First"), this);
     actFirstSeg->setStatusTip(tr("Set the selected segment as the first of the contour"));
@@ -234,19 +241,20 @@ void FormContour::createGridView() {
     actLastSeg = new QAction(tr("Last"), this);
     actLastSeg->setStatusTip(tr("Set the selected segment as the last of the contour"));
 
+    actSortSeg = new QAction(tr("Sort"), this);
+    actSortSeg->setStatusTip(tr("Sort segments in the current contour"));
+
     actDeleleSeg = new QAction(tr("Delete"), this);
     actDeleleSeg->setStatusTip(tr("Delete current segment"));
 
-    actMoveSeg = new QAction(tr("Move to"), this);
-    actMoveSeg->setStatusTip(tr("Move selected segments to another contour"));
-
     viewSegments->setContextMenuPolicy(Qt::ContextMenuPolicy::ActionsContextMenu);
-    viewSegments->addAction(actPropSeg);
+    viewSegments->addAction(actPropSeg);    
     viewSegments->addAction(actUseAsEntryLineSeg);
+    viewSegments->addAction(actSortSeg);
     viewSegments->addAction(actFirstSeg);
     viewSegments->addAction(actUpSeg);
     viewSegments->addAction(actDownSeg);
-    viewSegments->addAction(actLastSeg);
+    viewSegments->addAction(actLastSeg);    
     viewSegments->addAction(actDeleleSeg);
     viewSegments->addAction(actMoveSeg);
 
@@ -287,7 +295,7 @@ void FormContour::createGridView() {
 
     actions = {
         actPropCtr, actSortCtr, actChangeDirCtr, actFirstCtr, actUpCtr, actDownCtr, actLastCtr, actDeleteCtr,
-        actPropSeg, actUseAsEntryLineSeg, actFirstSeg, actUpSeg, actDownSeg, actLastSeg, actDeleleSeg, actMoveSeg
+        actPropSeg, actMoveSeg, actUseAsEntryLineSeg, actFirstSeg, actUpSeg, actDownSeg, actLastSeg, actSortSeg, actDeleleSeg
     };
 }
 
@@ -328,24 +336,10 @@ void FormContour::createViewControl() {
     btnLast->setStatusTip(tr("Set the selected contour or segment as the last in the list"));
 
     btnSort = new QPushButton(tr("Sort"));
-    btnSort->setStatusTip(tr("Auto sort segments in the current contour"));
+    btnSort->setStatusTip(tr("Sort segments in the current contour or in the all contours"));
 
-    //
     actUseAsEntryLine = new QAction(tr("Use as Entry line"));
     actUseAsEntryLine->setStatusTip(tr("Use selected segment as the Entry line of a single contour"));
-
-//    actBridgeLine = new QAction(tr("Use as Bridge line"));
-//    actBridgeLine->setStatusTip(tr("Use selected segment as the Bridge line"));
-
-//    actExitLine = new QAction(tr("Use as Exit line"));
-//    actExitLine->setStatusTip(tr("Use selected segment as the Exit line"));
-
-//    menuUseAs = new QMenu;
-//    menuUseAs->addAction(actEntryLine);
-//    menuUseAs->addAction(actBridgeLine);
-//    menuUseAs->addAction(actExitLine);
-
-//    btnUseAs->setMenu(menuUseAs);
 
     btnProperties = new QPushButton(tr("Properties"));
     btnProperties->setStatusTip(tr("Current contour/segment properties"));
@@ -381,11 +375,11 @@ void FormContour::createViewControl() {
     btnEdit->setMenu(menuEdit);
 
     vboxRight_0 = new QVBoxLayout;
+    vboxRight_0->addWidget(btnSort);
     vboxRight_0->addWidget(btnFirst);
     vboxRight_0->addWidget(btnUp);
     vboxRight_0->addWidget(btnDown);
-    vboxRight_0->addWidget(btnLast);
-    vboxRight_0->addWidget(btnSort);
+    vboxRight_0->addWidget(btnLast);    
 
     vboxRight_1 = new QVBoxLayout;
     vboxRight_1->addWidget(btnProperties);
@@ -439,7 +433,13 @@ void FormContour::createViewControl() {
         }
     });
 
-    connect(btnSort, &QPushButton::clicked, this, &FormContour::on_btnSortClicked);
+    connect(btnSort, &QPushButton::clicked, this, [&](bool /*checked*/) {
+        switch (m_viewState) {
+            case VIEW_STATE::TABLE_VIEW_CONTOURS: on_actSortCtrClicked(); break;
+            case VIEW_STATE::TABLE_VIEW_SEGMENTS: on_actSortSegClicked(); break;
+            default: break;
+        }
+    });
 
     connect(btnProperties, &QPushButton::clicked, this, [&](bool /*checked*/) {
         switch (m_viewState) {
@@ -457,7 +457,8 @@ void FormContour::createViewControl() {
 
     connect(actMoveSeg, &QAction::triggered, this, &FormContour::on_actMoveSeg_clicked);
 
-    connect(actSortCtr, &QAction::triggered, this, &FormContour::on_btnSortClicked);
+    connect(actSortSeg, &QAction::triggered, this, &FormContour::on_actSortSegClicked);
+    connect(actSortCtr, &QAction::triggered, this, &FormContour::on_actSortCtrClicked);
 
     connect(actChangeDir, &QAction::triggered, this, &FormContour::on_btnChangeDir_clicked);
     connect(actChangeDirCtr, &QAction::triggered, this, &FormContour::on_btnChangeDir_clicked);
@@ -561,6 +562,68 @@ void FormContour::_init() {
     }
 }
 
+void FormContour::printUnused(bool OK, const std::string& lastError, const Contour& free, const Contour& tails) {
+    if (!free.empty()) {
+        txtMsg->setText(txtMsg->toPlainText() + tr("Removed unconnected segments from DXF") + ":\n");
+
+        for (list<SegmentEntity*>::const_iterator it = free.entities().cbegin(); it != free.entities().cend(); ++it)
+            if (*it)
+                txtMsg->setText(txtMsg->toPlainText() + (*it)->toString().c_str() + "\n");
+            else
+                txtMsg->setText(txtMsg->toPlainText() + "Error at void FormContour::on_btnBot_clicked() (1): DxfEntity is NULL\n");
+    }
+
+    if (!tails.empty()) {
+        txtMsg->setText(txtMsg->toPlainText() + tr("Removed extra tails from DXF") + ":\n");
+
+        for (list<SegmentEntity*>::const_iterator it = tails.entities().cbegin(); it != tails.entities().cend(); ++it)
+            if (*it)
+                txtMsg->setText(txtMsg->toPlainText() + (*it)->toString().c_str() + "\n");
+            else
+                txtMsg->setText(txtMsg->toPlainText() + "Error at void FormContour::on_btnBot_clicked() (2): DxfEntity is NULL\n");
+    }
+
+    if (!OK)
+        txtMsg->setText(txtMsg->toPlainText() + tr("Bottom layer DXF segments sorting error") + ": " + lastError.c_str() + "\n");
+}
+
+// Try to sort. Unsorted segments are added to the end
+void FormContour::trySort(Contour& cnt, Contour* const prev, bool prev_first) {
+    Contour free, tails;
+
+    if (cnt.empty())
+        return;
+
+    bool OK = cnt.sort(free, tails, prev, prev_first);
+
+    printUnused(OK, cnt.lastError(), free, tails);
+
+    // !OK - sort manually
+    if (tails.empty())
+        cnt.move_back(tails);
+
+    if (free.empty())
+        cnt.move_back(free);
+}
+
+// Try to sort
+void FormContour::trySortDxf(Contour& cnt) {
+    Contour clone, free, tails;
+
+    if (cnt.empty())
+        return;
+
+    clone = cnt;
+
+    bool OK = clone.sort(free, tails);
+
+    printUnused(OK, cnt.lastError(), free, tails);
+
+    if (OK)
+        cnt = clone;
+    // !OK - sort manually
+}
+
 void FormContour::on_btnLoadDxf_clicked() {
     QFile file;
     file_open = false;
@@ -597,7 +660,7 @@ void FormContour::on_btnLoadDxf_clicked() {
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
             QMessageBox::critical(this, tr("Contour: Open DXF file error"), file.errorString());
         else {
-            Dxf dxf, bot, top;
+            Contour dxf, bot, top;
             dxf.init(par.dxfDir.toStdString(), par.dxfFileName.toStdString());
 
             if (dxf.parse()) {
@@ -649,43 +712,12 @@ void FormContour::on_btnLoadDxf_clicked() {
                     emit fileNameChanged(par.dxfFileName);
                 }
 
-                dxf = bot;
-
-                Dxf free, unused;
-                bool OK = dxf.sort(free, unused);
-                // OK = false - sort manually
-
-                if (!free.empty()) {
-                    txtMsg->setText(txtMsg->toPlainText() + tr("Removed unconnected segments from DXF") + ":\n");
-
-                    for (list<DxfEntity*>::const_iterator it = free.entities().cbegin(); it != free.entities().cend(); ++it)
-                        if (*it)
-                            txtMsg->setText(txtMsg->toPlainText() + (*it)->toString().c_str() + "\n");
-                        else
-                            txtMsg->setText(txtMsg->toPlainText() + "Error at void FormContour::on_btnBot_clicked() (1): DxfEntity is NULL\n");
-                }
-
-                if (!unused.empty()) {
-                    txtMsg->setText(txtMsg->toPlainText() + tr("Removed extra tails from DXF") + ":\n");
-
-                    for (list<DxfEntity*>::const_iterator it = unused.entities().cbegin(); it != unused.entities().cend(); ++it)
-                        if (*it)
-                            txtMsg->setText(txtMsg->toPlainText() + (*it)->toString().c_str() + "\n");
-                        else
-                            txtMsg->setText(txtMsg->toPlainText() + "Error at void FormContour::on_btnBot_clicked() (2): DxfEntity is NULL\n");
-                }
-
-                if (!OK)
-                    txtMsg->setText(txtMsg->toPlainText() + tr("Bottom layer DXF segments sorting error") + ": " + dxf.lastError().c_str() + "\n");
-
-                if (OK && free.empty() && unused.empty()) {
-                    bot = dxf;
-                }
+                trySortDxf(bot);
+                trySortDxf(top);
 
                 par.contours.new_back();
-                par.contours.back()->setBot(bot);
 
-                // todo: check top
+                par.contours.back()->setBot(bot);
                 par.contours.back()->setTop(top);
 
                 init();
@@ -703,11 +735,8 @@ void FormContour::on_btnLoadDxf_clicked() {
 
 void FormContour::on_btnNewContour_clicked() {
     updateCurrentViewPos();
-
-    par.contours.new_back();
-//    initView();
-
-    restoreViewPos(par.contours.size() - 1, 0, 0);
+    par.contours.new_insert(m_ctr_num);
+    restoreViewPos(m_ctr_num, 0, 0);
 }
 
 void FormContour::on_btnNewCutline_clicked() {
@@ -758,7 +787,7 @@ void FormContour::on_btnNewCutline_clicked() {
 
     if (dialog->result() == QDialog::Accepted) {
         double x0, x1, y0, y1;
-        DxfLine line_bot, line_top;
+        SegmentLine line_bot, line_top;
         bool line_top_valid = false;
 
         dialog->get(x0, x1, y0, y1);
@@ -1029,103 +1058,54 @@ void FormContour::on_actDownSeg_clicked() {
     restoreViewPos(m_ctr_num, m_row_num, m_col_num);
 }
 
-void FormContour::on_btnSortClicked() {
+void FormContour::on_actSortCtrClicked() {
+    saveUndo();
+    par.contours.sort();
+}
+
+void FormContour::on_actSortSegClicked() {
     updateCurrentViewPos();
     ContourPair* const pair = par.contours.at(m_ctr_num);
 
     if (!pair || pair->empty())
         return;
 
-    fpoint_valid_t prev_pt = fpoint_t(false), next_pt = fpoint_t(false);
+    ContourPair* const prev_pair = par.contours.at(m_ctr_num - 1);
 
-    const ContourPair* const prev = par.contours.at(m_ctr_num - 1);
-    const ContourPair* const next = par.contours.at(m_ctr_num + 1);
-
-    if (prev) {
-        switch (m_col_num) {
-        case 0:
-            prev_pt = prev->lastBot();
-            break;
-        case 1:
-            prev_pt = prev->lastTop();
-            break;
-        default:
-            break;
-        }
-    }
-
-    if (next) {
-        switch (m_col_num) {
-        case 0:
-            next_pt = next->firstBot();
-            break;
-        case 1:
-            next_pt = next->firstTop();
-            break;
-        default:
-            break;
-        }
-    }
-
-    Dxf dxf, free, unused;
+    Contour cnt, free, unused;
+    Contour* prev = nullptr;
 
     switch (m_col_num) {
     case 0:
-        dxf = *pair->bot();
+        cnt = *pair->bot();
+        prev = prev_pair ? prev_pair->bot() : nullptr;
         break;
     case 1:
-        dxf = *pair->top();
+        cnt = *pair->top();
+        prev = prev_pair ? prev_pair->top() : nullptr;
         break;
     default:
         return;
     }
 
-    if (dxf.empty())
+    if (cnt.empty())
         return;
 
-    bool OK = dxf.sort(free, unused, prev_pt, next_pt);
+    trySort(cnt, prev, m_ctr_num == 1);
+    saveUndo();
 
-    if (!free.empty()) {
-       txtMsg->setText(txtMsg->toPlainText() + tr("Removed unconnected segments from DXF") + ":\n");
-
-       for (list<DxfEntity*>::const_iterator it = free.entities().cbegin(); it != free.entities().cend(); ++it)
-           if (*it)
-               txtMsg->setText(txtMsg->toPlainText() + (*it)->toString().c_str() + "\n");
-           else
-               txtMsg->setText(txtMsg->toPlainText() + "Error at void FormContour::on_btnBot_clicked() (1): DxfEntity is NULL\n");
+    switch (m_col_num) {
+    case 0:
+        pair->setBot(cnt);
+        break;
+    case 1:
+        pair->setTop(cnt);
+        break;
+    default:
+        return;
     }
 
-    if (!unused.empty()) {
-       txtMsg->setText(txtMsg->toPlainText() + tr("Removed extra tails from DXF") + ":\n");
-
-       for (list<DxfEntity*>::const_iterator it = unused.entities().cbegin(); it != unused.entities().cend(); ++it)
-           if (*it)
-               txtMsg->setText(txtMsg->toPlainText() + (*it)->toString().c_str() + "\n");
-           else
-               txtMsg->setText(txtMsg->toPlainText() + "Error at void FormContour::on_btnBot_clicked() (2): DxfEntity is NULL\n");
-    }
-
-    if (!OK)
-       txtMsg->setText(txtMsg->toPlainText() + tr("Bottom layer DXF segments sorting error") + ": " + dxf.lastError().c_str() + "\n");
-
-    OK &= free.empty() && unused.empty();
-
-    if (OK) {
-        switch (m_col_num) {
-        case 0:
-            saveUndo();
-            pair->setBot(dxf);
-            break;
-        case 1:
-            saveUndo();
-            pair->setTop(dxf);
-            break;
-        default:
-            return;
-        }
-
-        restoreViewPos(m_ctr_num, 0, m_col_num);
-    }
+    restoreViewPos(m_ctr_num, 0, m_col_num);
 }
 
 void FormContour::onViewContoursClicked(const QModelIndex &index) {
@@ -1160,8 +1140,8 @@ void FormContour::onViewSegmentsClicked(const QModelIndex& index) {
         updateCurrentViewPos();
         const ContourPair* const pair = par.contours.at(m_ctr_num);
 
-        const Dxf* const bot = pair && !pair->botEmpty() ? pair->bot() : nullptr;
-        const Dxf* const top = pair && !pair->topEmpty() ? pair->top() : nullptr;
+        const Contour* const bot = pair && !pair->botEmpty() ? pair->bot() : nullptr;
+        const Contour* const top = pair && !pair->topEmpty() ? pair->top() : nullptr;
 
         switch (m_col_num) {
         case 0:
@@ -1219,89 +1199,115 @@ void FormContour::onViewSegmentsClicked(const QModelIndex& index) {
 
 // only for single contour
 void FormContour::on_actUseAsEntryLine_clicked() {
+    bool ready = false;
     updateCurrentViewPos();
 
+    if (par.contours.empty())
+        return;
+
+    saveUndo();
+
+    // Add entry and out line for a closed contour
     if (par.contours.size() == 1) {
-        ContourPair incut(CONTOUR_TYPE::CUTLINE_CONTOUR);        
+        ContourPair incut(CONTOUR_TYPE::CUTLINE_CONTOUR);
         ContourPair* const pair = par.contours.front();
 
-        if (pair && !pair->empty()) {            
-            saveUndo();
-            pair->checkSorted();
+        if (pair && !pair->botEmpty()) {
+            if (!pair->bot()->isSorted())
+                pair->checkSorted();
 
-            if (!pair->botEmpty() && pair->bot()->isSorted() && !pair->bot()->isLoop()) {
+            if (pair->bot()->isSorted() && !pair->bot()->isLoop() && (pair->topEmpty() || (pair->top()->isSorted() && !pair->top()->isLoop()))) {
                 if (m_row_num == 0)
-                    incut.setBot( Dxf(pair->bot()->cut_front()) );
+                    incut.setBot( Contour(pair->bot()->cut_front()) );
                 else if (m_row_num == pair->countBot() - 1) {
-                    incut.setBot( Dxf(pair->bot()->cut_back()) );
+                    incut.setBot( Contour(pair->bot()->cut_back()) );
                     incut.bot()->reverse();
                 }
-            }
 
-            if (!pair->topEmpty() && pair->top()->isSorted() && !pair->top()->isLoop()) {
-                if (m_row_num == 0)
-                    incut.setTop( Dxf(pair->top()->cut_front()) );
-                else if (m_row_num == pair->countTop() - 1) {
-                    incut.setTop( Dxf(pair->top()->cut_back()) );
-                    incut.top()->reverse();
+                if (!pair->topEmpty()) {
+                    if (m_row_num == 0)
+                        incut.setTop( Contour(pair->top()->cut_front()) );
+                    else if (m_row_num == pair->countTop() - 1) {
+                        incut.setTop( Contour(pair->top()->cut_back()) );
+                        incut.top()->reverse();
+                    }
+                }
+
+                if (!incut.botEmpty()) {
+                    par.contours.push_front(incut);
+
+                    if (pair->bot()->isLoop() && !incut.botEmpty()) {
+                        ContourPair outcut(incut);
+                        outcut.reverse();
+                        par.contours.push_back(outcut);
+                    }
+
+                    ready = true;
                 }
             }
-
-            if (pair->bot()->isLoop() && !incut.botEmpty()) {
-                ContourPair outcut(incut);
-                outcut.reverse();
-
-                par.contours.push_front(incut);
-                par.contours.push_back(outcut);
-
-                restoreViewPos(1, 0, 0);
-                return;
-            }
-
-            init();
         }
     }
-    else {
-        txtMsg->setText("It works only for a single loop contour");
 
-//        ContourPair cutline(CONTOUR_TYPE::CUTLINE_CONTOUR);
-////        const ContourPair* const pair = par.contours.front();
-//        ContourPair* pair = par.contours.at(m_contour_num); // todo: check m_contour_num
+    // Otherwise
+    if (!ready) {
+        par.contours.new_insert(m_ctr_num, CONTOUR_TYPE::CUTLINE_CONTOUR); // todo: return pointer
+
+        ContourPair* const pair_new = par.contours.at(m_ctr_num);
+        ContourPair* const pair_old = par.contours.at(m_ctr_num + 1);
+
+        Contour bot = pair_old->bot()->cut_at(m_row_num);
+        Contour top = pair_old->top()->cut_at(m_row_num);
+        pair_new->move_back(bot, top);
+    }
+
+    init();
+
+    restoreViewPos(m_ctr_num, 0, 0);
+    viewSegments->setFocus();
+    setViewState(VIEW_STATE::TABLE_VIEW_SEGMENTS);
+
+//    if (par.contours.size() == 1) {
+//        ContourPair incut(CONTOUR_TYPE::CUTLINE_CONTOUR);
+//        ContourPair* const pair = par.contours.front();
 
 //        if (pair && !pair->empty()) {
-//            if (!pair->emptyBot()) {
-//                if (m_row == 0)
-//                    cutline.setBot( Dxf(pair->bot()->cut_front()) );
-//                else if (m_row == pair->countBot() - 1) {
-//                    cutline.setBot( Dxf(pair->bot()->cut_back()) );
-//                    cutline.bot()->reverse();
+//            saveUndo();
+//            pair->checkSorted();
+
+//            if (!pair->botEmpty() && pair->bot()->isSorted() && !pair->bot()->isLoop()) {
+//                if (m_row_num == 0)
+//                    incut.setBot( Contour(pair->bot()->cut_front()) );
+//                else if (m_row_num == pair->countBot() - 1) {
+//                    incut.setBot( Contour(pair->bot()->cut_back()) );
+//                    incut.bot()->reverse();
 //                }
 //            }
 
-//            if (!pair->emptyTop()) {
-//                if (m_row == 0)
-//                    cutline.setTop( Dxf(pair->top()->cut_front()) );
-//                else if (m_row == pair->countTop() - 1) {
-//                    cutline.setTop( Dxf(pair->top()->cut_back()) );
-//                    cutline.top()->reverse();
+//            if (!pair->topEmpty() && pair->top()->isSorted() && !pair->top()->isLoop()) {
+//                if (m_row_num == 0)
+//                    incut.setTop( Contour(pair->top()->cut_front()) );
+//                else if (m_row_num == pair->countTop() - 1) {
+//                    incut.setTop( Contour(pair->top()->cut_back()) );
+//                    incut.top()->reverse();
 //                }
 //            }
 
-//            if (!cutline.emptyBot() || !cutline.emptyTop()) {
-//                ContourPair outcut(cutline);
+//            if (pair->bot()->isLoop() && !incut.botEmpty()) {
+//                ContourPair outcut(incut);
 //                outcut.reverse();
 
-////                par.contours.insert(m_contour_num, incut);
-//                par.contours.push_front(cutline);
+//                par.contours.push_front(incut);
 //                par.contours.push_back(outcut);
 
-//                m_row = 0;
-//                m_column = 0;
-//                par.contours.clearSelected();
-//                init();
+//                restoreViewPos(1, 0, 0);
+//                return;
 //            }
+
+//            init();
 //        }
-    }
+//    }
+//    else
+//        txtMsg->setText("It works only for a single loop contour");
 }
 
 void FormContour::restoreViewPos(size_t ctr_num, size_t row, size_t column) {    
@@ -1402,7 +1408,7 @@ void FormContour::on_btnSegProp_clicked() {
             if (pair && !pair->empty()) {
                 saveUndo();
 
-                ctr.setBot( Dxf(pair->bot()->cut_at(m_row_num)) );
+                ctr.setBot( Contour(pair->bot()->cut_at(m_row_num)) );
 
                 if (dialog->isNewBefore()) {
                     par.contours.push_front(ctr);
@@ -1431,8 +1437,8 @@ void FormContour::on_btnSegProp_clicked() {
                 if (pair_out && pair_in && !pair_out->empty() && m_row_num < pair_out->countBot()) {
                     saveUndo();
 
-                    Dxf bot = pair_out->bot()->cut_at(m_row_num);
-                    Dxf top = pair_out->top()->cut_at(m_row_num);
+                    Contour bot = pair_out->bot()->cut_at(m_row_num);
+                    Contour top = pair_out->top()->cut_at(m_row_num);
                     pair_in->move_back(bot, top);
 
                     restoreViewPos(m_ctr_num, m_row_num, 0);
@@ -1502,8 +1508,8 @@ void FormContour::on_actMoveSeg_clicked() {
                     int r = it->row();
 
                     if (r >= 0 && (size_t)r < pair_old->countBot()) {
-                        Dxf bot = pair_old->bot()->cut_at(r);
-                        Dxf top = pair_old->top()->cut_at(r);
+                        Contour bot = pair_old->bot()->cut_at(r);
+                        Contour top = pair_old->top()->cut_at(r);
                         pair_new->move_back(bot, top);
                     }
                 }
@@ -1770,7 +1776,7 @@ void FormContour::plot() {
     }
 }
 
-void FormContour::plot(const Dxf& contour) {
+void FormContour::plot(const Contour& contour) {
     m_plotView.setSwapXY(par.swapXY);
     m_plotView.setInverseX(par.reverseX);
     m_plotView.setInverseY(par.reverseY);

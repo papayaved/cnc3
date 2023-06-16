@@ -59,6 +59,7 @@ SOURCES += \
     cnc_param.cpp \
     com_packet.cpp \
     combobox_delegate.cpp \
+    contour.cpp \
     contour_range.cpp \
     dialog_contour_properties.cpp \
     dialog_move_seg.cpp \
@@ -92,11 +93,17 @@ SOURCES += \
     pult_widget.cpp \
     resize_dialog.cpp \
     rotate_dialog.cpp \
+    segment_arc.cpp \
+    segment_block.cpp \
+    segment_circle.cpp \
+    segment_entity.cpp \
+    segment_intersection.cpp \
+    segment_line.cpp \
+    segment_point.cpp \
     slicing_widget.cpp \
     slots_widget.cpp \
     start_stop_elapsed_timer.cpp \
     run_widget.cpp \
-    dxf.cpp \
     form_contour.cpp \
     new_cutline_dialog.cpp \
     form_passes.cpp \
@@ -111,13 +118,6 @@ SOURCES += \
     fpoint_t.cpp \
     cnc_types.cpp \
     double_ext.cpp \
-    dxf_arc.cpp \
-    dxf_line.cpp \
-    dxf_entities.cpp \
-    dxf_entity.cpp \
-    dxf_circle.cpp \
-    dxf_intersect.cpp \
-    dxf_point.cpp \
     plot_view.cpp \
     qwt_plot_view.cpp \
     uv_sizing_widget.cpp \
@@ -137,6 +137,7 @@ HEADERS += \
     cnc_param.h \
     com_packet.h \
     combobox_delegate.h \
+    contour.h \
     contour_range.h \
     contour_range.h \
     dialog_contour_properties.h \
@@ -169,11 +170,17 @@ HEADERS += \
     pult_widget.h \
     resize_dialog.h \
     rotate_dialog.h \
+    segment_arc.h \
+    segment_block.h \
+    segment_circle.h \
+    segment_entity.h \
+    segment_intersection.h \
+    segment_line.h \
+    segment_point.h \
     slicing_widget.h \
     slots_widget.h \
     start_stop_elapsed_timer.h \
     run_widget.h \
-    dxf.h \
     form_contour.h \
     debug.h \
     new_cutline_dialog.h \
@@ -190,13 +197,6 @@ HEADERS += \
     fpoint_t.h \
     cnc_types.h \
     double_ext.h \
-    dxf_entity.h \
-    dxf_arc.h \
-    dxf_entities.h \
-    dxf_line.h \
-    dxf_circle.h \
-    dxf_intersect.h \
-    dxf_point.h \
     plot_view.h \
     qwt_plot_view.h \
     uv_sizing_widget.h \

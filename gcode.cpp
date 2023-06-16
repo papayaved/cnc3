@@ -125,7 +125,7 @@ bool GCode::generate(const cut_t& cut, const deque<ContourPair>& contours, const
     frames.clear();
 
     if (!contours.empty()) {
-        const DxfEntity *bot = nullptr, *top = nullptr;
+        const SegmentEntity *bot = nullptr, *top = nullptr;
         bool cutline = false;
         bool init = true;
         bool tab = false;
@@ -220,7 +220,7 @@ bool GCode::generate(const cut_t& cut, const deque<ContourPair>& contours, const
 
                 while (bot || top) {
                     if (bot) {
-                        if (bot->type() == ENTITY_TYPE::LINE) {
+                        if (bot->type() == DXF_ENTITY_TYPE::LINE) {
                             if (bot->hasRollVel()) {
                                 if (!M105.init || M105.value != bot->rollVel()) {
                                     M105.value = bot->rollVel();
@@ -245,7 +245,7 @@ bool GCode::generate(const cut_t& cut, const deque<ContourPair>& contours, const
                                 append(GEntity('F', cut.speed));
                             }
                         }
-                        else if (bot->type() == ENTITY_TYPE::ARC) {
+                        else if (bot->type() == DXF_ENTITY_TYPE::ARC) {
                             if (bot->CCW()) {
                                 frames.push_back(GFrame::G3());
                                 G_reg = 3;
@@ -269,7 +269,7 @@ bool GCode::generate(const cut_t& cut, const deque<ContourPair>& contours, const
                     }
 
                     if (top) {
-                        if (top->type() == ENTITY_TYPE::LINE) {
+                        if (top->type() == DXF_ENTITY_TYPE::LINE) {
                             if (G_reg != 1) {
                                 append(GFrame::G1());
                                 G_reg = 1;
@@ -277,7 +277,7 @@ bool GCode::generate(const cut_t& cut, const deque<ContourPair>& contours, const
 
                             append(GEntity('U', top->point_1().x), GEntity('V', top->point_1().y));
                         }
-                        else if (top->type() == ENTITY_TYPE::ARC) {
+                        else if (top->type() == DXF_ENTITY_TYPE::ARC) {
                             if (top->CCW()) {
                                 if (G_reg != 3) {
                                     append(GFrame::G3());
@@ -410,7 +410,7 @@ bool GCode::generate(double D_top, double D_bot, double L, double H, double T, b
     return true;
 }
 
-void GCode::addLine(Dxf& cnt, const GCommand& cmd, bool inc_ena, const fpoint_t& offset, double& X, double& Y, LAYER_T layer) {
+void GCode::addLine(Contour& cnt, const GCommand& cmd, bool inc_ena, const fpoint_t& offset, double& X, double& Y, LAYER_T layer) {
     fpoint_t A(X, Y), B(X, Y);
 
     if (layer == LAYER_T::BOT && cmd.isXY()) {
@@ -429,12 +429,12 @@ void GCode::addLine(Dxf& cnt, const GCommand& cmd, bool inc_ena, const fpoint_t&
     }
 
     if (A == B)
-        cnt.push_back(new DxfPoint(X, Y));
+        cnt.push_back(new SegmentPoint(X, Y));
     else
-        cnt.push_back(new DxfLine(A, B));
+        cnt.push_back(new SegmentLine(A, B));
 }
 
-void GCode::addArc(Dxf& cnt, const GCommand& cmd, bool inc_ena, const fpoint_t& offset, double& X, double& Y, bool ccw, LAYER_T layer) {
+void GCode::addArc(Contour& cnt, const GCommand& cmd, bool inc_ena, const fpoint_t& offset, double& X, double& Y, bool ccw, LAYER_T layer) {
     fpoint_t A(X, Y), B(X, Y), C(X, Y);
 
     if (layer == LAYER_T::BOT && cmd.isR()) {
@@ -447,9 +447,9 @@ void GCode::addArc(Dxf& cnt, const GCommand& cmd, bool inc_ena, const fpoint_t& 
         double R = cmd.R();
 
         if (fabs(R) < M_PRECISION)
-            cnt.push_back(new DxfPoint(X, Y));
+            cnt.push_back(new SegmentPoint(X, Y));
         else
-            cnt.push_back(new DxfArc(A, B, R, ccw));
+            cnt.push_back(new SegmentArc(A, B, R, ccw));
     }
     else if (layer == LAYER_T::TOP && cmd.isR2()) {
         if (cmd.isU())
@@ -461,9 +461,9 @@ void GCode::addArc(Dxf& cnt, const GCommand& cmd, bool inc_ena, const fpoint_t& 
         double R = cmd.R2();
 
         if (fabs(R) < M_PRECISION)
-            cnt.push_back(new DxfPoint(X, Y));
+            cnt.push_back(new SegmentPoint(X, Y));
         else
-            cnt.push_back(new DxfArc(A, B, R, ccw));
+            cnt.push_back(new SegmentArc(A, B, R, ccw));
     }
     else if (layer == LAYER_T::BOT) {
         if (cmd.isI())
@@ -479,11 +479,11 @@ void GCode::addArc(Dxf& cnt, const GCommand& cmd, bool inc_ena, const fpoint_t& 
             B.y = Y = inc_ena ? Y + cmd.Y() : offset.y + cmd.Y();
 
         if (A == C && B == C)
-            cnt.push_back(new DxfPoint(X, Y));
+            cnt.push_back(new SegmentPoint(X, Y));
         else if (A == C || B == C)
-            cnt.push_back(new DxfLine(A, B));
+            cnt.push_back(new SegmentLine(A, B));
         else
-            cnt.push_back(new DxfArc(A, B, C, ccw));
+            cnt.push_back(new SegmentArc(A, B, C, ccw));
     }
     else if (layer == LAYER_T::TOP) {
         if (cmd.isI2())
@@ -499,14 +499,14 @@ void GCode::addArc(Dxf& cnt, const GCommand& cmd, bool inc_ena, const fpoint_t& 
             B.y = Y = inc_ena ? Y + cmd.V() : offset.y + cmd.V();
 
         if (A == C && B == C)
-            cnt.push_back(new DxfPoint(X, Y));
+            cnt.push_back(new SegmentPoint(X, Y));
         else if (A == C || B == C)
-            cnt.push_back(new DxfLine(A, B));
+            cnt.push_back(new SegmentLine(A, B));
         else
-            cnt.push_back(new DxfArc(A, B, C, ccw));
+            cnt.push_back(new SegmentArc(A, B, C, ccw));
     }
     else
-        cnt.push_back(new DxfPoint(X, Y));
+        cnt.push_back(new SegmentPoint(X, Y));
 }
 
 void f(bool inc_ena, bool valid, double cmd_X, double& X) {
@@ -700,7 +700,7 @@ void GCode::RtoIJ() {
 
                         if (cmd.isR()) {
                             fpoint_t B(X,Y);
-                            DxfArc arc(A, B, cmd.R(), cmd.G() == 3);
+                            SegmentArc arc(A, B, cmd.R(), cmd.G() == 3);
 
                             frame.replaceRtoIJ(true, arc.center());
                         }
@@ -729,7 +729,7 @@ void GCode::RtoIJ() {
 
                         if (cmd.isR2()) {
                             fpoint_t B2(X,Y);
-                            DxfArc arc(A2, B2, cmd.R2(), cmd.G2() == 3);
+                            SegmentArc arc(A2, B2, cmd.R2(), cmd.G2() == 3);
 
                             frame.replaceRtoIJ(false, arc.center());
                         }

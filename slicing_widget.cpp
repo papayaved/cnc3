@@ -253,7 +253,7 @@ void SlicingWidget::onGenerate() {
         btnGen->blockSignals(true);
         btnGen->setEnabled(false);
 
-        Dxf bot;
+        Contour bot;
         par.saveSlices( snake() );
         init();
 

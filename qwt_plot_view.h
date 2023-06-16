@@ -55,7 +55,7 @@ class QwtPlotView : public QObject {
     );
     static void addPlot(
         QwtPlot* const newPlot, ContourRange& newRange,
-        const Dxf* const dxf,
+        const Contour* const dxf,
         bool swapXY,
         const QColor& color, // Qt::GlobalColor::blue
         int width = 2,
@@ -64,7 +64,7 @@ class QwtPlotView : public QObject {
 
     static void addPlot(
         QwtPlot* const newPlot, ContourRange& newRange,
-        const DxfEntity* const entity,
+        const SegmentEntity* const entity,
         bool swapXY,
         const QColor& color, // Qt::GlobalColor::yellow
         int width = 4, Qt::PenStyle = Qt::SolidLine
@@ -138,8 +138,8 @@ public:
     void plot(const ContourList& contourList, const QSize& frameSize);
     void plot(const ContourList& contourList);
 
-    void plot(const Dxf& contour, const QSize& frameSize);
-    void plot(const Dxf& contour);
+    void plot(const Contour& contour, const QSize& frameSize);
+    void plot(const Contour& contour);
 
     void plot(QVector<QPointF>& pts, ContourRange& range, const QSize& frameSize, const QColor& color, const QColor& tipColor, int width, Qt::PenStyle style);
     void plot(QVector<QPointF>& pts, ContourRange& range, const QColor& color, const QColor& tipColor, int width, Qt::PenStyle style);

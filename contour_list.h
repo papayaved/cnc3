@@ -48,9 +48,9 @@ public:
     void insert_before(size_t index, const ContourPair& pair);
     void insert_after(size_t index, const ContourPair& pair);
 
-    void new_insert(size_t index);
-    void new_front();
-    void new_back();
+    void new_insert(size_t index, CONTOUR_TYPE type = CONTOUR_TYPE::MAIN_CONTOUR);
+    void new_front(CONTOUR_TYPE type = CONTOUR_TYPE::MAIN_CONTOUR);
+    void new_back(CONTOUR_TYPE type = CONTOUR_TYPE::MAIN_CONTOUR);
 
     void clear();
     void leaveOne(size_t ctr_num);
@@ -71,7 +71,7 @@ public:
 
     ContourPair* at(size_t index);
     const ContourPair* at(size_t index) const;
-    const DxfEntity* at(size_t ctr, size_t row, size_t col);
+    const SegmentEntity* at(size_t ctr, size_t row, size_t col);
 
     ContourPair* front();
     ContourPair* back();

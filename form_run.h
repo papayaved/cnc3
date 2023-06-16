@@ -18,7 +18,7 @@ class FormRun : public QWidget {
     const unsigned REMAIN_TIMER_MAX = 2000 / POLLING_TIME - 1;
     const unsigned ADC_POLLING_TIME = 1000; // ms
 
-    ProgramParam& m_par;
+    ProgramParam& par;
     RunWidget* m_runWidget;
     bool m_cncReaderEna {false}, m_adcEnable {false};
     std::list<std::string> m_gframes;

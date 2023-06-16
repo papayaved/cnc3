@@ -171,6 +171,7 @@ void ContourList::insert_before(size_t index, const ContourPair& pair) {
             break;
         }
     }
+
     m_botLength = -1;
 }
 
@@ -190,9 +191,11 @@ void ContourList::insert_after(size_t index, const ContourPair& pair) {
     m_botLength = -1;
 }
 
-void ContourList::new_insert(size_t index) { insert_before(index, ContourPair()); }
-void ContourList::new_front() { m_contours.push_front(ContourPair()); }
-void ContourList::new_back() { m_contours.push_back(ContourPair()); }
+void ContourList::new_insert(size_t index, CONTOUR_TYPE type) {
+    insert_before(index, ContourPair(type));
+}
+void ContourList::new_front(CONTOUR_TYPE type) {                m_contours.push_front(ContourPair(type)); }
+void ContourList::new_back(CONTOUR_TYPE type) {                 m_contours.push_back(ContourPair(type)); }
 
 bool ContourList::remove(size_t index) {
     size_t i = 0;
@@ -292,7 +295,7 @@ const ContourPair* ContourList::at(size_t i) const {
     return i < m_contours.size() ? &m_contours[i] : nullptr;
 }
 
-const DxfEntity* ContourList::at(size_t ctr, size_t row, size_t col) {
+const SegmentEntity* ContourList::at(size_t ctr, size_t row, size_t col) {
     if (ctr < m_contours.size()) {
         const ContourPair& pair = m_contours[ctr];
 
@@ -324,8 +327,8 @@ ContourRange ContourList::range() const {
     ContourRange range, bot_range, top_range;
 
     for (const ContourPair& pair: m_contours) {
-        bot_range = pair.bot() ? Dxf::contourRange(pair.bot()->entities()) : ContourRange();
-        top_range = pair.top() ? Dxf::contourRange(pair.top()->entities()) : ContourRange();
+        bot_range = pair.bot() ? Contour::contourRange(pair.bot()->entities()) : ContourRange();
+        top_range = pair.top() ? Contour::contourRange(pair.top()->entities()) : ContourRange();
 
         range.scale(bot_range);
         range.scale(top_range);
@@ -468,41 +471,39 @@ bool ContourList::isSelected(size_t ctr, size_t row, size_t col) const {
 }
 
 bool ContourList::sort() {
-    bool OK {true};
+    bool OK = true;
+    fpoint_valid_t prev_pt, next_pt;
 
     clearSelected();
 
     for (int i = 0; i < (int)m_contours.size(); i++) {
-        const ContourPair* const prev = i > 0 ? &m_contours[i - 1] : nullptr;
-        const ContourPair* const next = i < (int)m_contours.size() - 1 ? &m_contours[i + 1] : nullptr;
+        Contour* const bot = m_contours[i].bot();
+        Contour* const top = m_contours[i].top();
 
-        Dxf* const bot = m_contours[i].bot();
+        ContourPair* const prev_pair = i > 0 ? &m_contours[i - 1] : nullptr;
 
         if (bot && !bot->empty()) {
-            fpoint_valid_t prev_pt(false), next_pt(false);
-
-            if (prev)
-                prev_pt = prev->lastBot();
-
-            if (next)
-                next_pt = next->firstBot();
-
-            OK &= bot->sort(prev_pt, next_pt);
+            Contour* const prev = prev_pair ? prev_pair->bot() : nullptr;
+            OK &= bot->sort(prev, i == 1);
         }
-
-        Dxf* const top = m_contours[i].top();
 
         if (top && !top->empty()) {
-            fpoint_valid_t prev_pt(false), next_pt(false);
-
-            if (prev)
-                prev_pt = prev->lastTop();
-
-            if (next)
-                next_pt = next->firstTop();
-
-            OK &= top->sort(prev_pt, next_pt);
+            Contour* const prev = prev_pair ? prev_pair->top() : nullptr;
+            OK &= top->sort(prev, i == 1);
         }
+    }
+
+    for (int i = 0; i < (int)m_contours.size(); i++) {
+        const ContourPair* const next = i < (int)m_contours.size() - 1 ? &m_contours[i + 1] : nullptr;
+
+        Contour* const bot = m_contours[i].bot();
+        Contour* const top = m_contours[i].top();
+
+        if (bot && !bot->empty() && bot->isSorted() && next)
+            bot->setOut(next->firstBot());
+
+        if (top && !top->empty() && top->isSorted() && next)
+            top->setOut(next->firstTop());
     }
 
     return OK;
@@ -706,25 +707,25 @@ fpoint_t ContourList::intersectUV() const {
     if (!pair || m_cur_seg < 0)
         return fpoint_t();
 
-    const DxfEntity* const selectedBot = pair->bot()->at(m_cur_seg);
+    const SegmentEntity* const selectedBot = pair->bot()->at(m_cur_seg);
 
     switch (selectedBot->type()) {
-        case ENTITY_TYPE::LINE: {
-            DxfLine LZ(m_xyPos, m_uvPos);
-            const DxfLine* LXY = dynamic_cast<const DxfLine*>(selectedBot);
+        case DXF_ENTITY_TYPE::LINE: {
+            SegmentLine LZ(m_xyPos, m_uvPos);
+            const SegmentLine* LXY = dynamic_cast<const SegmentLine*>(selectedBot);
             fpoint_t res;
 
-            DxfIntersect::intersect(LZ, *LXY, res);
+            SegmentIntersection::intersect(LZ, *LXY, res);
 
             return res;
         }
-        case ENTITY_TYPE::ARC: {
-            DxfLine line(m_xyPos, m_uvPos);
-            const DxfArc* arc = dynamic_cast<const DxfArc*>(selectedBot);
+        case DXF_ENTITY_TYPE::ARC: {
+            SegmentLine line(m_xyPos, m_uvPos);
+            const SegmentArc* arc = dynamic_cast<const SegmentArc*>(selectedBot);
             fpoint_t pts[2];
             double angle[2];
 
-            DxfIntersect::intersect(line, *arc, pts, angle);
+            SegmentIntersection::intersect(line, *arc, pts, angle);
 
             if (arc->between(angle[0]))
                 return pts[0];
@@ -937,10 +938,10 @@ bool ContourList::find(const fpoint_t& pt, const ContourRange& range, size_t& ct
         if (pair.bot()) {
             col_num = 0;
 
-            for (const DxfEntity* const ent: pair.bot()->entities()) {
+            for (const SegmentEntity* const ent: pair.bot()->entities()) {
                 switch (ent->type()) {
-                case ENTITY_TYPE::LINE: {
-                    const DxfLine* const line = reinterpret_cast<const DxfLine*>(ent);
+                case DXF_ENTITY_TYPE::LINE: {
+                    const SegmentLine* const line = reinterpret_cast<const SegmentLine*>(ent);
                     double h = line->distance(pt);
 
                     if (h <= e)
@@ -948,8 +949,8 @@ bool ContourList::find(const fpoint_t& pt, const ContourRange& range, size_t& ct
                 }
                     break;
 
-                case ENTITY_TYPE::ARC: {
-                    const DxfArc* const arc = reinterpret_cast<const DxfArc*>(ent);
+                case DXF_ENTITY_TYPE::ARC: {
+                    const SegmentArc* const arc = reinterpret_cast<const SegmentArc*>(ent);
                     double h = arc->distance(pt);
 
                     if (h <= e)
@@ -970,10 +971,10 @@ bool ContourList::find(const fpoint_t& pt, const ContourRange& range, size_t& ct
         if (pair.top()) {
             col_num = 1;
 
-            for (const DxfEntity* const ent: pair.top()->entities()) {
+            for (const SegmentEntity* const ent: pair.top()->entities()) {
                 switch (ent->type()) {
-                case ENTITY_TYPE::LINE: {
-                    const DxfLine* const line = reinterpret_cast<const DxfLine*>(ent);
+                case DXF_ENTITY_TYPE::LINE: {
+                    const SegmentLine* const line = reinterpret_cast<const SegmentLine*>(ent);
                     double h = line->distance(pt);
 
                     if (h <= e)
@@ -981,8 +982,8 @@ bool ContourList::find(const fpoint_t& pt, const ContourRange& range, size_t& ct
                 }
                     break;
 
-                case ENTITY_TYPE::ARC: {
-                    const DxfArc* const arc = reinterpret_cast<const DxfArc*>(ent);
+                case DXF_ENTITY_TYPE::ARC: {
+                    const SegmentArc* const arc = reinterpret_cast<const SegmentArc*>(ent);
                     double h = arc->distance(pt);
 
                     if (h <= e)

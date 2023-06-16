@@ -1,4 +1,4 @@
-#include "dxf.h"
+#include "contour.h"
 #include <QDebug>
 #include <cstdint>
 #include <cstring>
@@ -19,11 +19,11 @@ double DxfCodeValue::getDouble() const {
     return OK ? data : 0.0;
 }
 
-Dxf::Dxf() : m_fp(nullptr), m_ch_reg(0), m_color(Qt::GlobalColor::blue) {}
+Contour::Contour() : m_fp(nullptr), m_ch_reg(0), m_color(Qt::GlobalColor::blue) {}
 
-Dxf::Dxf(const Dxf& other) :
+Contour::Contour(const Contour& other) :
     m_fileDir( other.m_fileDir ), m_fileName( other.m_fileName ), m_fp( nullptr ), m_ch_reg( 0 ),
-    m_blocks( std::deque<DxfBlock*>(other.m_blocks.size()) ), m_entities( std::list<DxfEntity*>() ),
+    m_blocks( std::deque<SegmentBlock*>(other.m_blocks.size()) ), m_entities( std::list<SegmentEntity*>() ),
     m_layers( other.m_layers ),
     m_color( other.m_color ),
     m_last_error( other.m_last_error ),
@@ -32,18 +32,18 @@ Dxf::Dxf(const Dxf& other) :
 {
     for (size_t i = 0; i < m_blocks.size(); i++) {
         if (other.m_blocks[i])
-            m_blocks[i] = new DxfBlock( *other.m_blocks[i] );
+            m_blocks[i] = new SegmentBlock( *other.m_blocks[i] );
     }
 
-    for (list<DxfEntity*>::const_iterator it = other.m_entities.cbegin(); it != other.m_entities.cend(); ++it) {
+    for (list<SegmentEntity*>::const_iterator it = other.m_entities.cbegin(); it != other.m_entities.cend(); ++it) {
         if (*it)
             m_entities.push_back( (*it)->clone() );
     }
 }
 
-Dxf::Dxf(Dxf&& other) :
+Contour::Contour(Contour&& other) :
     m_fileDir( std::move(other.m_fileDir) ), m_fileName( std::move(other.m_fileName) ), m_fp(other.m_fp), m_ch_reg(other.m_ch_reg),
-    m_blocks( std::deque<DxfBlock*>(other.m_blocks.size()) ), m_entities( std::list<DxfEntity*>() ),
+    m_blocks( std::deque<SegmentBlock*>(other.m_blocks.size()) ), m_entities( std::list<SegmentEntity*>() ),
     m_layers( std::move(other.m_layers) ),
     m_color( other.m_color ),
     m_last_error( std::move(other.m_last_error) ),
@@ -59,7 +59,7 @@ Dxf::Dxf(Dxf&& other) :
 
     other.m_blocks.clear();
 
-    for (list<DxfEntity*>::iterator it = other.m_entities.begin(); it != other.m_entities.end(); ++it) {
+    for (list<SegmentEntity*>::iterator it = other.m_entities.begin(); it != other.m_entities.end(); ++it) {
         if (*it) {
             m_entities.push_back(*it);
             *it = nullptr;
@@ -75,17 +75,17 @@ Dxf::Dxf(Dxf&& other) :
     other.m_sorted = false;
 }
 
-Dxf::Dxf(std::list<DxfEntity*>& entities) {
+Contour::Contour(std::list<SegmentEntity*>& entities) {
     m_entities = entities;
     entities.clear();
 }
 
-Dxf::~Dxf() {
+Contour::~Contour() {
     clear();
     close();
 }
 
-Dxf& Dxf::operator=(const Dxf& other) {
+Contour& Contour::operator=(const Contour& other) {
     if (this != &other) {
         clear();
         close();
@@ -105,10 +105,10 @@ Dxf& Dxf::operator=(const Dxf& other) {
 
         for (size_t i = 0; i < m_blocks.size(); i++) {
             if (other.m_blocks[i])
-                m_blocks[i] = new DxfBlock(*other.m_blocks[i]);
+                m_blocks[i] = new SegmentBlock(*other.m_blocks[i]);
         }
 
-        for (list<DxfEntity*>::const_iterator it = other.m_entities.cbegin(); it != other.m_entities.cend(); ++it) {
+        for (list<SegmentEntity*>::const_iterator it = other.m_entities.cbegin(); it != other.m_entities.cend(); ++it) {
             if (*it)
                 m_entities.push_back( (*it)->clone() );
         }
@@ -117,7 +117,7 @@ Dxf& Dxf::operator=(const Dxf& other) {
     return *this;
 }
 
-Dxf& Dxf::operator=(Dxf&& other) noexcept {
+Contour& Contour::operator=(Contour&& other) noexcept {
     if (this != &other) {
         clear();
         close();
@@ -137,7 +137,7 @@ Dxf& Dxf::operator=(Dxf&& other) noexcept {
 
         other.m_blocks.clear();
 
-        for (list<DxfEntity*>::iterator it = other.m_entities.begin(); it != other.m_entities.end(); ++it) {
+        for (list<SegmentEntity*>::iterator it = other.m_entities.begin(); it != other.m_entities.end(); ++it) {
             if (*it) {
                 m_entities.push_back(*it);
                 *it = nullptr;
@@ -165,8 +165,8 @@ Dxf& Dxf::operator=(Dxf&& other) noexcept {
     return *this;
 }
 
-void Dxf::clearEntities() {
-    for (list<DxfEntity*>::iterator it = m_entities.begin(); it != m_entities.end(); ++it)
+void Contour::clearEntities() {
+    for (list<SegmentEntity*>::iterator it = m_entities.begin(); it != m_entities.end(); ++it)
         if (*it) {
             delete *it;
             *it = nullptr;
@@ -175,7 +175,7 @@ void Dxf::clearEntities() {
     m_entities.clear();
 }
 
-void Dxf::clearBlocks() {
+void Contour::clearBlocks() {
     for (size_t i = 0; i < m_blocks.size(); i++)
         if (m_blocks[i]) {
             delete m_blocks[i];
@@ -185,7 +185,7 @@ void Dxf::clearBlocks() {
     m_blocks.clear();
 }
 
-void Dxf::clear() {
+void Contour::clear() {
     clearBlocks();
     clearEntities();
     m_layers.clear();
@@ -197,11 +197,11 @@ void Dxf::clear() {
     m_ch_reg = 0;
 }
 
-Dxf Dxf::getLayer(const string &layer_name) const {
-    Dxf res;
+Contour Contour::getLayer(const string &layer_name) const {
+    Contour res;
 
     if (layer_name.length() > 0) {
-        for (const DxfEntity* ent: m_entities) {
+        for (const SegmentEntity* ent: m_entities) {
             string s = ent->layerName();
 
             if ( s.compare(layer_name) == 0 ) {
@@ -213,10 +213,10 @@ Dxf Dxf::getLayer(const string &layer_name) const {
     return res;
 }
 
-Dxf Dxf::cutLayer(const string &layer_name) {
-    Dxf res;
+Contour Contour::cutLayer(const string &layer_name) {
+    Contour res;
 
-    for (list<DxfEntity*>::iterator it = m_entities.begin(); it != m_entities.end(); ++it) {
+    for (list<SegmentEntity*>::iterator it = m_entities.begin(); it != m_entities.end(); ++it) {
         if ( (*it)->layerName().compare(layer_name) == 0 ) {
             res.m_entities.push_back(*it);
 //            *it = nullptr;
@@ -230,14 +230,14 @@ Dxf Dxf::cutLayer(const string &layer_name) {
     return res;
 }
 
-void Dxf::init(const string &fileDir, const string &fileName) {
+void Contour::init(const string &fileDir, const string &fileName) {
     clear();
     close();
     m_fileDir = fileDir;
     m_fileName = fileName;
 }
 
-bool Dxf::open() {
+bool Contour::open() {
     string file_name = m_fileDir + "/" + m_fileName;
     m_fp = fopen(file_name.c_str(), "r");
     m_ch_reg = 0;
@@ -251,7 +251,7 @@ bool Dxf::open() {
     return true;
 }
 
-void Dxf::close() {
+void Contour::close() {
     if (m_fp) {
         fclose(m_fp);
         m_fp = nullptr;
@@ -260,7 +260,7 @@ void Dxf::close() {
     m_ch_reg = 0;
 }
 
-Dxf::STATES Dxf::next_entity(Dxf::STATES state, const DxfCodeValue& pair) {
+Contour::STATES Contour::next_entity(Contour::STATES state, const DxfCodeValue& pair) {
     if (pair.equal(0, "ENDSEC"))
         return STATES::SKIP;
     else if (pair.equal(0, "LINE"))
@@ -281,17 +281,17 @@ Dxf::STATES Dxf::next_entity(Dxf::STATES state, const DxfCodeValue& pair) {
     return state;
 }
 
-Dxf::STATES Dxf::next_block_entity(Dxf::STATES state, const DxfCodeValue& pair, DxfBlock*& block) {
+Contour::STATES Contour::next_block_entity(Contour::STATES state, const DxfCodeValue& pair, SegmentBlock*& block) {
     if (pair.equal(0, "ENDBLK")) {
         if (block)
             if (block->check()) {
                 m_blocks.push_back(block);
-                block = new DxfBlock;
+                block = new SegmentBlock;
             }
             else
                 block->clear();
         else
-            block = new DxfBlock;
+            block = new SegmentBlock;
 
         return STATES::BLOCKS;
     }
@@ -311,7 +311,7 @@ Dxf::STATES Dxf::next_block_entity(Dxf::STATES state, const DxfCodeValue& pair, 
     return state;
 }
 
-void Dxf::init_entity(DxfLine& line, const DxfCodeValue& pair) {
+void Contour::init_entity(SegmentLine& line, const DxfCodeValue& pair) {
     switch (pair.code) {
     case 8:
         line.setLayerName(pair.value);
@@ -332,7 +332,7 @@ void Dxf::init_entity(DxfLine& line, const DxfCodeValue& pair) {
     }
 }
 
-void Dxf::init_polyline(DxfPoint& prev_point, DxfLine& line, const DxfCodeValue& pair) {
+void Contour::init_polyline(SegmentPoint& prev_point, SegmentLine& line, const DxfCodeValue& pair) {
     switch (pair.code) {
     case 8:
         line.setLayerName(pair.value);
@@ -365,7 +365,7 @@ void Dxf::init_polyline(DxfPoint& prev_point, DxfLine& line, const DxfCodeValue&
         m_layers.insert(line.layerName());
 }
 
-void Dxf::init_entity(DxfArc& arc, const DxfCodeValue& pair) {
+void Contour::init_entity(SegmentArc& arc, const DxfCodeValue& pair) {
     switch (pair.code) {
     case 8:
         arc.setLayerName(pair.value);
@@ -392,7 +392,7 @@ void Dxf::init_entity(DxfArc& arc, const DxfCodeValue& pair) {
     }
 }
 
-void Dxf::init_entity(DxfCircle& circle, const DxfCodeValue& pair) {
+void Contour::init_entity(SegmentCircle& circle, const DxfCodeValue& pair) {
     switch (pair.code) {
     case 8:
         circle.setLayerName(pair.value);
@@ -413,7 +413,7 @@ void Dxf::init_entity(DxfCircle& circle, const DxfCodeValue& pair) {
     }
 }
 
-void Dxf::init_entity(DxfPoint& point, const DxfCodeValue& pair) {
+void Contour::init_entity(SegmentPoint& point, const DxfCodeValue& pair) {
     switch (pair.code) {
     case 8:
         point.setLayerName(pair.value);
@@ -428,14 +428,14 @@ void Dxf::init_entity(DxfPoint& point, const DxfCodeValue& pair) {
     }
 }
 
-bool Dxf::parse() {
+bool Contour::parse() {
     STATES state = STATES::SKIP;
-    DxfBlock* block = new DxfBlock;
-    DxfLine line;
-    DxfArc arc;
-    DxfCircle circle;
-    DxfPoint point;
-    DxfInsert insert;
+    SegmentBlock* block = new SegmentBlock;
+    SegmentLine line;
+    SegmentArc arc;
+    SegmentCircle circle;
+    SegmentPoint point;
+    SegmentInsertBlock insert;
 
     clear();
     open();
@@ -675,7 +675,7 @@ bool Dxf::parse() {
     return true;
 }
 
-void Dxf::cutUnconnected(list<DxfEntity*>& free) {
+void Contour::cutUnconnected(list<SegmentEntity*>& free) {
     free.clear();
     bool find = false;
     fpoint_t A1{0,0}, B1{0,0}, A2{0,0}, B2{0,0};
@@ -683,13 +683,13 @@ void Dxf::cutUnconnected(list<DxfEntity*>& free) {
     if (m_entities.size() < 2)
         return;
 
-    for (list<DxfEntity*>::iterator i = m_entities.begin(); i != m_entities.end();) {
+    for (list<SegmentEntity*>::iterator i = m_entities.begin(); i != m_entities.end();) {
         if (*i == nullptr) {
             i = m_entities.erase(i);
             continue;
         }
 
-        list<DxfEntity*>::iterator j = i;        
+        list<SegmentEntity*>::iterator j = i;
         A1 = (*i)->point_0();
         B1 = (*i)->point_1();
 
@@ -727,7 +727,7 @@ void Dxf::cutUnconnected(list<DxfEntity*>& free) {
 }
 
 // if more than 2 entities
-void Dxf::cutTails(list<DxfEntity*>& tails) {
+void Contour::cutTails(list<SegmentEntity*>& tails) {
     tails.clear();
     bool a = false, b = false;
     fpoint_t A1{0,0}, B1{0,0}, A2{0,0}, B2{0,0};
@@ -736,13 +736,13 @@ void Dxf::cutTails(list<DxfEntity*>& tails) {
         return;
 
     bool incut = true;
-    for (list<DxfEntity*>::iterator i = m_entities.begin(); i != m_entities.end();) {
+    for (list<SegmentEntity*>::iterator i = m_entities.begin(); i != m_entities.end();) {
         if (*i == nullptr) {
             ++i;
             continue;
         }
 
-        list<DxfEntity*>::iterator j = i;
+        list<SegmentEntity*>::iterator j = i;
         A1 = (*i)->point_0();
         B1 = (*i)->point_1();
 
@@ -774,7 +774,7 @@ void Dxf::cutTails(list<DxfEntity*>& tails) {
                 j = m_entities.begin();
         }
 
-        for (list<DxfEntity*>::iterator k = tails.begin(); k != tails.end() && !(a && b); ++k) {
+        for (list<SegmentEntity*>::iterator k = tails.begin(); k != tails.end() && !(a && b); ++k) {
             if (*k == nullptr)
                 continue;
 
@@ -789,7 +789,7 @@ void Dxf::cutTails(list<DxfEntity*>& tails) {
         }
 
         if (a ^ b) {
-            if (incut && (*i)->type() == ENTITY_TYPE::LINE && a) { // A connected
+            if (incut && (*i)->type() == DXF_ENTITY_TYPE::LINE && a) { // A connected
                 (*i)->reverse();
                 incut = false;
             }
@@ -802,21 +802,27 @@ void Dxf::cutTails(list<DxfEntity*>& tails) {
     }
 }
 
-void Dxf::moveOneTail(std::list<DxfEntity*>& tail) {
+// Move back two tails: head and tail is they exist
+void Contour::moveTwoTails(std::list<SegmentEntity*>& tail) {
     if (!tail.empty() && tail.front()) {
         m_entities.push_front(tail.front());
         tail.erase(tail.begin());
     }
+
+    if (!tail.empty() && tail.back()) {
+        m_entities.push_back(tail.back());
+        tail.erase(--tail.end());
+    }
 }
 
-void Dxf::shiftToBegin(list<DxfEntity*>& entities, const fpoint_t* const first_ptr) {
+void Contour::shiftToBegin(list<SegmentEntity*>& entities, const fpoint_t* const first_ptr) {
     if (first_ptr)
         shiftToBegin(entities, fpoint_valid_t(first_ptr));
 }
 
-void Dxf::shiftToBegin(std::list<DxfEntity *> &entities, const fpoint_valid_t &first) {
+void Contour::shiftToBegin(std::list<SegmentEntity *> &entities, const fpoint_valid_t &first) {
     if (first.valid) {
-        list<DxfEntity*>::iterator it = entities.begin();
+        list<SegmentEntity*>::iterator it = entities.begin();
 
         for (; it != entities.end(); ++it) {
              if ((*it)->point_0() == first)
@@ -830,7 +836,7 @@ void Dxf::shiftToBegin(std::list<DxfEntity *> &entities, const fpoint_valid_t &f
         if (it == entities.end())
             return;
 
-        std::list<DxfEntity*> head;
+        std::list<SegmentEntity*> head;
 
         head.splice(head.begin(), entities, entities.begin(), it); // transfer to the head
 
@@ -839,20 +845,43 @@ void Dxf::shiftToBegin(std::list<DxfEntity *> &entities, const fpoint_valid_t &f
     }
 }
 
-bool Dxf::sort(Dxf& free, Dxf& tails, const fpoint_valid_t& prev_pt, const fpoint_valid_t& next_pt) {
+void Contour::reversePrev(Contour* const prev) {
+    bool rev_req = false;
+
+    for (SegmentEntity* const ent : m_entities) {
+        if (prev->last() == ent->point_0())
+            return;
+        else if (prev->last() == ent->point_1()) {
+            ent->reverse();
+            return;
+        }
+        else if (prev->first() == ent->point_0())
+            rev_req = true;
+        else if (prev->first() == ent->point_1()) {
+            ent->reverse();
+            rev_req = true;
+        }
+    }
+
+    if (rev_req)
+        prev->reverse();
+}
+
+bool Contour::sort(Contour& free, Contour& tails, Contour* const prev, bool prev_first) {
     if (m_entities.empty())
         return false;
 
-    if (m_entities.size() == 1) {
-        if (prev_pt.valid) {
-            if (m_entities.front()->point_1() == prev_pt)
-                m_entities.front()->reverse();
+    // Reverse previous contour
+    if (prev && !prev->empty()) {
+        if (prev_first)
+            reversePrev(prev);
 
-            return m_entities.front()->point_0() == prev_pt;
-        }
-        else
-            return true;
+        // Search first
+        shiftToBegin(m_entities, prev->last());
     }
+
+    if (m_entities.size() == 1)
+        return prev ? this->first() == prev->last() : true;
 
     cutUnconnected(free.m_entities);
     qDebug() << "Free segments:";
@@ -864,23 +893,64 @@ bool Dxf::sort(Dxf& free, Dxf& tails, const fpoint_valid_t& prev_pt, const fpoin
     tails.printDebug();
     qDebug("m_entities.size=%d %d", (int)size(m_entities), (int)m_entities.size());
 
-    moveOneTail(tails.m_entities); // it can be only one
+    moveTwoTails(tails.m_entities); // move back a head and tail if they exist
     qDebug() << "Tails segments:";
     tails.printDebug();
     qDebug("m_entities.size=%d %d", (int)size(m_entities), (int)m_entities.size());
 
-    // Search first
-    shiftToBegin(m_entities, prev_pt);
-
     // Sort
-    list<DxfEntity*> clone(0), sorted(0); // they are only copies of pointers
-    list<DxfEntity*>::iterator it;
+    list<SegmentEntity*> clone(0), sorted(0); // they are only copies of pointers
+    list<SegmentEntity*>::iterator it;
 
-    for (size_t i = 0; i < m_entities.size(); i++) {
+    if (!prev) {
+        for (size_t i = 0; i < m_entities.size(); i++) {
+            clone = m_entities;
+            sorted.clear();
+
+            shiftFirst(clone, i);
+
+            it = clone.begin();
+
+            sorted.push_back(*it);
+            it = clone.erase(it);
+
+            while (!clone.empty()) {
+                bool OK = sorted.back() ? searchNext(sorted.back()->point_1(), it, clone.begin(), clone.end()) : false;
+
+                if (OK) {
+                    sorted.push_back(*it);
+                    it = clone.erase(it);
+                }
+                else
+                    break;
+            }
+
+            while (!clone.empty()) {
+                bool OK = sorted.front() ? searchPrev(sorted.front()->point_0(), it, clone.begin(), clone.end()) : false;
+
+                if (OK) {
+                    sorted.push_front(*it);
+                    it = clone.erase(it);
+                }
+                else
+                    break;
+            }
+
+            if (clone.empty()) {
+                m_entities = sorted;
+                m_sorted = true;
+                qDebug() << "Sorted:";
+                qDebug() << toString().c_str();
+
+                return true;
+            }
+
+            // try to set as the first segment the next segment
+        }
+    }
+    else {
         clone = m_entities;
         sorted.clear();
-
-        shiftFirst(clone, i);
 
         it = clone.begin();
 
@@ -892,7 +962,7 @@ bool Dxf::sort(Dxf& free, Dxf& tails, const fpoint_valid_t& prev_pt, const fpoin
 
             if (OK) {
                 sorted.push_back(*it);
-                it = clone.erase(it);                
+                it = clone.erase(it);
             }
             else
                 break;
@@ -915,47 +985,135 @@ bool Dxf::sort(Dxf& free, Dxf& tails, const fpoint_valid_t& prev_pt, const fpoin
             qDebug() << "Sorted:";
             qDebug() << toString().c_str();
 
-            if (isLoop()) {
-                if (next_pt.valid)
-                    setOut(next_pt);
-            }
-            else
-                setOut();
-
             return true;
         }
-
-        // try to set as the first segment the next segment
     }
 
     m_last_error = clone.front() ? "Error at " + clone.front()->toString() : "Error: DxfEntity is NULL";
     qDebug() << toString().c_str();
 
-    // sort manually
-//    clone.clear();
-//    for (DxfEntity* ent: sorted)
-//        if (ent)
-//            clone.push_back(ent->clone());
-
-//    clearEntities();
-//    m_entities = clone;
-
     return false;
 }
 
-bool Dxf::sort(const fpoint_valid_t& prev_pt, const fpoint_valid_t& next_pt) {
+//bool Contour::sort(Contour& free, Contour& tails, const fpoint_valid_t& prev_pt) {
+//    if (m_entities.empty())
+//        return false;
+
+//    if (m_entities.size() == 1) {
+//        if (prev_pt.valid) {
+//            if (m_entities.front()->point_1() == prev_pt)
+//                m_entities.front()->reverse();
+
+//            return m_entities.front()->point_0() == prev_pt;
+//        }
+//        else
+//            return true;
+//    }
+
+//    cutUnconnected(free.m_entities);
+//    qDebug() << "Free segments:";
+//    free.printDebug();
+//    qDebug("m_entities.size=%d %d", (int)size(m_entities), (int)m_entities.size());
+
+//    cutTails(tails.m_entities);
+//    qDebug() << "Tails segments:";
+//    tails.printDebug();
+//    qDebug("m_entities.size=%d %d", (int)size(m_entities), (int)m_entities.size());
+
+//    moveTwoTails(tails.m_entities); // it can be only one
+//    qDebug() << "Tails segments:";
+//    tails.printDebug();
+//    qDebug("m_entities.size=%d %d", (int)size(m_entities), (int)m_entities.size());
+
+//    // Search first
+//    shiftToBegin(m_entities, prev_pt);
+
+//    // Sort
+//    list<SegmentEntity*> clone(0), sorted(0); // they are only copies of pointers
+//    list<SegmentEntity*>::iterator it;
+
+//    for (size_t i = 0; i < m_entities.size(); i++) {
+//        clone = m_entities;
+//        sorted.clear();
+
+//        shiftFirst(clone, i);
+
+//        it = clone.begin();
+
+//        sorted.push_back(*it);
+//        it = clone.erase(it);
+
+//        while (!clone.empty()) {
+//            bool OK = sorted.back() ? searchNext(sorted.back()->point_1(), it, clone.begin(), clone.end()) : false;
+
+//            if (OK) {
+//                sorted.push_back(*it);
+//                it = clone.erase(it);
+//            }
+//            else
+//                break;
+//        }
+
+//        while (!clone.empty()) {
+//            bool OK = sorted.front() ? searchPrev(sorted.front()->point_0(), it, clone.begin(), clone.end()) : false;
+
+//            if (OK) {
+//                sorted.push_front(*it);
+//                it = clone.erase(it);
+//            }
+//            else
+//                break;
+//        }
+
+//        if (clone.empty()) {
+//            m_entities = sorted;
+//            m_sorted = true;
+//            qDebug() << "Sorted:";
+//            qDebug() << toString().c_str();
+
+//            return true;
+//        }
+
+//        // try to set as the first segment the next segment
+//    }
+
+//    m_last_error = clone.front() ? "Error at " + clone.front()->toString() : "Error: DxfEntity is NULL";
+//    qDebug() << toString().c_str();
+
+//    return false;
+//}
+
+// Sort and delete unused
+bool Contour::sort(Contour* const prev, bool prev_first) {
+    Contour free, tails;
+
     if (m_entities.empty())
         return false;
 
-    Dxf free, tails;
-    bool OK = sort(free, tails, prev_pt, next_pt);
+    bool OK = sort(free, tails, prev, prev_first);
     return OK && free.empty() && tails.empty();
 }
 
-bool Dxf::checkSorted(fpoint_valid_t prev_pt, const fpoint_valid_t& next_pt) {
+// Sort and add to the back unsorted segments
+bool Contour::trySort(Contour* const prev, bool prev_first) {
+    Contour free, tails;
+
+    if (m_entities.empty())
+        return false;
+
+    bool OK = sort(free, tails, prev, prev_first);
+    OK &= free.empty() && tails.empty();
+
+    this->move_back(tails);
+    this->move_back(free);
+
+    return OK;
+}
+
+bool Contour::checkSorted(fpoint_valid_t prev_pt, const fpoint_valid_t& next_pt) {
     m_sorted = true;
 
-    for (list<DxfEntity*>::const_iterator it = m_entities.cbegin(); it != m_entities.cend(); ++it) {
+    for (list<SegmentEntity*>::const_iterator it = m_entities.cbegin(); it != m_entities.cend(); ++it) {
         if (prev_pt.valid && prev_pt != (*it)->point_0()) {
             m_sorted = false;
             break;
@@ -971,30 +1129,30 @@ bool Dxf::checkSorted(fpoint_valid_t prev_pt, const fpoint_valid_t& next_pt) {
     return m_sorted;
 }
 
-void Dxf::reverse() {
+void Contour::reverse() {
     m_entities.reverse();
-    for (DxfEntity* ent: m_entities) {
+    for (SegmentEntity* ent: m_entities) {
         if (ent)
             ent->reverse();
     }
     //    sort();
 }
 
-fpoint_valid_t Dxf::first_point() const {
+fpoint_valid_t Contour::first_point() const {
     if (!m_entities.empty() && m_entities.front())
         return m_entities.front()->point_0();
 
     return fpoint_valid_t(false);
 }
 
-fpoint_valid_t Dxf::last_point() const {
+fpoint_valid_t Contour::last_point() const {
     if (!m_entities.empty() && m_entities.back())
         return m_entities.back()->point_1();
 
     return fpoint_valid_t(false);
 }
 
-const DxfEntity *Dxf::at(size_t index) const {
+const SegmentEntity *Contour::at(size_t index) const {
     size_t i = 0;
 
     if (index < m_entities.size())
@@ -1005,15 +1163,15 @@ const DxfEntity *Dxf::at(size_t index) const {
     return nullptr;
 }
 
-bool Dxf::isLoop() const {
+bool Contour::isLoop() const {
     return m_entities.size() > 1 && m_entities.back() && m_entities.front() && m_entities.back()->point_1() == m_entities.front()->point_0();
 }
 
-bool Dxf::hasOut() const {
+bool Contour::hasOut() const {
     return m_outIndex.valid && m_entities.size() != 0 && m_outIndex.data < (m_entities.size() - 1);
 }
 
-size_t Dxf::getOutNum() const {
+size_t Contour::getOutNum() const {
     if (m_outIndex.valid && isLoop() && m_outIndex.data < m_entities.size())
         return m_outIndex.data;
     else if (m_entities.empty())
@@ -1022,9 +1180,9 @@ size_t Dxf::getOutNum() const {
     return m_entities.size() - 1;
 }
 
-fpoint_t Dxf::getOutPoint() const {
+fpoint_t Contour::getOutPoint() const {
     size_t out_num = getOutNum();
-    const DxfEntity* ent = at(out_num);
+    const SegmentEntity* ent = at(out_num);
 
     if (ent)
         return ent->point_1();
@@ -1032,11 +1190,11 @@ fpoint_t Dxf::getOutPoint() const {
     return fpoint_t(0, 0);
 }
 
-bool Dxf::searchNext(
+bool Contour::searchNext(
     const fpoint_t& pt1,
-    list<DxfEntity*>::iterator& it,
-    const list<DxfEntity*>::iterator& begin,
-    const list<DxfEntity*>::iterator& end
+    list<SegmentEntity*>::iterator& it,
+    const list<SegmentEntity*>::iterator& begin,
+    const list<SegmentEntity*>::iterator& end
 ) {
     if (begin == end)
         return false;
@@ -1044,20 +1202,20 @@ bool Dxf::searchNext(
     if (it == end)
         it = begin;
 
-    list<DxfEntity*>::iterator start = it;
+    list<SegmentEntity*>::iterator start = it;
 
     do {
-        DxfEntity*& o = *it;
+        SegmentEntity*& ent = *it;
 
-        if (o) {
-            fpoint_t A = o->point_0();
-            fpoint_t B = o->point_1();
+        if (ent) {
+            fpoint_t A = ent->point_0();
+            fpoint_t B = ent->point_1();
 
             if (A == pt1)
                 return true;
 
             if (B == pt1) {
-                o->reverse();
+                ent->reverse();
                 return true;
             }
         }
@@ -1071,11 +1229,11 @@ bool Dxf::searchNext(
     return false;
 }
 
-bool Dxf::searchPrev(
+bool Contour::searchPrev(
     const fpoint_t& pt0,
-    list<DxfEntity*>::iterator& it,
-    const list<DxfEntity*>::iterator& begin,
-    const list<DxfEntity*>::iterator& end
+    list<SegmentEntity*>::iterator& it,
+    const list<SegmentEntity*>::iterator& begin,
+    const list<SegmentEntity*>::iterator& end
 ) {
     if (begin == end)
         return false;
@@ -1083,20 +1241,20 @@ bool Dxf::searchPrev(
     if (it == end)
         --it;
 
-    list<DxfEntity*>::iterator start = it;
+    list<SegmentEntity*>::iterator start = it;
 
     do {
-        DxfEntity*& o = *it;
+        SegmentEntity*& ent = *it;
 
-        if (o) {
-            fpoint_t A = o->point_0();
-            fpoint_t B = o->point_1();
+        if (ent) {
+            fpoint_t A = ent->point_0();
+            fpoint_t B = ent->point_1();
 
             if (B == pt0)
                 return true;
 
             if (A == pt0) {
-                o->reverse();
+                ent->reverse();
                 return true;
             }
         }
@@ -1108,22 +1266,22 @@ bool Dxf::searchPrev(
     return false;
 }
 
-size_t Dxf::size(const std::list<DxfEntity*> entities) {
+size_t Contour::size(const std::list<SegmentEntity*> entities) {
     size_t i = 0;
 
-    for (std::list<DxfEntity*>::const_iterator it = entities.cbegin(); it != entities.cend(); ++it)
+    for (std::list<SegmentEntity*>::const_iterator it = entities.cbegin(); it != entities.cend(); ++it)
         i++;
 
     return i;
 }
 
-string Dxf::lastError() {
+string Contour::lastError() {
     string res = m_last_error;
     m_last_error.clear();
     return res;
 }
 
-DxfCodeValue Dxf::getCodeValue() {
+DxfCodeValue Contour::getCodeValue() {
     DxfCodeValue res;
 
     StringParser sp_code(readString());
@@ -1144,30 +1302,30 @@ DxfCodeValue Dxf::getCodeValue() {
     return res;
 }
 
-void Dxf::push_back(DxfEntity* const entity) {
+void Contour::push_back(SegmentEntity* const entity) {
     if (entity)
         m_entities.push_back(entity);
 }
 
-void Dxf::push_back(const DxfEntity& entity) {
+void Contour::push_back(const SegmentEntity& entity) {
     push_back(entity.clone());
 }
 
-void Dxf::push_back(const std::list<DxfEntity *> &entities) {
-    for (DxfEntity* ent : entities) {
+void Contour::push_back(const std::list<SegmentEntity *> &entities) {
+    for (SegmentEntity* ent : entities) {
         if (ent)
             push_back(ent->clone());
     }
 }
 
-void Dxf::move_back(Dxf* const ent) {
+void Contour::move_back(Contour* const ent) {
     if (ent) {
         m_entities.splice(m_entities.end(), ent->m_entities);
 //        ent->m_entities.clear();
     }
 }
 
-void Dxf::move_back(Dxf& ent) { move_back(&ent); }
+void Contour::move_back(Contour& ent) { move_back(&ent); }
 
 //void Dxf::move_back(Dxf& ent) {
 //    for (DxfEntity*& ent : ent.m_entities)
@@ -1179,30 +1337,30 @@ void Dxf::move_back(Dxf& ent) { move_back(&ent); }
 //    ent.m_entities.clear();
 //}
 
-void Dxf::push_front(DxfEntity* const entity) {
+void Contour::push_front(SegmentEntity* const entity) {
     if (entity)
         m_entities.push_front(entity);
 }
 
-void Dxf::push_front(const DxfEntity& entity) {
+void Contour::push_front(const SegmentEntity& entity) {
     push_front(entity.clone());
 }
 
-void Dxf::addInsert(const DxfInsert &insert) {
-    DxfInsert* const new_insert = new DxfInsert(insert);
+void Contour::addInsert(const SegmentInsertBlock &insert) {
+    SegmentInsertBlock* const new_insert = new SegmentInsertBlock(insert);
     m_entities.push_back(new_insert);
 }
 
-list<DxfEntity*>::iterator Dxf::insertBlock(list<DxfEntity*>::iterator it) {
-    DxfEntity*& o = *it;
-    DxfInsert* insert = nullptr;
+list<SegmentEntity*>::iterator Contour::insertBlock(list<SegmentEntity*>::iterator it) {
+    SegmentEntity*& o = *it;
+    SegmentInsertBlock* insert = nullptr;
 
-    if (o && o->type() == ENTITY_TYPE::INSERT) {
-        insert = dynamic_cast<DxfInsert*>(o); // copy
+    if (o && o->type() == DXF_ENTITY_TYPE::INSERT) {
+        insert = dynamic_cast<SegmentInsertBlock*>(o); // copy
 
         if (insert) {
             it = m_entities.erase(it);
-            const DxfBlock* block = getBlockByName(insert->blockName());
+            const SegmentBlock* block = getBlockByName(insert->blockName());
 
             if (block) {
                 const fpoint_t& block_pos = insert->pos();
@@ -1212,10 +1370,10 @@ list<DxfEntity*>::iterator Dxf::insertBlock(list<DxfEntity*>::iterator it) {
                 offset.x = block_pos.x - block_base.x;
                 offset.y = block_pos.y - block_base.y;
 
-                for (const DxfEntity* entity: block->entities()) {
-                    if (entity && entity->type() == ENTITY_TYPE::LINE) {
-                        if (const DxfLine* line = dynamic_cast<const DxfLine*>(entity)) {
-                            DxfLine* const new_line = new DxfLine(*line);
+                for (const SegmentEntity* entity: block->entities()) {
+                    if (entity && entity->type() == DXF_ENTITY_TYPE::LINE) {
+                        if (const SegmentLine* line = dynamic_cast<const SegmentLine*>(entity)) {
+                            SegmentLine* const new_line = new SegmentLine(*line);
                             new_line->shift(offset);
                             it = m_entities.insert(it, new_line);
                         }
@@ -1230,14 +1388,14 @@ list<DxfEntity*>::iterator Dxf::insertBlock(list<DxfEntity*>::iterator it) {
     return it;
 }
 
-void Dxf::insertBlocks() {
+void Contour::insertBlocks() {
     for (auto it = m_entities.begin(); it != m_entities.end(); ++it)
         it = insertBlock(it);
 
     clearBlocks();
 }
 
-const DxfBlock* Dxf::getBlockByName(const string &blockName) const {
+const SegmentBlock* Contour::getBlockByName(const string &blockName) const {
     for (auto it = m_blocks.cbegin(); it != m_blocks.cend(); ++it) {
         if (*it && (*it)->name().compare(blockName) == 0)
             return *it;
@@ -1246,7 +1404,7 @@ const DxfBlock* Dxf::getBlockByName(const string &blockName) const {
     return nullptr;
 }
 
-string Dxf::readString() {
+string Contour::readString() {
     string s;
     s.resize(256);
     s.clear();
@@ -1286,10 +1444,10 @@ string Dxf::readString() {
     return s;
 }
 
-void Dxf::printDebug() const {
+void Contour::printDebug() const {
     int i = 0;
 
-    for (const DxfEntity* entity: m_entities) {
+    for (const SegmentEntity* entity: m_entities) {
         if (entity)
             qDebug("%d: %s", i, entity->toString().c_str());
         else
@@ -1299,11 +1457,11 @@ void Dxf::printDebug() const {
     }
 }
 
-string Dxf::toString() const {
+string Contour::toString() const {
     string s;
     int i = 0;
 
-    for (const DxfEntity* entity: m_entities) {
+    for (const SegmentEntity* entity: m_entities) {
 //        if (i == 13)
 //            qDebug() << "Stop";
 
@@ -1316,12 +1474,12 @@ string Dxf::toString() const {
     return s;
 }
 
-size_t Dxf::count() const { return m_entities.size(); }
+size_t Contour::count() const { return m_entities.size(); }
 
 // round shift to first position
-void Dxf::shiftFirst(list<DxfEntity*>& entities, size_t index) {
+void Contour::shiftFirst(list<SegmentEntity*>& entities, size_t index) {
     if (index != 0 && index < entities.size()) {
-        std::list<DxfEntity*> head;
+        std::list<SegmentEntity*> head;
 
         auto it = entities.begin();
         std::advance(it, index); // move iterator to index
@@ -1333,13 +1491,13 @@ void Dxf::shiftFirst(list<DxfEntity*>& entities, size_t index) {
     }
 }
 
-void Dxf::shiftFirst(size_t index) {
+void Contour::shiftFirst(size_t index) {
     shiftFirst(m_entities, index);
 }
 
-void Dxf::shiftLast(size_t index) {
+void Contour::shiftLast(size_t index) {
     if (index < m_entities.size() - 1) {
-        std::list<DxfEntity*> head;
+        std::list<SegmentEntity*> head;
 
         auto it = m_entities.begin();
         std::advance(it, index + 1); // move iterator to index
@@ -1351,7 +1509,7 @@ void Dxf::shiftLast(size_t index) {
     }
 }
 
-void Dxf::moveFirst(size_t index) {
+void Contour::moveFirst(size_t index) {
     if (index != 0 && index < m_entities.size()) {
         auto it = m_entities.begin();
         std::advance(it, index); // move iterator to index
@@ -1360,44 +1518,44 @@ void Dxf::moveFirst(size_t index) {
     }
 }
 
-void Dxf::moveLast(size_t index) {
+void Contour::moveLast(size_t index) {
     auto it = m_entities.begin();
     std::advance(it, index); // move iterator to index
     m_entities.push_back(*it);
     it = m_entities.erase(it);
 }
 
-void Dxf::moveUp(size_t index) {
+void Contour::moveUp(size_t index) {
     if (index != 0 && index < m_entities.size()) {
         auto it = m_entities.begin();
         std::advance(it, index); // move iterator to index
-        DxfEntity* A = *it;
+        SegmentEntity* A = *it;
         --it;
-        DxfEntity* B = *it;
+        SegmentEntity* B = *it;
         *it = A;
         ++it;
         *it = B;
     }
 }
 
-void Dxf::moveDown(size_t index) {
+void Contour::moveDown(size_t index) {
     if (index < m_entities.size() - 1) {
         auto it = m_entities.begin();
         std::advance(it, index); // move iterator to index
-        DxfEntity* A = *it;
+        SegmentEntity* A = *it;
         ++it;
-        DxfEntity* B = *it;
+        SegmentEntity* B = *it;
         *it = A;
         --it;
         *it = B;
     }
 }
 
-Dxf Dxf::cut_front() {
-    Dxf ctr;
+Contour Contour::cut_front() {
+    Contour ctr;
 
     if (!m_entities.empty()) {
-        DxfEntity* const entity = m_entities.front();
+        SegmentEntity* const entity = m_entities.front();
         m_entities.pop_front();
         ctr.m_entities.push_back(entity);
     }
@@ -1405,11 +1563,11 @@ Dxf Dxf::cut_front() {
     return ctr;
 }
 
-Dxf Dxf::cut_back() {
-    Dxf ctr;
+Contour Contour::cut_back() {
+    Contour ctr;
 
     if (!m_entities.empty()) {
-        DxfEntity* const entity = m_entities.back();
+        SegmentEntity* const entity = m_entities.back();
         m_entities.pop_back();
         ctr.m_entities.push_back(entity);
     }
@@ -1417,7 +1575,7 @@ Dxf Dxf::cut_back() {
     return ctr;
 }
 
-Dxf Dxf::cut_at(size_t index) {
+Contour Contour::cut_at(size_t index) {
     if (index == 0)
         return cut_front();
     else if (index == m_entities.size() - 1)
@@ -1427,7 +1585,7 @@ Dxf Dxf::cut_at(size_t index) {
         return cut_front();
     }
 
-    return Dxf();
+    return Contour();
 }
 
 //void Dxf::offset(OFFSET_SIDE side, double offset) {
@@ -1462,20 +1620,20 @@ Dxf Dxf::cut_at(size_t index) {
 //        }
 //}
 
-bool Dxf::offset(OFFSET_SIDE side, double offset) {
+bool Contour::offset(OFFSET_SIDE side, double offset) {
     if (m_entities.empty() || offset <= 0)
         return true;
 
     bool loop = isLoop();
 
-    for (DxfEntity*& ent: m_entities) {
+    for (SegmentEntity*& ent: m_entities) {
         if (!ent)
             continue;
 
         ent->offset(side, offset);
         if (ent->isPoint()) {
             delete ent;
-            ent = new DxfPoint;
+            ent = new SegmentPoint;
         }
     }
 
@@ -1496,16 +1654,16 @@ bool Dxf::offset(OFFSET_SIDE side, double offset) {
 }
 
 // return false if segment changed
-bool Dxf::intersectLine(DxfEntity*& A, DxfEntity*& B) {
+bool Contour::intersectLine(SegmentEntity*& A, SegmentEntity*& B) {
     static int i = 0;
-    DxfLine& LA = dynamic_cast<DxfLine&>(*A);
-    DxfLine& LB = dynamic_cast<DxfLine&>(*B);
+    SegmentLine& LA = dynamic_cast<SegmentLine&>(*A);
+    SegmentLine& LB = dynamic_cast<SegmentLine&>(*B);
 
 //    if (i == 7)
 //        qDebug("Debug");
 
     fpoint_t pt;
-    DxfIntersect::intersect(LA, LB, pt);
+    SegmentIntersection::intersect(LA, LB, pt);
 
     {
         qDebug("%d Intersect Lines:", i++);
@@ -1514,15 +1672,15 @@ bool Dxf::intersectLine(DxfEntity*& A, DxfEntity*& B) {
         qDebug("point: %s", pt.toString().c_str());
     }
 
-    DxfLine new_LA(LA.point_0(), pt);
-    DxfLine new_LB(pt, LB.point_1());
+    SegmentLine new_LA(LA.point_0(), pt);
+    SegmentLine new_LB(pt, LB.point_1());
 
     if (!new_LA.otherDir180(LA) && !new_LB.otherDir180(LB)) {
         LA.setPoint1(pt);
         LB.setPoint0(pt);
     }
     else if (new_LA.otherDir180(LA) || new_LA.point_0() == pt) {
-        DxfPoint* P = new DxfPoint(pt, LA.isAdditional());
+        SegmentPoint* P = new SegmentPoint(pt, LA.isAdditional());
 
         if (A)
             delete A;
@@ -1533,7 +1691,7 @@ bool Dxf::intersectLine(DxfEntity*& A, DxfEntity*& B) {
     }
     else {
         LA.setPoint1(pt);
-        DxfPoint* P = new DxfPoint(pt, LB.isAdditional());
+        SegmentPoint* P = new SegmentPoint(pt, LB.isAdditional());
 
         if (B)
             delete B;
@@ -1546,7 +1704,7 @@ bool Dxf::intersectLine(DxfEntity*& A, DxfEntity*& B) {
 }
 
 // connect all segments
-bool Dxf::intersect(bool loop, OFFSET_SIDE side, double offset) {
+bool Contour::intersect(bool loop, OFFSET_SIDE side, double offset) {
     bool empty = false;
 
     for (auto it = m_entities.begin(); it != m_entities.end();) {
@@ -1555,29 +1713,29 @@ bool Dxf::intersect(bool loop, OFFSET_SIDE side, double offset) {
         if (empty || next_it == m_entities.end() || next_it == it) // next empty
             break;
 
-        DxfEntity*& A = *it;
-        DxfEntity*& B = *next_it;
+        SegmentEntity*& A = *it;
+        SegmentEntity*& B = *next_it;
 
         if (A && B && A->point_1() != B->point_0()) {
-            if (A->type() == ENTITY_TYPE::LINE) {
-                if (B->type() == ENTITY_TYPE::LINE) {
+            if (A->type() == DXF_ENTITY_TYPE::LINE) {
+                if (B->type() == DXF_ENTITY_TYPE::LINE) {
                     if (!intersectLine(A, B))
                         return false; // A or B changed type to Point
                 }
-                else if (B->type() == ENTITY_TYPE::ARC) {
-                    DxfLine& LA = dynamic_cast<DxfLine&>(*A);
-                    DxfArc& AB = dynamic_cast<DxfArc&>(*B);
+                else if (B->type() == DXF_ENTITY_TYPE::ARC) {
+                    SegmentLine& LA = dynamic_cast<SegmentLine&>(*A);
+                    SegmentArc& AB = dynamic_cast<SegmentArc&>(*B);
                     fpoint_t pt[2];
                     double angle[2];
 
-                    if (DxfIntersect::intersect(LA, AB, pt, angle)) {
+                    if (SegmentIntersection::intersect(LA, AB, pt, angle)) {
                         if (pt[0] == pt[1]) {
                             LA.setPoint1(pt[0]);
                             AB.setStartAngle(angle[0]);
                             AB.setEndAngle(angle[0]);
                         }
                         else {
-                            if (DxfEntity::almost_same_dir(LA.point_0(), LA.point_1(), pt[0])) {
+                            if (SegmentEntity::almost_same_dir(LA.point_0(), LA.point_1(), pt[0])) {
                                 if (fabs(angle[0] - AB.startAngle()) < fabs(angle[1] - AB.startAngle())) {
                                     LA.setPoint1(pt[0]);
                                     AB.setStartAngle(angle[0]);
@@ -1627,7 +1785,7 @@ bool Dxf::intersect(bool loop, OFFSET_SIDE side, double offset) {
                     }
                     else { // change to line
                         AB.offset(~side, offset); // restore
-                        DxfLine* LB = new DxfLine(AB.point_0(), AB.point_1());
+                        SegmentLine* LB = new SegmentLine(AB.point_0(), AB.point_1());
                         LB->offset(side, offset);
                         if (B)
                             delete B;
@@ -1637,21 +1795,21 @@ bool Dxf::intersect(bool loop, OFFSET_SIDE side, double offset) {
                     }
                 }
             }
-            else if (A->type() == ENTITY_TYPE::ARC) {
-                if (B->type() == ENTITY_TYPE::LINE) {                    
-                    DxfArc& AA = dynamic_cast<DxfArc&>(*A);
-                    DxfLine& LB = dynamic_cast<DxfLine&>(*B);
+            else if (A->type() == DXF_ENTITY_TYPE::ARC) {
+                if (B->type() == DXF_ENTITY_TYPE::LINE) {                    
+                    SegmentArc& AA = dynamic_cast<SegmentArc&>(*A);
+                    SegmentLine& LB = dynamic_cast<SegmentLine&>(*B);
                     fpoint_t pt[2];
                     double angle[2];
 
-                    if (DxfIntersect::intersect(LB, AA, pt, angle)) {
+                    if (SegmentIntersection::intersect(LB, AA, pt, angle)) {
                         if (pt[0] == pt[1]) {
                             AA.setStartAngle(angle[0]);
                             AA.setEndAngle(angle[0]);
                             LB.setPoint0(pt[0]);
                         }
                         else {
-                            if (DxfEntity::almost_same_dir(LB.point_1(), LB.point_0(), pt[0])) {
+                            if (SegmentEntity::almost_same_dir(LB.point_1(), LB.point_0(), pt[0])) {
                                 if (fabs(angle[0] - AA.endAngle()) < fabs(angle[1] - AA.endAngle())) {
                                     LB.setPoint0(pt[0]);
                                     AA.setEndAngle(angle[0]);
@@ -1703,7 +1861,7 @@ bool Dxf::intersect(bool loop, OFFSET_SIDE side, double offset) {
                     }
                     else { // change to line
                         AA.offset(~side, offset); // restore
-                        DxfLine* LA = new DxfLine(AA.point_0(), AA.point_1());
+                        SegmentLine* LA = new SegmentLine(AA.point_0(), AA.point_1());
                         LA->offset(side, offset);
                         if (A)
                             delete A;
@@ -1712,12 +1870,12 @@ bool Dxf::intersect(bool loop, OFFSET_SIDE side, double offset) {
                         return false;
                     }
                 }
-                else if (B->type() == ENTITY_TYPE::ARC) {
-                    DxfArc& AA = dynamic_cast<DxfArc&>(*A);
-                    DxfArc& AB = dynamic_cast<DxfArc&>(*B);
+                else if (B->type() == DXF_ENTITY_TYPE::ARC) {
+                    SegmentArc& AA = dynamic_cast<SegmentArc&>(*A);
+                    SegmentArc& AB = dynamic_cast<SegmentArc&>(*B);
                     double angleA[2], angleB[2];
 
-                    if (DxfIntersect::intersect(AA, AB, angleA, angleB)) {
+                    if (SegmentIntersection::intersect(AA, AB, angleA, angleB)) {
                         AA.setEndAngle(angleA[0]);
                         AB.setStartAngle(angleB[0]);
                     }
@@ -1725,8 +1883,8 @@ bool Dxf::intersect(bool loop, OFFSET_SIDE side, double offset) {
                         AA.offset(~side, offset);
                         AB.offset(~side, offset);
 
-                        DxfLine* LA = new DxfLine(AA.point_0(), AA.point_1(), true);
-                        DxfLine* LB = new DxfLine(AB.point_0(), AB.point_1(), true);
+                        SegmentLine* LA = new SegmentLine(AA.point_0(), AA.point_1(), true);
+                        SegmentLine* LB = new SegmentLine(AB.point_0(), AB.point_1(), true);
 
                         LA->offset(side, offset);
                         LB->offset(side, offset);
@@ -1744,8 +1902,8 @@ bool Dxf::intersect(bool loop, OFFSET_SIDE side, double offset) {
                     }
                 }
             }
-            else if (A->type() == ENTITY_TYPE::POINT) // first item is point
-                dynamic_cast<DxfPoint*>(A)->set(B->point_0());
+            else if (A->type() == DXF_ENTITY_TYPE::POINT) // first item is point
+                dynamic_cast<SegmentPoint*>(A)->set(B->point_0());
         }
 
         it = next_it;
@@ -1756,15 +1914,15 @@ bool Dxf::intersect(bool loop, OFFSET_SIDE side, double offset) {
     return true;
 }
 
-void Dxf::alignDxfPoints() {
+void Contour::alignDxfPoints() {
     if (m_entities.empty()) return;
 
     fpoint_t base = m_entities.front() ? m_entities.front()->point_1() : fpoint_t();
 
-    for (DxfEntity* ent: m_entities) {
+    for (SegmentEntity* ent: m_entities) {
         if (ent) {
-            if (ent->type() == ENTITY_TYPE::POINT)
-                dynamic_cast<DxfPoint*>(ent)->set(base);
+            if (ent->type() == DXF_ENTITY_TYPE::POINT)
+                dynamic_cast<SegmentPoint*>(ent)->set(base);
             else
                 base = ent->point_1();
         }
@@ -1773,10 +1931,10 @@ void Dxf::alignDxfPoints() {
 
 
 // return next not empty segment
-list<DxfEntity*>::iterator Dxf::nextLineOrArc(
-    const list<DxfEntity*>::iterator& init,
-    const list<DxfEntity*>::iterator& begin,
-    const list<DxfEntity*>::iterator& end,
+list<SegmentEntity*>::iterator Contour::nextLineOrArc(
+    const list<SegmentEntity*>::iterator& init,
+    const list<SegmentEntity*>::iterator& begin,
+    const list<SegmentEntity*>::iterator& end,
     bool& empty,
     bool loop
 ){
@@ -1785,7 +1943,7 @@ list<DxfEntity*>::iterator Dxf::nextLineOrArc(
         return init;
     }
 
-    list<DxfEntity*>::iterator it = init;
+    list<SegmentEntity*>::iterator it = init;
     ++it;
 
     if (loop) {
@@ -1796,7 +1954,7 @@ list<DxfEntity*>::iterator Dxf::nextLineOrArc(
             if (it == init)
                 break;
 
-            if (*it && ((*it)->type() == ENTITY_TYPE::LINE || (*it)->type() == ENTITY_TYPE::ARC))
+            if (*it && ((*it)->type() == DXF_ENTITY_TYPE::LINE || (*it)->type() == DXF_ENTITY_TYPE::ARC))
                 return it;
         }
 
@@ -1806,7 +1964,7 @@ list<DxfEntity*>::iterator Dxf::nextLineOrArc(
 
     // else
     for (; it != end; ++it) {
-        if (*it && ((*it)->type() == ENTITY_TYPE::LINE || (*it)->type() == ENTITY_TYPE::ARC))
+        if (*it && ((*it)->type() == DXF_ENTITY_TYPE::LINE || (*it)->type() == DXF_ENTITY_TYPE::ARC))
             return it;
     }
 
@@ -1814,10 +1972,10 @@ list<DxfEntity*>::iterator Dxf::nextLineOrArc(
     return end;
 }
 
-list<DxfEntity*>::iterator Dxf::prevLineOrArc(
-    const list<DxfEntity*>::iterator& init,
-    const list<DxfEntity*>::iterator& begin,
-    const list<DxfEntity*>::iterator& end,
+list<SegmentEntity*>::iterator Contour::prevLineOrArc(
+    const list<SegmentEntity*>::iterator& init,
+    const list<SegmentEntity*>::iterator& begin,
+    const list<SegmentEntity*>::iterator& end,
     bool& empty,
     bool loop
 ){
@@ -1826,7 +1984,7 @@ list<DxfEntity*>::iterator Dxf::prevLineOrArc(
         return init;
     }
 
-    list<DxfEntity*>::iterator it = init;
+    list<SegmentEntity*>::iterator it = init;
 
     if (loop) {
         do {
@@ -1838,7 +1996,7 @@ list<DxfEntity*>::iterator Dxf::prevLineOrArc(
             if (it == init)
                 break;
 
-           if (*it && ((*it)->type() == ENTITY_TYPE::LINE || (*it)->type() == ENTITY_TYPE::ARC))
+           if (*it && ((*it)->type() == DXF_ENTITY_TYPE::LINE || (*it)->type() == DXF_ENTITY_TYPE::ARC))
                 return it;
         } while(1);
 
@@ -1850,7 +2008,7 @@ list<DxfEntity*>::iterator Dxf::prevLineOrArc(
     --it;
 
     while (it != begin) {
-        if (*it && ((*it)->type() == ENTITY_TYPE::LINE || (*it)->type() == ENTITY_TYPE::ARC))
+        if (*it && ((*it)->type() == DXF_ENTITY_TYPE::LINE || (*it)->type() == DXF_ENTITY_TYPE::ARC))
             return it;
 
         --it;
@@ -1861,17 +2019,17 @@ list<DxfEntity*>::iterator Dxf::prevLineOrArc(
 }
 
 // return first entity after split in forward order
-size_t Dxf::split(double len) {
+size_t Contour::split(double len) {
     double sum = 0;
     size_t i = 0;
 
     if (len >= M_PRECISION) {
         if (!m_entities.empty()) {
-            for (list<DxfEntity*>::iterator it = m_entities.begin(); it != m_entities.end(); ++it, i++) {
+            for (list<SegmentEntity*>::iterator it = m_entities.begin(); it != m_entities.end(); ++it, i++) {
                 sum += *it ? (*it)->length() : 0;
 
                 if (sum >= len - M_PRECISION) {
-                    DxfEntity* rem = *it ? (*it)->trim_back(sum - len, true) : nullptr;
+                    SegmentEntity* rem = *it ? (*it)->trim_back(sum - len, true) : nullptr;
                     if (rem) {
                         m_entities.insert(++it, rem);
                         return ++i;
@@ -1886,17 +2044,17 @@ size_t Dxf::split(double len) {
 }
 
 // return first entity after split in reverse order
-size_t Dxf::split_rev(double tab) {
+size_t Contour::split_rev(double tab) {
     double sum = 0;
     size_t i = m_entities.size() - 1;
 
     if (tab >= M_PRECISION) {
         if (!m_entities.empty()) {
-            for (list<DxfEntity*>::reverse_iterator it = m_entities.rbegin(); it != m_entities.rend(); ++it, i--) {
+            for (list<SegmentEntity*>::reverse_iterator it = m_entities.rbegin(); it != m_entities.rend(); ++it, i--) {
                 sum += *it ? (*it)->length() : 0;
 
                 if (sum >= tab - M_PRECISION) {
-                    DxfEntity* rem = *it ? (*it)->trim_front(sum - tab, true) : nullptr;
+                    SegmentEntity* rem = *it ? (*it)->trim_front(sum - tab, true) : nullptr;
                     if (rem) {
                         m_entities.insert(--it.base(), rem);
                         return ++i;
@@ -1910,14 +2068,14 @@ size_t Dxf::split_rev(double tab) {
     return m_entities.size();
 }
 
-void Dxf::remove_before(size_t index) {
+void Contour::remove_before(size_t index) {
     size_t i = 0;
 
     for (auto it = m_entities.begin(); it != m_entities.end(); ) {
         if (i >= index)
             return;
 
-        if (!( (*it)->isAdditional() && (*it)->type() != ENTITY_TYPE::POINT ))
+        if (!( (*it)->isAdditional() && (*it)->type() != DXF_ENTITY_TYPE::POINT ))
             i++;
 
         if (*it) {
@@ -1928,14 +2086,14 @@ void Dxf::remove_before(size_t index) {
     }
 }
 
-void Dxf::remove_to(size_t index) {
+void Contour::remove_to(size_t index) {
     size_t i = 0;
 
     for (auto it = m_entities.begin(); it != m_entities.end(); ) {
         if (i > index)
             return;
 
-        if (!( (*it)->isAdditional() && (*it)->type() != ENTITY_TYPE::POINT ))
+        if (!( (*it)->isAdditional() && (*it)->type() != DXF_ENTITY_TYPE::POINT ))
             i++;
 
         if (*it) {
@@ -1946,7 +2104,7 @@ void Dxf::remove_to(size_t index) {
     }
 }
 
-void Dxf::remove_from(size_t index) {
+void Contour::remove_from(size_t index) {
     size_t i = 0;
 
     for (auto it = m_entities.begin(); it != m_entities.end(); ) {
@@ -1958,7 +2116,7 @@ void Dxf::remove_from(size_t index) {
             it = m_entities.erase(it);
         }
         else {
-            if (!( (*it)->isAdditional() && (*it)->type() != ENTITY_TYPE::POINT ))
+            if (!( (*it)->isAdditional() && (*it)->type() != DXF_ENTITY_TYPE::POINT ))
                 i++;
 
             ++it;
@@ -1966,7 +2124,7 @@ void Dxf::remove_from(size_t index) {
     }
 }
 
-void Dxf::remove_after(size_t index) {
+void Contour::remove_after(size_t index) {
     size_t i = 0;
 
     for (auto it = m_entities.begin(); it != m_entities.end(); ) {
@@ -1978,7 +2136,7 @@ void Dxf::remove_after(size_t index) {
             it = m_entities.erase(it);
         }
         else {
-            if (!( (*it)->isAdditional() && (*it)->type() != ENTITY_TYPE::POINT ))
+            if (!( (*it)->isAdditional() && (*it)->type() != DXF_ENTITY_TYPE::POINT ))
                 i++;
 
             ++it;
@@ -1986,7 +2144,7 @@ void Dxf::remove_after(size_t index) {
     }
 }
 
-void Dxf::remove(size_t index) {
+void Contour::remove(size_t index) {
     size_t i = 0;
 
     if (index < m_entities.size()) {
@@ -2004,10 +2162,10 @@ void Dxf::remove(size_t index) {
     }
 }
 
-void Dxf::changeFirstPoint(const fpoint_valid_t& first_pt) {
+void Contour::changeFirstPoint(const fpoint_valid_t& first_pt) {
     if (first_pt.valid && !m_entities.empty()) {
         const fpoint_t& last_pt = m_entities.front()->point_1();
-        DxfLine* line = new DxfLine(first_pt, last_pt);
+        SegmentLine* line = new SegmentLine(first_pt, last_pt);
 
         if (m_entities.front())
             delete m_entities.front();
@@ -2016,10 +2174,10 @@ void Dxf::changeFirstPoint(const fpoint_valid_t& first_pt) {
     }
 }
 
-void Dxf::changeLastPoint(const fpoint_valid_t& last_pt) {
+void Contour::changeLastPoint(const fpoint_valid_t& last_pt) {
     if (last_pt.valid && !m_entities.empty()) {
         const fpoint_t& first_pt = m_entities.back()->point_0();
-        DxfLine* line = new DxfLine(first_pt, last_pt);
+        SegmentLine* line = new SegmentLine(first_pt, last_pt);
 
         if (m_entities.back())
             delete m_entities.back();
@@ -2028,19 +2186,19 @@ void Dxf::changeLastPoint(const fpoint_valid_t& last_pt) {
     }
 }
 
-void Dxf::shift(const fpoint_t& pt) {
-    for (DxfEntity* entity: m_entities)
+void Contour::shift(const fpoint_t& pt) {
+    for (SegmentEntity* entity: m_entities)
         if (entity)
             entity->shift(pt);
 }
 
-vector<fpoint_t> Dxf::getPoints() const {
+vector<fpoint_t> Contour::getPoints() const {
     vector<fpoint_t> res;
     bool valid = false;
     fpoint_t cur;
 
     if (!m_entities.empty()) {
-        for (const DxfEntity* ent: m_entities) {
+        for (const SegmentEntity* ent: m_entities) {
             vector<fpoint_t> pts = ent ? ent->getPoints() : vector<fpoint_t>();
 
             for (const fpoint_t& pt: pts) {
@@ -2061,15 +2219,15 @@ vector<fpoint_t> Dxf::getPoints() const {
     return res;
 }
 
-double Dxf::length() const {
+double Contour::length() const {
     double sum = 0;
-    for (const DxfEntity* entity: m_entities) {
+    for (const SegmentEntity* entity: m_entities) {
         sum += entity ? entity->length() : 0;
     }
     return sum;
 }
 
-double Dxf::length(size_t index, const fpoint_t& pt) const {
+double Contour::length(size_t index, const fpoint_t& pt) const {
     double sum = 0;
     auto it = m_entities.cbegin();
 
@@ -2082,16 +2240,16 @@ double Dxf::length(size_t index, const fpoint_t& pt) const {
     return sum;
 }
 
-Dxf* Dxf::copy_front(double len) const {
+Contour* Contour::copy_front(double len) const {
     if (len < M_PRECISION) return nullptr;
 
     double sum = 0;
-    Dxf* res = new Dxf();
+    Contour* res = new Contour();
 
     if (!res)
         return nullptr;
 
-    for (DxfEntity* entity: m_entities) {
+    for (SegmentEntity* entity: m_entities) {
         if (entity) {
             sum += entity->length();
             res->push_back(*entity);
@@ -2112,11 +2270,11 @@ Dxf* Dxf::copy_front(double len) const {
     return res;
 }
 
-Dxf* Dxf::copy_front_rev(double tab) const {
+Contour* Contour::copy_front_rev(double tab) const {
     if (tab < M_PRECISION)
-        return new Dxf(*this);
+        return new Contour(*this);
 
-    Dxf* res = new Dxf();
+    Contour* res = new Contour();
 
     if (!res)
         return nullptr;
@@ -2141,11 +2299,11 @@ Dxf* Dxf::copy_front_rev(double tab) const {
     return res;
 }
 
-Dxf* Dxf::copy_back(double len) const {
+Contour* Contour::copy_back(double len) const {
     if (len < M_PRECISION) return nullptr;
 
     double sum = 0;
-    Dxf* res = new Dxf();
+    Contour* res = new Contour();
 
     for (auto it = m_entities.rbegin(); it != m_entities.rend(); ++it) {
         double ent_len = *it ? (*it)->length() : 0;
@@ -2170,12 +2328,12 @@ Dxf* Dxf::copy_back(double len) const {
     return res;
 }
 
-ContourRange Dxf::contourRange(const list<DxfEntity*>& contour) {
+ContourRange Contour::contourRange(const list<SegmentEntity*>& contour) {
     ContourRange range = ContourRange();
 
     range.valid = !contour.empty();
 
-    for (const DxfEntity* ent: contour)
+    for (const SegmentEntity* ent: contour)
         if (ent)
             range.scale(ent->range());
 
@@ -2204,9 +2362,9 @@ ContourRange Dxf::contourRange(const list<DxfEntity*>& contour) {
     return range;
 }
 
-ContourRange Dxf::contourRange() const { return Dxf::contourRange(m_entities); }
+ContourRange Contour::contourRange() const { return Contour::contourRange(m_entities); }
 
-size_t Dxf::joinedCount() const {
+size_t Contour::joinedCount() const {
     size_t i = 0;
 
     for (auto it = m_entities.begin(); it != m_entities.end() && next(it) != m_entities.end(); ++it, i++) {
@@ -2217,7 +2375,7 @@ size_t Dxf::joinedCount() const {
     return i + 1;
 }
 
-bool Dxf::whole() const {
+bool Contour::whole() const {
     for (auto it = m_entities.begin(); it != m_entities.end() && next(it) != m_entities.end(); ++it) {
         if (*it && *next(it) && (*it)->point_1() != (*next(it))->point_0())
             return false;
@@ -2226,31 +2384,31 @@ bool Dxf::whole() const {
     return true;
 }
 
-void Dxf::rotate(const RotateMatrix &mx) {
-    for (DxfEntity*& ent: m_entities)
+void Contour::rotate(const RotateMatrix &mx) {
+    for (SegmentEntity*& ent: m_entities)
         if (ent)
             ent->rotate(mx);
 }
 
-void Dxf::flipX(double x) {
-    for (DxfEntity*& ent: m_entities)
+void Contour::flipX(double x) {
+    for (SegmentEntity*& ent: m_entities)
         if (ent)
             ent->flipX(x);
 }
 
-void Dxf::flipY(double y) {
-    for (DxfEntity*& ent: m_entities)
+void Contour::flipY(double y) {
+    for (SegmentEntity*& ent: m_entities)
         if (ent)
             ent->flipY(y);
 }
 
-void Dxf::scale(double k) {
-    for (DxfEntity*& ent: m_entities)
+void Contour::scale(double k) {
+    for (SegmentEntity*& ent: m_entities)
         if (ent)
             ent->scale(k);
 }
 
-bool Dxf::setOut(const fpoint_valid_t& pt) {
+bool Contour::setOut(const fpoint_valid_t& pt) {
     size_t i = 0;
 
     m_outIndex = data_valid_t<size_t>();
@@ -2261,23 +2419,20 @@ bool Dxf::setOut(const fpoint_valid_t& pt) {
                 if ((*it)->point_1() == pt) {
                     m_outIndex.data = i;
                     m_outIndex.valid = true;
-                    return true;
+                    break;
                 }
             }
         }
     }
     else {
-        if (m_entities.back()->point_1() == pt) {
-            m_outIndex.data = m_entities.size() - 1;
-            m_outIndex.valid = true;
-            return true;
-        }
+        m_outIndex.data = m_entities.size() - 1;
+        m_outIndex.valid = true;
     }
 
-    return false;
+    return m_outIndex.valid;
 }
 
-bool Dxf::setOut(int seg_num) {
+bool Contour::setOut(int seg_num) {
     if (seg_num < 0)
         seg_num += m_entities.size();
 
@@ -2290,16 +2445,21 @@ bool Dxf::setOut(int seg_num) {
     return false;
 }
 
-void Dxf::setInOut(size_t in_seg, size_t out_seg) {
+// Use it after sorting the ContourList
+void Contour::setOut(const Contour* const next) {
+    setOut(next ? next->first() : fpoint_valid_t());
+}
+
+void Contour::setInOut(size_t in_seg, size_t out_seg) {
     shiftFirst(in_seg);
     int delta = out_seg - in_seg;
     setOut(delta - 1);
 }
 
-Dxf Dxf::createMux(size_t in_seg, size_t out_seg) const {
-    Dxf res;
+Contour Contour::createMux(size_t in_seg, size_t out_seg) const {
+    Contour res;
 
-    for (list<DxfEntity*>::const_iterator it = m_entities.cbegin(); it != m_entities.cend(); ++it) {
+    for (list<SegmentEntity*>::const_iterator it = m_entities.cbegin(); it != m_entities.cend(); ++it) {
         if (*it)
             res.m_entities.push_back( (*it)->clone() );
     }
@@ -2312,7 +2472,7 @@ Dxf Dxf::createMux(size_t in_seg, size_t out_seg) const {
 }
 
 // East North West South indeces
-std::vector<size_t> Dxf::getVerticesPoints() const {
+std::vector<size_t> Contour::getVerticesPoints() const {
     std::vector<size_t> res(4, 0);
     fpoint_t e, n, w, s;
 
@@ -2354,13 +2514,13 @@ std::vector<size_t> Dxf::getVerticesPoints() const {
 }
 
 // Slicing
-void Dxf::addRectSpeedProfile(AXIS axis, double width, double speed, bool fwd, fpoint_t &A, fpoint_t &B) {
+void Contour::addRectSpeedProfile(AXIS axis, double width, double speed, bool fwd, fpoint_t &A, fpoint_t &B) {
     if (axis == AXIS::AXIS_Y)
         B = fpoint_t(fwd ? A.x + width : A.x - width, A.y);
     else
         B = fpoint_t(A.x, fwd ? A.y + width : A.y - width);
 
-    DxfLine line = DxfLine(A, B);
+    SegmentLine line = SegmentLine(A, B);
     line.setSpeed(speed);
 
     push_back(line);
@@ -2369,7 +2529,7 @@ void Dxf::addRectSpeedProfile(AXIS axis, double width, double speed, bool fwd, f
 
 // return initial velocity
 // result < 0 - error
-double Dxf::addCircleSpeedProfile(const snake_t& par, bool fwd, fpoint_t& A, fpoint_t& B) {
+double Contour::addCircleSpeedProfile(const snake_t& par, bool fwd, fpoint_t& A, fpoint_t& B) {
     using namespace my_lib;
     vector<pair<double, double>> len_vel = splitCircle(par.width / 2, par.sections_num, par.speed_avg);
 
@@ -2381,7 +2541,7 @@ double Dxf::addCircleSpeedProfile(const snake_t& par, bool fwd, fpoint_t& A, fpo
     return vel0;
 }
 
-double Dxf::addSlice(const snake_t& par, bool fwd, bool last, fpoint_t& A, fpoint_t& B) {
+double Contour::addSlice(const snake_t& par, bool fwd, bool last, fpoint_t& A, fpoint_t& B) {
     double vel0 {0};
 
     double delta = fwd ? par.spacing : -par.spacing;
@@ -2391,7 +2551,7 @@ double Dxf::addSlice(const snake_t& par, bool fwd, bool last, fpoint_t& A, fpoin
     else
         B = fpoint_t(A.x, A.y + delta);
 
-    DxfLine line = DxfLine(A, B);
+    SegmentLine line = SegmentLine(A, B);
     line.setSpeed(par.speed_avg);
     line.setRollVel(par.roll_vel);
     push_back(line);
@@ -2410,7 +2570,7 @@ double Dxf::addSlice(const snake_t& par, bool fwd, bool last, fpoint_t& A, fpoin
     else
         B = fpoint_t(A.x, A.y + delta);
 
-    line = DxfLine(A, B);
+    line = SegmentLine(A, B);
     if (par.pause_ena && par.pause != 0)
         line.setPause(par.pause);
 
@@ -2425,7 +2585,7 @@ double Dxf::addSlice(const snake_t& par, bool fwd, bool last, fpoint_t& A, fpoin
         else
             B = fpoint_t(A.x + step, A.y);
 
-        DxfLine line = DxfLine(A, B);
+        SegmentLine line = SegmentLine(A, B);
         line.setSpeed(par.speed_idle);
         line.setRollVel(par.roll_vel_idle);
         push_back(line);
@@ -2436,7 +2596,7 @@ double Dxf::addSlice(const snake_t& par, bool fwd, bool last, fpoint_t& A, fpoin
     return vel0;
 }
 
-void Dxf::generate(const snake_t& par) {
+void Contour::generate(const snake_t& par) {
     bool fwd = true;
     fpoint_t A {0,0}, B {0,0};
     clear();
@@ -2457,7 +2617,7 @@ void Dxf::generate(const snake_t& par) {
     }
 }
 
-void Dxf::generate(const comb_t& par) {
+void Contour::generate(const comb_t& par) {
     fpoint_t A {0,0}, B {0,0};
     clear();
 
@@ -2466,7 +2626,7 @@ void Dxf::generate(const comb_t& par) {
     for (unsigned i = 0; i < par.slots_num; i++) {
         if (par.axis == AXIS::AXIS_Y) {
             B = fpoint_t(A.x + par.depth, A.y);
-            DxfLine line = DxfLine(A, B);
+            SegmentLine line = SegmentLine(A, B);
             line.setSpeed(par.speed);
             line.setRollVel(par.roll_vel);
 
@@ -2475,14 +2635,14 @@ void Dxf::generate(const comb_t& par) {
 
             push_back(line);
 
-            line = DxfLine(B, A);
+            line = SegmentLine(B, A);
             line.setSpeed(par.speed_idle);
             line.setRollVel(par.roll_vel_idle);
             push_back(line);
 
             if (i != par.slots_num - 1) {
                 B = fpoint_t(A.x, A.y + par.step + wireD);
-                line = DxfLine(A, B);
+                line = SegmentLine(A, B);
                 line.setSpeed(par.speed_idle);
                 line.setRollVel(par.roll_vel_idle);
                 push_back(line);
@@ -2492,7 +2652,7 @@ void Dxf::generate(const comb_t& par) {
         }
         else {
             B = fpoint_t(A.x, A.y + par.depth);
-            DxfLine line = DxfLine(A, B);
+            SegmentLine line = SegmentLine(A, B);
             line.setSpeed(par.speed);
             line.setRollVel(par.roll_vel);
 
@@ -2501,14 +2661,14 @@ void Dxf::generate(const comb_t& par) {
 
             push_back(line);
 
-            line = DxfLine(B, A);
+            line = SegmentLine(B, A);
             line.setSpeed(par.speed_idle);
             line.setRollVel(par.roll_vel_idle);
             push_back(line);
 
             if (i != par.slots_num - 1) {
                 B = fpoint_t(A.x + par.step + wireD, A.y);
-                line = DxfLine(A, B);
+                line = SegmentLine(A, B);
                 line.setSpeed(par.speed_idle);
                 line.setRollVel(par.roll_vel_idle);
                 push_back(line);
@@ -2519,10 +2679,10 @@ void Dxf::generate(const comb_t& par) {
     }
 }
 
-const Dxf& Dxf::buildLine(double len, AXIS axis, DIR dir) {
+const Contour& Contour::buildLine(double len, AXIS axis, DIR dir) {
     this->clear();
 
-    DxfLine line(len, axis, dir);
+    SegmentLine line(len, axis, dir);
     push_back(line);
 
     return *this;

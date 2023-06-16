@@ -1,5 +1,5 @@
-#ifndef DXF_ENTITY_H
-#define DXF_ENTITY_H
+#ifndef SEGMENT_ENTITY_H
+#define SEGMENT_ENTITY_H
 
 #include <cstdint>
 #include <string>
@@ -11,17 +11,16 @@
 #include "cnc_types.h"
 #include "contour_range.h"
 
-enum class ENTITY_TYPE : int8_t { NONE = -1, LINE, ARC, CIRCLE, POINT, INSERT };
-enum class CUT_TYPE : uint8_t { CUT_BODY, INCUT, OUTCUT };
+enum class DXF_ENTITY_TYPE : int8_t { NONE = -1, LINE, ARC, CIRCLE, POINT, INSERT };
 enum class DIRECTION : uint8_t { Q1, Q2, Q3, Q4 };
 
 bool almost_same(DIRECTION dir1, DIRECTION dir2);
 
-class IContourObject {
+class ISegmentObject {
 protected:
-    IContourObject();
+    ISegmentObject();
 public:
-    virtual ~IContourObject() = 0;
+    virtual ~ISegmentObject() = 0;
     virtual fpoint_t point_0() const = 0;
     virtual fpoint_t point_1() const = 0;
     virtual fpoint_t center() const = 0;
@@ -44,10 +43,10 @@ public:
 //    virtual DIRECTIONS direction_1() { return DIRECTIONS::Q1; }
 };
 
-class DxfEntity : public IContourObject {
+class SegmentEntity : public ISegmentObject {
 protected:
     constexpr static const double M_PRECISION = CncParam::PRECISION; // mm
-    ENTITY_TYPE m_type {ENTITY_TYPE::NONE};
+    DXF_ENTITY_TYPE m_type {DXF_ENTITY_TYPE::NONE};
     bool m_additional {false};
 
     struct {
@@ -67,22 +66,22 @@ protected:
 
     std::string m_layer = std::string();
 
-    DxfEntity(ENTITY_TYPE type = ENTITY_TYPE::NONE);
-    DxfEntity(const DxfEntity& other, ENTITY_TYPE type);
+    SegmentEntity(DXF_ENTITY_TYPE type = DXF_ENTITY_TYPE::NONE);
+    SegmentEntity(const SegmentEntity& other, DXF_ENTITY_TYPE type);
 
 public:
 //    CUT_TYPES cut_type;
 //    bool highlight;
 
-    virtual ~DxfEntity() override = 0;
+    virtual ~SegmentEntity() override = 0;
 
-    virtual DxfEntity* clone() const = 0; // parameters are lost
+    virtual SegmentEntity* clone() const = 0; // parameters are lost
 
-    virtual DxfEntity& operator=(const DxfEntity& other);
+    virtual SegmentEntity& operator=(const SegmentEntity& other);
 
-    virtual bool operator==(const DxfEntity& /*other*/) const { return false; }
-    virtual bool operator!=(const DxfEntity& /*other*/) const { return false; }
-    virtual bool same(const DxfEntity& /*other*/) const { return false; }
+    virtual bool operator==(const SegmentEntity& /*other*/) const { return false; }
+    virtual bool operator!=(const SegmentEntity& /*other*/) const { return false; }
+    virtual bool same(const SegmentEntity& /*other*/) const { return false; }
 
     virtual bool check() { return false; }
 
@@ -90,11 +89,11 @@ public:
         m_layer = std::string();
     }
 
-    virtual DxfEntity* trim_front(double head_length, bool rem = false);
-    virtual DxfEntity* trim_front_rev(double tail_length, bool rem = false);
-    virtual DxfEntity* trim_back(double tail_length, bool rem = false);
-    virtual DxfEntity* trim_back_rev(double head_length, bool rem = false);
-    virtual void offset(OFFSET_SIDE /*side*/, double /*offset*/, const DxfEntity* /*prev*/, const DxfEntity* /*next*/) {}
+    virtual SegmentEntity* trim_front(double head_length, bool rem = false);
+    virtual SegmentEntity* trim_front_rev(double tail_length, bool rem = false);
+    virtual SegmentEntity* trim_back(double tail_length, bool rem = false);
+    virtual SegmentEntity* trim_back_rev(double head_length, bool rem = false);
+    virtual void offset(OFFSET_SIDE /*side*/, double /*offset*/, const SegmentEntity* /*prev*/, const SegmentEntity* /*next*/) {}
     virtual void offset(OFFSET_SIDE /*side*/, double /*offset*/) {}
 
     virtual void rotate(const RotateMatrix& /*mx*/) {}
@@ -102,7 +101,7 @@ public:
     virtual void flipY(double /*y*/) {}
     virtual void scale(double /*k*/) {}
 
-    ENTITY_TYPE type() const;
+    DXF_ENTITY_TYPE type() const;
     std::string typeString() const;
 
     void setLayerName(const std::string& layer_name) {
@@ -157,4 +156,4 @@ public:
     static bool almost_same_dir(const fpoint_t& base, const fpoint_t& A, const fpoint_t& B);
 };
 
-#endif // DXF_ENTITY_H
+#endif // SEGMENT_ENTITY_H

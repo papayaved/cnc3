@@ -274,7 +274,7 @@ void ContourPass::connect(const ContourPair& prev, ContourPair& next) {
         fpoint_t B = next.bot()->front()->point_0();
 
         if (A != B)
-            next.bot()->push_front( DxfLine(A, B) );
+            next.bot()->push_front( SegmentLine(A, B) );
     }
 
     if (!prev.topEmpty() && !next.topEmpty() && prev.top()->back() && next.top()->front()) {
@@ -282,7 +282,7 @@ void ContourPass::connect(const ContourPair& prev, ContourPair& next) {
         fpoint_t B = next.top()->front()->point_0();
 
         if (A != B)
-            next.top()->push_front( DxfLine(A, B) );
+            next.top()->push_front( SegmentLine(A, B) );
     }
 }
 
@@ -364,7 +364,7 @@ deque<ContourPair> ContourPass::joinLoop(deque<ContourPair> &pass, deque<Contour
         const fpoint_valid_t B = first.bot()->first_point();
 
         if (A.valid && B.valid && A != B)
-            out.bot()->push_back( DxfLine(A, B) );
+            out.bot()->push_back( SegmentLine(A, B) );
     }
 
     if (!first.topEmpty() && !last.topEmpty()) {
@@ -372,7 +372,7 @@ deque<ContourPair> ContourPass::joinLoop(deque<ContourPair> &pass, deque<Contour
         const fpoint_valid_t B = first.top()->first_point();
 
         if (A.valid && B.valid && A != B)
-            out.top()->push_back( DxfLine(A, B) );
+            out.top()->push_back( SegmentLine(A, B) );
     }
 
     join(contours, out);

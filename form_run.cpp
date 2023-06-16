@@ -7,7 +7,7 @@
 using namespace std;
 
 FormRun::FormRun(ProgramParam& par, QWidget *parent) :
-    QWidget(parent), m_par(par), m_cncReaderEna(false), m_adcEnable(false), m_currentCursorPosition(0), m_cutStateAbortReq(false), m_speed(WireSpeed()), m_remain_tmr(0), m_full_length(9)
+    QWidget(parent), par(par), m_cncReaderEna(false), m_adcEnable(false), m_currentCursorPosition(0), m_cutStateAbortReq(false), m_speed(WireSpeed()), m_remain_tmr(0), m_full_length(9)
 {
     this->setObjectName(tr("Work Panel"));
     m_runWidget = new RunWidget(this);
@@ -221,7 +221,7 @@ void FormRun::addButtons() {
     connect(m_btnRoll, &QPushButton::clicked, this, [&]() {
         blockSignals(true);
         try {            
-            m_par.cnc.writeRollEnable( m_btnRoll->isChecked() );
+            par.cnc.writeRollEnable( m_btnRoll->isChecked() );
         }
         catch (...) {}
         blockSignals(false);
@@ -230,7 +230,7 @@ void FormRun::addButtons() {
     connect(m_btnPump, &QPushButton::clicked, this, [&]() {
         blockSignals(true);
         try {
-            m_par.cnc.writePumpEnable( m_btnPump->isChecked() );
+            par.cnc.writePumpEnable( m_btnPump->isChecked() );
         }
         catch (...) {}
         blockSignals(false);
@@ -239,7 +239,7 @@ void FormRun::addButtons() {
     connect(m_btnBreak, &QPushButton::clicked, this, [&]() {
         blockSignals(true);
         try {            
-            m_par.cnc.writeWireEnable( m_btnBreak->isChecked() );
+            par.cnc.writeWireEnable( m_btnBreak->isChecked() );
         }
         catch (...) {}
         blockSignals(false);
@@ -248,7 +248,7 @@ void FormRun::addButtons() {
     connect(m_btnHighVolt, &QPushButton::clicked, this, [&]() {
         blockSignals(true);
         try {
-            m_par.cnc.writeEnableHighVoltage( m_btnHighVolt->isChecked() );
+            par.cnc.writeEnableHighVoltage( m_btnHighVolt->isChecked() );
         }
         catch (...) {}
         blockSignals(false);
@@ -258,7 +258,7 @@ void FormRun::addButtons() {
     connect(m_btnLowHighVolt, &QPushButton::clicked, this, [&]() {
         blockSignals(true);
         try {            
-            m_par.cnc.writeEnableLowHighVolt( m_btnLowHighVolt->isChecked() );
+            par.cnc.writeEnableLowHighVolt( m_btnLowHighVolt->isChecked() );
         }
         catch (...) {}
         blockSignals(false);
@@ -268,7 +268,7 @@ void FormRun::addButtons() {
     connect(m_runWidget->btnHold, &QPushButton::clicked, this, [&]() {
         blockSignals(true);
         try {
-            m_par.cnc.writeHoldEnable( m_runWidget->btnHold->isChecked() );
+            par.cnc.writeHoldEnable( m_runWidget->btnHold->isChecked() );
         }
         catch (...) {}
         blockSignals(false);
@@ -344,7 +344,7 @@ void FormRun::createSpinBoxes() {
     connect(m_numRollVel, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int x) {
         blockSignals(true);
         try {
-            m_par.cnc.writeRollVel(static_cast<unsigned>(x));
+            par.cnc.writeRollVel(static_cast<unsigned>(x));
         } catch (...) {}
         blockSignals(false);
     });
@@ -352,7 +352,7 @@ void FormRun::createSpinBoxes() {
     connect(m_numWidth, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int x) {
         blockSignals(true);
         try {
-            m_par.cnc.writePulseWidth(static_cast<unsigned>(x));
+            par.cnc.writePulseWidth(static_cast<unsigned>(x));
         } catch (...) {}
         blockSignals(false);
     });
@@ -360,7 +360,7 @@ void FormRun::createSpinBoxes() {
     connect(m_numRatio, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int x) {
         blockSignals(true);
         try {
-            m_par.cnc.writePulseRatio(static_cast<unsigned>(x));
+            par.cnc.writePulseRatio(static_cast<unsigned>(x));
         } catch (...) {}
         blockSignals(false);
     });
@@ -368,7 +368,7 @@ void FormRun::createSpinBoxes() {
     connect(m_numCurrent, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int x) {
         blockSignals(true);
         try {
-            m_par.cnc.writeCurrentIndex(static_cast<unsigned>(x));
+            par.cnc.writeCurrentIndex(static_cast<unsigned>(x));
         } catch (...) {}
         blockSignals(false);
     });
@@ -383,7 +383,7 @@ void FormRun::createSpinBoxes() {
         blockSignals(true);
 
         m_speed.set(x);
-        m_par.cnc.writeSpeed(m_speed);
+        par.cnc.writeSpeed(m_speed);
 
         blockSignals(false);
     });
@@ -464,7 +464,7 @@ bool FormRun::loadGcode() {
     QElapsedTimer t;
     t.start();    
 
-    bool OK = m_par.cnc.write(m_gframes, &wrsize, &pa_size);
+    bool OK = par.cnc.write(m_gframes, &wrsize, &pa_size);
 
     if (!OK) {
         m_info +=   tr("G-code size is too big") + "\n";
@@ -493,7 +493,7 @@ bool FormRun::loadGcode() {
 
     qDebug("Read frames");
     t.restart();
-    list<string> read_gframes = m_par.cnc.read();
+    list<string> read_gframes = par.cnc.read();
     qDebug("loadGcode elapsed 2: %d ms", (int)t.elapsed());
 
     t.restart();
@@ -529,18 +529,18 @@ bool FormRun::loadGcode() {
 
 void FormRun::init(bool recovery) {
     m_report.clear();
-    m_par.cnc.bindReporter(&m_report);
+    par.cnc.bindReporter(&m_report);
 
     _init();
 
     try {
-        m_par.cnc.stateReset();
+        par.cnc.stateReset();
 
         // check G-code size
-        m_gframes = m_par.gcode.toFrameList();
+        m_gframes = par.gcode.toFrameList();
         size_t gsize = sizeOf(m_gframes);
 
-        uint32_t pa_size = m_par.cnc.readProgArraySize();
+        uint32_t pa_size = par.cnc.readProgArraySize();
 
         QString txt =   tr("G-code size") + ": " + QString::number(gsize) + " " + tr("bytes") + ". " +
                         tr("CNC program array size") + ": " + QString::number(pa_size) + " " + tr("bytes");
@@ -557,14 +557,14 @@ void FormRun::init(bool recovery) {
         }
 
         if (recovery) {
-            if (m_par.cncContext.valid()) {
-                m_par.cnc.reset(); // includes Input Levels
+            if (par.cncContext.valid()) {
+                par.cnc.reset(); // includes Input Levels
 #if defined(STONE)
-                m_par.cnc.writeSemaphoreCncEnable(true);
+                par.cnc.writeSemaphoreCncEnable(true);
 #else
-                m_par.cnc.writeCncEnable(true);
+                par.cnc.writeCncEnable(true);
 #endif
-                m_gframes = m_par.gcode.toFrameList();
+                m_gframes = par.gcode.toFrameList();
 
                 m_report.clear();
 
@@ -572,24 +572,24 @@ void FormRun::init(bool recovery) {
                 bool OK = loadGcode();
 
                 if (OK) {
-                    m_par.cnc.initialContext(m_par.cncContext.get());
+                    par.cnc.initialContext(par.cncContext.get());
 
-                    if (m_par.gcodeSettings.isUV()) {
-                        m_par.cnc.recoveryUV(m_par.gcodeSettings);
+                    if (par.gcodeSettings.isUV()) {
+                        par.cnc.recoveryUV(par.gcodeSettings);
                     }
 
-                    m_par.appState.gotoPauseState();
+                    par.appState.gotoPauseState();
                     updateButtons();
 
                     m_report.writeLine(tr("G-code is loaded"));
-                    m_par.cnc.imitEna(false);
+                    par.cnc.imitEna(false);
 
                     if (m_timer) {
 //                        timer->clear();                        
                         m_timer->start();
                     }
 
-                    m_par.cncContext.setValid(false);
+                    par.cncContext.setValid(false);
                 } else {
                     qDebug("form_run::FormRun::init(true)>>Load G-code error");
                     m_report.writeLine(tr("Load G-code error"));
@@ -605,7 +605,7 @@ void FormRun::init(bool recovery) {
 #endif
     } catch (const runtime_error& e) {
         m_report.writeLine( "Connection error.\n" + QString(e.what()) );
-        m_par.cnc.close();
+        par.cnc.close();
         return;
     } catch (const string& msg) {
         m_report.writeLine( "Error: " + msg );
@@ -620,41 +620,41 @@ void FormRun::init(bool recovery) {
 }
 
 void FormRun::_init() {
-    m_par.gcodeCnc.clear();
+    par.gcodeCnc.clear();
     m_runWidget->txtCode->clear();
-    m_par.workContours.clear();
-    m_par.mapGcodeToContours.clear();
+    par.workContours.clear();
+    par.mapGcodeToContours.clear();
     m_runWidget->txtMsg->clear();
     m_info.clear();
     m_runWidget->setElapsedTime(0);
     m_runWidget->setRemainTime(0);
     m_timer->clear();
 
-    if (m_par.gcode.empty())
+    if (par.gcode.empty())
         m_info = tr("Error") + ": " + tr("No G-code") + "\n";
     else {
-        m_par.gcode.normalize();
+        par.gcode.normalize();
 
-        if (!m_par.gcode.empty()) {
-            m_par.gcodeCnc = m_par.gcode.toText().c_str();
+        if (!par.gcode.empty()) {
+            par.gcodeCnc = par.gcode.toText().c_str();
 //            text = addLineNum(text);
-            m_runWidget->txtCode->setPlainText(m_par.gcodeCnc);
+            m_runWidget->txtCode->setPlainText(par.gcodeCnc);
             setCursorToBegin();
-            m_par.workContours = ContourList( m_par.gcode.getContours(&m_par.mapGcodeToContours) );
-            m_full_length = m_par.workContours.botLengthFull();
+            par.workContours = ContourList( par.gcode.getContours(&par.mapGcodeToContours) );
+            m_full_length = par.workContours.botLengthFull();
         }
         else
             m_info = tr("Error") + ": " + tr("G-code normalization error") + "\n";
     }
 
-    m_runWidget->checkIdle->setCheckState( m_par.appState.idleRun() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked );
+    m_runWidget->checkIdle->setCheckState( par.appState.idleRun() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked );
 
     updateButtons();
     m_runWidget->setButtonsEnabled(0, 0, 0, 1);
 
-    m_runWidget->plot(m_par.workContours, m_par.swapXY, m_par.reverseX, m_par.reverseY, m_par.showXY);
+    m_runWidget->plot(par.workContours, par.swapXY, par.reverseX, par.reverseY, par.showXY);
 
-    if (!m_par.cnc.isOpen())
+    if (!par.cnc.isOpen())
         m_info += tr("Error") + ": " + tr("No CNC connection") + "\n";
 
     m_report.write(m_info);
@@ -699,13 +699,13 @@ void FormRun::updateButtons() {
     const QString statusStart       = tr("Start cutting");
     const QString statusStop        = tr("Stop cutting");
 
-    switch (m_par.appState.state()) {
+    switch (par.appState.state()) {
     case AppState::STATES::ST_NONE:
         m_runWidget->setButtonsText({tr("Start"), tr("Back"), tr("Cancel")},
                                   {statusStart, tr("Go to back"), tr("Cancel program")});
         m_btnHome->setEnabled(true);
 
-        if (m_par.appState.idleRun() || (m_btnBreak->isChecked() && m_btnPump->isChecked() && m_btnRoll->isChecked()))
+        if (par.appState.idleRun() || (m_btnBreak->isChecked() && m_btnPump->isChecked() && m_btnRoll->isChecked()))
             m_runWidget->setButtonsEnabled(1,0,0,1);
         else
             m_runWidget->setButtonsEnabled(0,0,0,1);
@@ -716,7 +716,7 @@ void FormRun::updateButtons() {
                                   {statusStart, tr("Go to back"), tr("Cancel program")});
         m_btnHome->setEnabled(true);
 
-        if (m_par.appState.idleRun() || (m_btnBreak->isChecked() && m_btnPump->isChecked() && m_btnRoll->isChecked()))
+        if (par.appState.idleRun() || (m_btnBreak->isChecked() && m_btnPump->isChecked() && m_btnRoll->isChecked()))
             m_runWidget->setButtonsEnabled(1,0,0,1);
         else
             m_runWidget->setButtonsEnabled(0,0,0,1);
@@ -733,7 +733,7 @@ void FormRun::updateButtons() {
                                   {statusStart, tr("Go to back"), tr("Cancel program")});
         m_btnHome->setEnabled(false);
 
-        if (m_par.appState.idleRun() || (m_btnBreak->isChecked() && m_btnPump->isChecked() && m_btnRoll->isChecked()))
+        if (par.appState.idleRun() || (m_btnBreak->isChecked() && m_btnPump->isChecked() && m_btnRoll->isChecked()))
             m_runWidget->setButtonsEnabled(1,1,1,1);
         else
             m_runWidget->setButtonsEnabled(0,1,1,1);
@@ -769,7 +769,7 @@ void FormRun::updateButtons() {
 void FormRun::on_btnStart_clicked() {
     blockSignals(true);
 
-    switch (m_par.appState.state()) {
+    switch (par.appState.state()) {
     case AppState::STATES::ST_NONE:
         _init();
         [[clang::fallthrough]];
@@ -782,7 +782,7 @@ void FormRun::on_btnStart_clicked() {
             m_runWidget->btnStart->update();
             m_runWidget->btnStart->repaint();
 
-            m_par.saveGcode();
+            par.saveGcode();
 //            par.cnc.stateClear();
 
             stopCncReader();
@@ -803,13 +803,13 @@ void FormRun::on_btnStart_clicked() {
                 m_info += ". " + tr("Loaded") + "\n";
                 m_runWidget->txtMsg->setText(m_info);
 
-                m_par.cnc.imitEna(false);
+                par.cnc.imitEna(false);
 
                 if (m_runWidget->checkIdle->isChecked() || (m_btnBreak->isChecked() && m_btnPump->isChecked() && m_btnRoll->isChecked())) {
                     if (!m_runWidget->checkIdle->isChecked())
-                        m_par.cnc.writeHoldEnable(true);
+                        par.cnc.writeHoldEnable(true);
 
-                    m_par.cnc.runReq();
+                    par.cnc.runReq();
                     if (m_timer) {
                         m_timer->clear();
                         m_timer->start();
@@ -835,7 +835,7 @@ void FormRun::on_btnStart_clicked() {
 
     case AppState::STATES::ST_RUN:
     case AppState::STATES::ST_REV:
-        m_par.cnc.stopReq();
+        par.cnc.stopReq();
         if (m_timer)
             m_timer->stop();
         break;
@@ -843,9 +843,9 @@ void FormRun::on_btnStart_clicked() {
     case AppState::STATES::ST_PAUSE:
         if (m_runWidget->checkIdle->isChecked() || (m_btnBreak->isChecked() && m_btnPump->isChecked() && m_btnRoll->isChecked())) {
             if (!m_runWidget->checkIdle->isChecked())
-                m_par.cnc.writeHoldEnable(true);
+                par.cnc.writeHoldEnable(true);
 
-            m_par.cnc.runReq();
+            par.cnc.runReq();
             if (m_timer)
                 m_timer->start();
         }
@@ -857,7 +857,7 @@ void FormRun::on_btnStart_clicked() {
     }
 
     // todo: more reactions
-    m_par.appState.next(AppState::BUTTON::SIG_START);
+    par.appState.next(AppState::BUTTON::SIG_START);
     updateButtons();
 
     blockSignals(false);
@@ -868,13 +868,13 @@ void FormRun::on_btnReverse_clicked() {
 
     try {
         if (!m_runWidget->checkIdle->isChecked())
-            m_par.cnc.writeHoldEnable(true);
+            par.cnc.writeHoldEnable(true);
 
-        m_par.cnc.revReq();
+        par.cnc.revReq();
         if (m_timer)
             m_timer->start();
 
-        m_par.appState.next(AppState::BUTTON::SIG_REVERSE);
+        par.appState.next(AppState::BUTTON::SIG_REVERSE);
         updateButtons();
     } catch (...) {}
 
@@ -885,13 +885,13 @@ void FormRun::on_btnCancel_clicked() {
     blockSignals(true);
 
     try {
-        m_par.saveCncContext();
+        par.saveCncContext();
         int roll_vel = m_numRollVel->value();
 
-        m_par.cnc.cancelReq();
-        m_par.cnc.writeRollVel(roll_vel);
+        par.cnc.cancelReq();
+        par.cnc.writeRollVel(roll_vel);
 
-        m_par.appState.next(AppState::BUTTON::SIG_CANCEL);
+        par.appState.next(AppState::BUTTON::SIG_CANCEL);
         updateButtons();
     } catch (...) {}
 
@@ -931,7 +931,7 @@ void FormRun::setCursorToEnd() {
 }
 
 void FormRun::startCncReader() {
-    if (m_par.cnc.isOpen()) {
+    if (par.cnc.isOpen()) {
         qDebug()<<"CNC reader: Start";
         m_cncReaderEna = true;
         m_remain_tmr = 0;
@@ -953,8 +953,8 @@ void FormRun::readCncContext() {
         blockSignals(true);
 
         try {
-            m_par.cncContext = m_par.cnc.readCncContext();
-            const CncContext& ctx = m_par.cncContext;
+            par.cncContext = par.cnc.readCncContext();
+            const CncContext& ctx = par.cncContext;
 #ifndef STONE
             m_runWidget->txtMsg->setText(m_info + QString( ctx.toStringRunDebug().c_str() ));
 #else
@@ -1043,7 +1043,7 @@ void FormRun::readCncContext() {
             else
                 m_runWidget->numSpeed->setValue(m_speed.get());
 
-            if (m_par.appState.isWork() && ctx.isWork()) {
+            if (par.appState.isWork() && ctx.isWork()) {
                 setCursor(ctx.frameNum());
 
                 if (ctx.isEncoderMode()) {
@@ -1064,7 +1064,7 @@ void FormRun::readCncContext() {
                     m_remain_tmr = 0;
 
                     if (!ctx.reverse()) {
-                        double length = m_par.workContours.botLength();
+                        double length = par.workContours.botLength();
                         double speed = ms > 0 ? length / (double)ms : 0;
                         double remain_length = m_full_length > 0 ? m_full_length - length : 0;
                         double remain_time = remain_length / speed;
@@ -1083,17 +1083,17 @@ void FormRun::readCncContext() {
                     m_remain_tmr++;
             }
 
-            if (m_par.appState.isError() || ctx.isError() || m_cutStateAbortReq) {
+            if (par.appState.isError() || ctx.isError() || m_cutStateAbortReq) {
                 if (ctx.isError()) {
-                    m_par.cnc.cancelReq();
-                    m_par.appState.update(ctx);
+                    par.cnc.cancelReq();
+                    par.appState.update(ctx);
                     updateButtons();
                     qDebug("CutState: Error");
                 }
                 else
-                    m_par.cnc.stopReq();
+                    par.cnc.stopReq();
 
-                if (m_par.appState.isError())
+                if (par.appState.isError())
                     qDebug("RunWidgetState: Error");
 
                 if (m_cutStateAbortReq) {
@@ -1104,8 +1104,8 @@ void FormRun::readCncContext() {
                 if (m_timer)
                     m_timer->stop();
             }
-            else if (m_par.appState.isWork() && !ctx.isWork()) {
-                m_par.appState.reset();
+            else if (par.appState.isWork() && !ctx.isWork()) {
+                par.appState.reset();
                 updateButtons();                
                 setCursorToEnd();
 
@@ -1115,7 +1115,7 @@ void FormRun::readCncContext() {
                 m_runWidget->setRemainTime(0);
             }
             else {
-                m_par.appState.update(ctx);
+                par.appState.update(ctx);
                 updateButtons();
             }
         }
@@ -1131,7 +1131,7 @@ void FormRun::readCncContext() {
 }
 
 void FormRun::startAdc() { // on init
-    if (m_par.cnc.isOpen()) {
+    if (par.cnc.isOpen()) {
         qDebug()<<"ADC: Start";
         m_adcEnable = true;
         readAdc();
@@ -1147,33 +1147,33 @@ void FormRun::stopAdc() { // at to home
 
 void FormRun::readAdc() {
     if (m_adcEnable) {
-        cnc_adc_volt_t adc = m_par.cnc.readADCVolt();
+        cnc_adc_volt_t adc = par.cnc.readADCVolt();
         m_runWidget->setAdc(adc);
         QTimer::singleShot(ADC_POLLING_TIME, this, &FormRun::readAdc);
     }
 }
 
 void FormRun::onFrameChanged(int frame_num, const fpoint_t& bot_pos, const fpoint_t& top_pos) {
-    if (!m_par.workContours.empty() && !m_par.mapGcodeToContours.empty()) {
+    if (!par.workContours.empty() && !par.mapGcodeToContours.empty()) {
         if (frame_num >= 0) {
-            m_par.workContours.select( m_par.getDxfEntityNum(size_t(frame_num)) );
+            par.workContours.select( par.getDxfEntityNum(size_t(frame_num)) );
 
-            if (m_par.gcodeSettings.isUV()) {
-                m_par.workContours.setXYPos(bot_pos);
-                m_par.workContours.setUVPos(bot_pos + top_pos);
+            if (par.gcodeSettings.isUV()) {
+                par.workContours.setXYPos(bot_pos);
+                par.workContours.setUVPos(bot_pos + top_pos);
 
-                const double& k = m_par.gcodeSettings.bot_coe;
+                const double& k = par.gcodeSettings.bot_coe;
                 fpoint_t dXY = fpoint_t(k * top_pos.x, k * top_pos.y);
 
-                m_par.workContours.setBotPos(bot_pos + dXY);
+                par.workContours.setBotPos(bot_pos + dXY);
             }
             else {
-                m_par.workContours.setBotPos(bot_pos);
+                par.workContours.setBotPos(bot_pos);
             }
         }
         else
-            m_par.workContours.clearSelected();
+            par.workContours.clearSelected();
 
-        m_runWidget->plot(m_par.workContours, m_par.swapXY, m_par.reverseX, m_par.reverseY, m_par.showXY);
+        m_runWidget->plot(par.workContours, par.swapXY, par.reverseX, par.reverseY, par.showXY);
     }
 }

@@ -1,30 +1,30 @@
-#include "dxf_arc.h"
+#include "segment_arc.h"
 #include <cmath>
 
 using namespace std;
 
-const double DxfArc::ANGLE_STEP = M_PI / 180;
+const double SegmentArc::ANGLE_STEP = M_PI / 180;
 
-DxfArc::DxfArc() :
-    DxfEntity(ENTITY_TYPE::ARC), m_flags({0,0,0,0,0,0,0,1}), m_R(0), m_alpha(0), m_beta(0), m_C(fpoint_t()) {}
+SegmentArc::SegmentArc() :
+    SegmentEntity(DXF_ENTITY_TYPE::ARC), m_flags({0,0,0,0,0,0,0,1}), m_R(0), m_alpha(0), m_beta(0), m_C(fpoint_t()) {}
 
-DxfArc::DxfArc(const fpoint_t& C, double R, double alpha, double beta, bool ccw) :
-    DxfEntity(ENTITY_TYPE::ARC), m_flags({0,0,0,0,0,1,0,ccw}), m_R(R > 0 ? R : 0), m_alpha(range360(alpha)), m_beta(range360(beta)), m_C(C) {}
+SegmentArc::SegmentArc(const fpoint_t& C, double R, double alpha, double beta, bool ccw) :
+    SegmentEntity(DXF_ENTITY_TYPE::ARC), m_flags({0,0,0,0,0,1,0,ccw}), m_R(R > 0 ? R : 0), m_alpha(range360(alpha)), m_beta(range360(beta)), m_C(C) {}
 
-DxfArc::DxfArc(const fpoint_t &A, const fpoint_t &B, const fpoint_t &C, bool ccw) :
-    DxfEntity(ENTITY_TYPE::ARC), m_flags({0,0,0,0,0,1,0,1}), m_R(0), m_alpha(0), m_beta(0), m_C(fpoint_t())
+SegmentArc::SegmentArc(const fpoint_t &A, const fpoint_t &B, const fpoint_t &C, bool ccw) :
+    SegmentEntity(DXF_ENTITY_TYPE::ARC), m_flags({0,0,0,0,0,1,0,1}), m_R(0), m_alpha(0), m_beta(0), m_C(fpoint_t())
 {
     set(A, B, C, ccw);
 }
 
-DxfArc::DxfArc(const fpoint_t& A, const fpoint_t& B, double R, bool ccw) :
-    DxfEntity(ENTITY_TYPE::ARC), m_flags({0,0,0,0,0,1,0,1})
+SegmentArc::SegmentArc(const fpoint_t& A, const fpoint_t& B, double R, bool ccw) :
+    SegmentEntity(DXF_ENTITY_TYPE::ARC), m_flags({0,0,0,0,0,1,0,1})
 {
     set(A, B, R, ccw);
 }
 
-DxfArc::DxfArc(const DxfArc& other) :
-    DxfEntity(other, ENTITY_TYPE::ARC),
+SegmentArc::SegmentArc(const SegmentArc& other) :
+    SegmentEntity(other, DXF_ENTITY_TYPE::ARC),
     m_flags(other.m_flags),
     m_R(other.m_R),
     m_alpha(other.m_alpha),
@@ -33,77 +33,77 @@ DxfArc::DxfArc(const DxfArc& other) :
 {
 }
 
-DxfArc::~DxfArc() {}
+SegmentArc::~SegmentArc() {}
 
-DxfEntity* DxfArc::clone() const { return new DxfArc(*this); }
+SegmentEntity* SegmentArc::clone() const { return new SegmentArc(*this); }
 
-bool DxfArc::operator==(const DxfEntity& other) const {
+bool SegmentArc::operator==(const SegmentEntity& other) const {
     return same(other) && point_0() == other.point_0() && point_1() == other.point_1();
 }
 
-bool DxfArc::operator!=(const DxfEntity& other) const {
+bool SegmentArc::operator!=(const SegmentEntity& other) const {
     return !(*this == other);
 }
 
-bool DxfArc::same(const DxfEntity& other) const {
-    return other.type() == ENTITY_TYPE::ARC && radius() > other.radius() - M_PRECISION && radius() < other.radius() + M_PRECISION;
+bool SegmentArc::same(const SegmentEntity& other) const {
+    return other.type() == DXF_ENTITY_TYPE::ARC && radius() > other.radius() - M_PRECISION && radius() < other.radius() + M_PRECISION;
 }
 
-bool DxfArc::inside(const DxfArc& other) const {
-    double L = DxfEntity::length(m_C, other.m_C);
+bool SegmentArc::inside(const SegmentArc& other) const {
+    double L = SegmentEntity::length(m_C, other.m_C);
     return L < fabs(other.radius() - radius());
 }
 
-bool DxfArc::outside(const DxfArc& other) const {
-    double L = DxfEntity::length(m_C, other.m_C);
+bool SegmentArc::outside(const SegmentArc& other) const {
+    double L = SegmentEntity::length(m_C, other.m_C);
     return L > other.radius() + radius();
 }
 
-bool DxfArc::insideCircle(const fpoint_t& pt) const {
-    return DxfEntity::length(m_C, pt) <= radius();
+bool SegmentArc::insideCircle(const fpoint_t& pt) const {
+    return SegmentEntity::length(m_C, pt) <= radius();
 }
 
-bool DxfArc::outsideCircle(const fpoint_t& pt) const { return !insideCircle(pt); }
+bool SegmentArc::outsideCircle(const fpoint_t& pt) const { return !insideCircle(pt); }
 
-bool DxfArc::intersected(const DxfArc& other) const {
-    double L = DxfEntity::length(m_C, other.m_C);
+bool SegmentArc::intersected(const SegmentArc& other) const {
+    double L = SegmentEntity::length(m_C, other.m_C);
     return L >= fabs(other.radius() - radius()) && L <= other.radius() + radius();
 }
 
-void DxfArc::setCenterX(double value) {
+void SegmentArc::setCenterX(double value) {
     m_flags.valid = 0;
     m_flags.Cx = 1;
     m_C.x = value;
 }
-void DxfArc::setCenterY(double value) {
+void SegmentArc::setCenterY(double value) {
     m_flags.valid = 0;
     m_flags.Cy = 1;
     m_C.y = value;
 }
-void DxfArc::setRadius(double value) {
+void SegmentArc::setRadius(double value) {
     m_flags.valid = 0;
     m_flags.R = 1;
     m_R = value > 0 ? value : 0;
 }
 
-void DxfArc::setStartAngle(double rad) {
+void SegmentArc::setStartAngle(double rad) {
     m_flags.valid = 0;
     m_flags.alpha = 1;
     m_alpha = range360(rad);
 }
-void DxfArc::setEndAngle(double rad) {
+void SegmentArc::setEndAngle(double rad) {
     m_flags.valid = 0;
     m_flags.beta = 1;
     m_beta = range360(rad);
 }
 
-void DxfArc::setExtrusionDirectionZ(double value) { m_flags.ccw = value >= 0 ? 1 : 0; }
+void SegmentArc::setExtrusionDirectionZ(double value) { m_flags.ccw = value >= 0 ? 1 : 0; }
 
-bool DxfArc::isPoint() const { return m_R < M_PRECISION; }
+bool SegmentArc::isPoint() const { return m_R < M_PRECISION; }
 
-bool DxfArc::isCircle() const { return point_0() == point_1() && m_R >= M_PRECISION; }
+bool SegmentArc::isCircle() const { return point_0() == point_1() && m_R >= M_PRECISION; }
 
-vector<fpoint_t> DxfArc::getPoints() const {
+vector<fpoint_t> SegmentArc::getPoints() const {
     vector<fpoint_t> res;    
 
     double a = m_alpha;
@@ -137,7 +137,7 @@ vector<fpoint_t> DxfArc::getPoints() const {
     return res;
 }
 
-void DxfArc::set(const fpoint_t& C, double R, double alpha, double beta, bool ccw) {
+void SegmentArc::set(const fpoint_t& C, double R, double alpha, double beta, bool ccw) {
     m_flags = {0, 0, 0, 0, 0, 1, 0, ccw};
 
     this->m_R = R > 0 ? R :0;
@@ -146,7 +146,7 @@ void DxfArc::set(const fpoint_t& C, double R, double alpha, double beta, bool cc
     this->m_C = C;
 }
 
-void DxfArc::set(const fpoint_t& A, const fpoint_t& B, const fpoint_t& C, bool ccw) {
+void SegmentArc::set(const fpoint_t& A, const fpoint_t& B, const fpoint_t& C, bool ccw) {
     m_flags = {0, 0, 0, 0, 0, 1, 0, ccw};
 
     if (A == C && B == C) { // point
@@ -181,7 +181,7 @@ void DxfArc::set(const fpoint_t& A, const fpoint_t& B, const fpoint_t& C, bool c
     }
 }
 
-void DxfArc::set(const fpoint_t& A, const fpoint_t& B, double R_in, bool ccw) {
+void SegmentArc::set(const fpoint_t& A, const fpoint_t& B, double R_in, bool ccw) {
     m_flags = {0, 0, 0, 0, 0, 1, 0, ccw};
 
     bool biggest = R_in < 0;
@@ -242,20 +242,20 @@ void DxfArc::set(const fpoint_t& A, const fpoint_t& B, double R_in, bool ccw) {
     m_flags.circle = A == B; // circle
 }
 
-double DxfArc::point_X0() const { return m_C.x + radius() * cos(m_alpha); }
-double DxfArc::point_Y0() const { return m_C.y + radius() * sin(m_alpha); }
-double DxfArc::point_X1() const { return m_C.x + radius() * cos(m_beta); }
-double DxfArc::point_Y1() const { return m_C.y + radius() * sin(m_beta); }
+double SegmentArc::point_X0() const { return m_C.x + radius() * cos(m_alpha); }
+double SegmentArc::point_Y0() const { return m_C.y + radius() * sin(m_alpha); }
+double SegmentArc::point_X1() const { return m_C.x + radius() * cos(m_beta); }
+double SegmentArc::point_Y1() const { return m_C.y + radius() * sin(m_beta); }
 
-fpoint_t DxfArc::point_0() const { return fpoint_t(point_X0(), point_Y0()); }
-fpoint_t DxfArc::point_1() const { return fpoint_t(point_X1(), point_Y1()); }
+fpoint_t SegmentArc::point_0() const { return fpoint_t(point_X0(), point_Y0()); }
+fpoint_t SegmentArc::point_1() const { return fpoint_t(point_X1(), point_Y1()); }
 
-double DxfArc::radius() const { return m_R > 0 ? m_R : 0 ; }
+double SegmentArc::radius() const { return m_R > 0 ? m_R : 0 ; }
 
-double DxfArc::tangent_0() const { return m_flags.ccw ? m_alpha + M_PI_2 : m_alpha - M_PI_2; }
-double DxfArc::tangent_1() const { return m_flags.ccw ? m_beta + M_PI_2 : m_beta - M_PI_2; }
+double SegmentArc::tangent_0() const { return m_flags.ccw ? m_alpha + M_PI_2 : m_alpha - M_PI_2; }
+double SegmentArc::tangent_1() const { return m_flags.ccw ? m_beta + M_PI_2 : m_beta - M_PI_2; }
 
-ContourRange DxfArc::range() const {
+ContourRange SegmentArc::range() const {
     ContourRange range;
     fpoint_t A  = point_0();
     fpoint_t B  = point_1();
@@ -285,9 +285,9 @@ ContourRange DxfArc::range() const {
     return range;
 }
 
-double DxfArc::length() const { return fabs(deltaAngle()) * radius(); }
+double SegmentArc::length() const { return fabs(deltaAngle()) * radius(); }
 
-double DxfArc::length(const fpoint_t& pt) const {
+double SegmentArc::length(const fpoint_t& pt) const {
     double R, gamma;
     polar(m_C, pt, R, gamma);
     gamma = range360(gamma);
@@ -302,7 +302,7 @@ double DxfArc::length(const fpoint_t& pt) const {
     else
         return dGamma * radius();
 }
-double DxfArc::distance(const fpoint_t& pt) const {
+double SegmentArc::distance(const fpoint_t& pt) const {
     double CP, gamma;
     polar(m_C, pt, CP, gamma);
     gamma = range360(gamma);
@@ -310,19 +310,19 @@ double DxfArc::distance(const fpoint_t& pt) const {
     double dGamma = deltaAngle(m_flags.ccw, m_alpha, gamma);
 
     if (dGamma <= 0)
-        return DxfEntity::length(point_0(), pt);
+        return SegmentEntity::length(point_0(), pt);
     else {
         double dArc = deltaAngle();
 
         if (dGamma >= dArc)
-            return DxfEntity::length(point_1(), pt);
+            return SegmentEntity::length(point_1(), pt);
         else
-            return DxfEntity::length(m_C, pt) - radius();
+            return SegmentEntity::length(m_C, pt) - radius();
     }
 }
 
-DxfEntity* DxfArc::trim_front(double head, bool rem) {
-    DxfArc* res = nullptr;
+SegmentEntity* SegmentArc::trim_front(double head, bool rem) {
+    SegmentArc* res = nullptr;
     double len = length();
 
     if (head >= M_PRECISION && head < (len - M_PRECISION)) {
@@ -330,14 +330,14 @@ DxfEntity* DxfArc::trim_front(double head, bool rem) {
         double da = deltaAngle();
         double gamma = range360(m_alpha + da * pct);
 
-        if (rem) res = new DxfArc(m_C, m_R, m_alpha, gamma, m_flags.ccw);
+        if (rem) res = new SegmentArc(m_C, m_R, m_alpha, gamma, m_flags.ccw);
         m_alpha = gamma;
     }
     return res;
 }
 
-DxfEntity *DxfArc::trim_front_rev(double tail, bool rem) {
-    DxfArc* res = nullptr;
+SegmentEntity *SegmentArc::trim_front_rev(double tail, bool rem) {
+    SegmentArc* res = nullptr;
     double len = length();
 
     if (tail >= M_PRECISION && tail < len) {
@@ -345,14 +345,14 @@ DxfEntity *DxfArc::trim_front_rev(double tail, bool rem) {
         double da = deltaAngle();
         double gamma = range360(m_beta - da * pct);
 
-        if (rem) res = new DxfArc(m_C, m_R, m_alpha, gamma, m_flags.ccw);
+        if (rem) res = new SegmentArc(m_C, m_R, m_alpha, gamma, m_flags.ccw);
         m_alpha = gamma;
     }
     return res;
 }
 
-DxfEntity *DxfArc::trim_back(double tail, bool rem) {
-    DxfArc* res = nullptr;
+SegmentEntity *SegmentArc::trim_back(double tail, bool rem) {
+    SegmentArc* res = nullptr;
     double len = length();
 
     if (tail > M_PRECISION && tail < len) {
@@ -360,14 +360,14 @@ DxfEntity *DxfArc::trim_back(double tail, bool rem) {
         double da = deltaAngle();
         double gamma = range360(m_beta - da * pct);
 
-        if (rem) res = new DxfArc(m_C, m_R, gamma, m_beta, m_flags.ccw);
+        if (rem) res = new SegmentArc(m_C, m_R, gamma, m_beta, m_flags.ccw);
         m_beta = gamma;
     }
     return res;
 }
 
-DxfEntity* DxfArc::trim_back_rev(double head, bool rem) {
-    DxfArc* res = nullptr;
+SegmentEntity* SegmentArc::trim_back_rev(double head, bool rem) {
+    SegmentArc* res = nullptr;
     double len = length();
 
     if (head > M_PRECISION && head < len) {
@@ -375,13 +375,13 @@ DxfEntity* DxfArc::trim_back_rev(double head, bool rem) {
         double da = deltaAngle();
         double gamma = range360(m_alpha + da * pct);
 
-        if (rem) res = new DxfArc(m_C, m_R, gamma, m_beta, m_flags.ccw);
+        if (rem) res = new SegmentArc(m_C, m_R, gamma, m_beta, m_flags.ccw);
         m_beta = gamma;
     }
     return res;
 }
 
-void DxfArc::offset(OFFSET_SIDE side, double offset, const DxfEntity* prev, const DxfEntity* next) {
+void SegmentArc::offset(OFFSET_SIDE side, double offset, const SegmentEntity* prev, const SegmentEntity* next) {
     double a, a0, a1, g, b, R, dx, dy;
 
     fpoint_t A = point_0();
@@ -429,7 +429,7 @@ void DxfArc::offset(OFFSET_SIDE side, double offset, const DxfEntity* prev, cons
     set(A, B, C, ccw);
 }
 
-void DxfArc::offset(OFFSET_SIDE side, double offset) {
+void SegmentArc::offset(OFFSET_SIDE side, double offset) {
     bool ccw = m_flags.ccw;
     if (offset <= 0)
         return;
@@ -440,7 +440,7 @@ void DxfArc::offset(OFFSET_SIDE side, double offset) {
         m_R += offset;
 }
 
-void DxfArc::rotate(const RotateMatrix &mx) {
+void SegmentArc::rotate(const RotateMatrix &mx) {
     fpoint_t A = this->point_0();
     fpoint_t B = this->point_1();
     A.rotate(mx);
@@ -449,43 +449,43 @@ void DxfArc::rotate(const RotateMatrix &mx) {
     set(A, B, m_C, m_flags.ccw);
 }
 
-void DxfArc::flipX(double x) {
+void SegmentArc::flipX(double x) {
     m_C.flipX(x);
     m_flags.ccw = !m_flags.ccw;
     m_alpha = range360(M_PI - m_alpha);
     m_beta = range360(M_PI - m_beta);
 }
 
-void DxfArc::flipY(double y) {
+void SegmentArc::flipY(double y) {
     m_C.flipY(y);
     m_flags.ccw = !m_flags.ccw;
     m_alpha = range360(2*M_PI - m_alpha);
     m_beta = range360(2*M_PI - m_beta);
 }
 
-void DxfArc::scale(double k) {
+void SegmentArc::scale(double k) {
     m_C.scale(k);
     m_R *= k;
 }
 
-double DxfArc::dx() const { return radius() * (cos(m_beta) - cos(m_alpha)); }
-double DxfArc::dy() const { return radius() * (sin(m_beta) - sin(m_alpha)); }
+double SegmentArc::dx() const { return radius() * (cos(m_beta) - cos(m_alpha)); }
+double SegmentArc::dy() const { return radius() * (sin(m_beta) - sin(m_alpha)); }
 
-void DxfArc::shift(const fpoint_t& value) { m_C.shift(value); }
+void SegmentArc::shift(const fpoint_t& value) { m_C.shift(value); }
 
-void DxfArc::reverse() {
+void SegmentArc::reverse() {
     swap<double>(m_alpha, m_beta);
     m_flags.ccw = !m_flags.ccw;
 }
 
-string DxfArc::toString() const {
+string SegmentArc::toString() const {
     return m_flags.valid ? "ARC: Center " + m_C.toString() +
             ", Radius " + to_string(m_R) +
             ", angles (" + to_string(m_alpha / M_PI * 180) + ", " + to_string(m_beta / M_PI * 180) + ")" +
                          ", CCW " + to_string(m_flags.ccw) : "Not valid";
 }
 
-string DxfArc::toString2() const {
+string SegmentArc::toString2() const {
     if (m_flags.valid) {
         char buf[128];
         snprintf(buf, sizeof(buf), ", R: %.3f, Length: %.3f mm, CCW: %s.", m_R, length(), m_flags.ccw ? "True" : "False");
@@ -501,11 +501,11 @@ string DxfArc::toString2() const {
     return "Not valid";
 }
 
-bool DxfArc::between(double angle) const {
+bool SegmentArc::between(double angle) const {
     return between(angle, m_alpha, m_beta, m_flags.ccw);
 }
 
-double DxfArc::range360(double value) {
+double SegmentArc::range360(double value) {
     const double M_360 = 2 * M_PI;
 
     if (value >= M_360) {
@@ -523,7 +523,7 @@ double DxfArc::range360(double value) {
     return value;
 }
 
-bool DxfArc::between(double angle, double alpha, double beta, bool ccw) {
+bool SegmentArc::between(double angle, double alpha, double beta, bool ccw) {
     angle = range360(angle);
     alpha = range360(alpha);
     beta = range360(beta);
@@ -540,7 +540,7 @@ bool DxfArc::between(double angle, double alpha, double beta, bool ccw) {
             return !(angle > alpha || angle < beta);
 }
 
-void DxfArc::polar(const fpoint_t& C, const fpoint_t& A, double& R, double& a) {
+void SegmentArc::polar(const fpoint_t& C, const fpoint_t& A, double& R, double& a) {
     if (A != C) {
         double dx = A.x - C.x;
         double dy = A.y - C.y;
@@ -564,7 +564,7 @@ void DxfArc::polar(const fpoint_t& C, const fpoint_t& A, double& R, double& a) {
     }
 }
 
-double DxfArc::deltaAngle(bool ccw, double alpha, double beta) {
+double SegmentArc::deltaAngle(bool ccw, double alpha, double beta) {
     double delta;
     if (ccw)
         if (beta > alpha)
@@ -580,7 +580,7 @@ double DxfArc::deltaAngle(bool ccw, double alpha, double beta) {
     return delta;
 }
 
-double DxfArc::deltaAngle() const {
+double SegmentArc::deltaAngle() const {
     if (m_R <= 0)
         return 0;
 
@@ -599,8 +599,8 @@ double DxfArc::deltaAngle() const {
     return deltaAngle(m_flags.ccw, a, m_beta);
 }
 
-void DxfArc::clear() {
-    DxfEntity::clear();
+void SegmentArc::clear() {
+    SegmentEntity::clear();
     m_flags = {0,0,0,0,0,0,0,1};
     m_R = 0;
     m_alpha = 0;
@@ -608,7 +608,7 @@ void DxfArc::clear() {
     m_C = fpoint_t();
 }
 
-bool DxfArc::check() {
+bool SegmentArc::check() {
     if (!m_flags.valid && m_flags.Cx && m_flags.Cy && m_flags.R && m_flags.alpha && m_flags.beta) {
         m_flags.Cx = 0;
         m_flags.Cy = 0;

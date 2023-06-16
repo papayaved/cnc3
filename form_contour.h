@@ -43,9 +43,9 @@ class FormContour : public QWidget {
     QAction *actPropCtr {nullptr}, *actChangeDirCtr {nullptr}, *actDeleteCtr {nullptr},
         *actFirstCtr {nullptr}, *actUpCtr {nullptr}, *actDownCtr {nullptr}, *actLastCtr {nullptr},
 
-        *actPropSeg {nullptr}, *actUseAsEntryLineSeg {nullptr},
-        *actFirstSeg {nullptr}, *actUpSeg {nullptr}, *actDownSeg {nullptr}, *actLastSeg {nullptr}, *actSortCtr {nullptr},
-        *actDeleleSeg {nullptr}, *actMoveSeg {nullptr};
+        *actPropSeg {nullptr}, *actMoveSeg {nullptr}, *actUseAsEntryLineSeg {nullptr},
+        *actFirstSeg {nullptr}, *actUpSeg {nullptr}, *actDownSeg {nullptr}, *actLastSeg {nullptr}, *actSortSeg {nullptr}, *actSortCtr {nullptr},
+        *actDeleleSeg {nullptr};
 
     QGroupBox *groupContours, *groupContour;
     QPushButton *btnNewEmpty {nullptr}, *btnNewCutline {nullptr}, *btnMerge {nullptr}, *btnDelete {nullptr}, *btnClear {nullptr};
@@ -100,6 +100,9 @@ private slots:
     void on_btnSave_clicked();
     void on_btnSaveAs_clicked();
 
+    void printUnused(bool OK, const std::string& lastError, const Contour& free, const Contour& tails);
+    void trySort(Contour& cnt, Contour* const prev, bool prev_first);
+    void trySortDxf(Contour& cnt);
     void on_btnLoadDxf_clicked();
 
     void on_btnNewContour_clicked();
@@ -124,7 +127,8 @@ private slots:
     void on_actUpSeg_clicked();
     void on_actDownSeg_clicked();
 
-    void on_btnSortClicked();
+    void on_actSortCtrClicked();
+    void on_actSortSegClicked();
 
     void onViewContoursClicked(const QModelIndex&);
     void onViewSegmentsClicked(const QModelIndex&);
@@ -168,7 +172,7 @@ public:
 
 
     void plot();
-    void plot(const Dxf& contour);
+    void plot(const Contour& contour);
 
     void setText(const QString& text);
 };

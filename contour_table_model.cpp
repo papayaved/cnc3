@@ -25,8 +25,8 @@ QVariant SegmentsModel::data(const QModelIndex& index, int role) const {
         size_t row = size_t(index.row());
         size_t col = size_t(index.column());
 
-        const Dxf* const bot = m_pair->bot();
-        const Dxf* const top = m_pair->top();
+        const Contour* const bot = m_pair->bot();
+        const Contour* const top = m_pair->top();
 
         if (role == Qt::DisplayRole)
             switch (col) {

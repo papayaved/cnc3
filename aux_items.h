@@ -22,9 +22,9 @@
 #include <stdexcept>
 
 #include "com_packet.h"
-#include "dxf_entity.h"
-#include "dxf_arc.h"
-#include "dxf_line.h"
+#include "segment_entity.h"
+#include "segment_arc.h"
+#include "segment_line.h"
 
 // Collection of auxiliary functions and classes for the project
 

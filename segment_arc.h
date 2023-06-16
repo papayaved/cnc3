@@ -1,9 +1,9 @@
-#ifndef DXF_ARC_H
-#define DXF_ARC_H
+#ifndef SEGMENT_ARC_H
+#define SEGMENT_ARC_H
 
-#include "dxf_entity.h"
+#include "segment_entity.h"
 
-class DxfArc : public DxfEntity {
+class SegmentArc : public SegmentEntity {
 protected:
     static const double ANGLE_STEP;
 
@@ -21,23 +21,23 @@ protected:
     fpoint_t m_C;
 
 public:
-    DxfArc();
-    DxfArc(const fpoint_t& center, double radius, double start_angle, double end_angle, bool ccw = true);
-    DxfArc(const fpoint_t& A, const fpoint_t& B, const fpoint_t& C, bool ccw);
-    DxfArc(const fpoint_t& A, const fpoint_t& B, double R, bool ccw);
-    DxfArc(const DxfArc& other);
-    ~DxfArc() override;
-    DxfEntity* clone() const override;
+    SegmentArc();
+    SegmentArc(const fpoint_t& center, double radius, double start_angle, double end_angle, bool ccw = true);
+    SegmentArc(const fpoint_t& A, const fpoint_t& B, const fpoint_t& C, bool ccw);
+    SegmentArc(const fpoint_t& A, const fpoint_t& B, double R, bool ccw);
+    SegmentArc(const SegmentArc& other);
+    ~SegmentArc() override;
+    SegmentEntity* clone() const override;
 
-    bool operator==(const DxfEntity& other) const override;
-    bool operator!=(const DxfEntity& other) const override;
+    bool operator==(const SegmentEntity& other) const override;
+    bool operator!=(const SegmentEntity& other) const override;
 
-    bool same(const DxfEntity& other) const override;
-    bool inside(const DxfArc& other) const;
-    bool outside(const DxfArc& other) const;
+    bool same(const SegmentEntity& other) const override;
+    bool inside(const SegmentArc& other) const;
+    bool outside(const SegmentArc& other) const;
     bool insideCircle(const fpoint_t& pt) const;
     bool outsideCircle(const fpoint_t& pt) const;
-    bool intersected(const DxfArc& other) const;
+    bool intersected(const SegmentArc& other) const;
 
     virtual void setCenterX(double value);
     virtual void setCenterY(double value);
@@ -78,11 +78,11 @@ public:
     double length() const override;
     double length(const fpoint_t& pt) const override;
     double distance(const fpoint_t& pt) const;
-    DxfEntity* trim_front(double length, bool rem = false) override;
-    DxfEntity* trim_front_rev(double length, bool rem = false) override;
-    DxfEntity* trim_back(double length, bool rem = false) override;
-    DxfEntity* trim_back_rev(double length, bool rem = false) override;
-    void offset(OFFSET_SIDE side, double offset, const DxfEntity* prev, const DxfEntity* next) override;
+    SegmentEntity* trim_front(double length, bool rem = false) override;
+    SegmentEntity* trim_front_rev(double length, bool rem = false) override;
+    SegmentEntity* trim_back(double length, bool rem = false) override;
+    SegmentEntity* trim_back_rev(double length, bool rem = false) override;
+    void offset(OFFSET_SIDE side, double offset, const SegmentEntity* prev, const SegmentEntity* next) override;
     void offset(OFFSET_SIDE side, double offset) override;
 
     void rotate(const RotateMatrix& mx) override;
@@ -108,4 +108,4 @@ public:
     virtual double deltaAngle() const;
 };
 
-#endif // DXF_ARC_H
+#endif // SEGMENT_ARC_H

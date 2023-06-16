@@ -15,15 +15,15 @@ ContourPair::Reader::Reader(const ContourPair& pair) : valid({false, false}), m_
     }
 }
 
-const DxfEntity* ContourPair::Reader::bot() {
+const SegmentEntity* ContourPair::Reader::bot() {
     return (valid.bot && !m_pair.botEmpty() && it_bot != m_pair.m_bot->entities().end()) ? *it_bot : nullptr;
 }
 
-const DxfEntity* ContourPair::Reader::top() {
+const SegmentEntity* ContourPair::Reader::top() {
     return (valid.top && !m_pair.topEmpty() && it_top != m_pair.m_top->entities().end()) ? *it_top : nullptr;
 }
 
-void ContourPair::Reader::next(const DxfEntity*& bot, const DxfEntity*& top) {
+void ContourPair::Reader::next(const SegmentEntity*& bot, const SegmentEntity*& top) {
     if (valid.bot && !m_pair.botEmpty() && it_bot != m_pair.m_bot->entities().end()) {
         ++it_bot;
         bot = it_bot != m_pair.m_bot->entities().end() ? *it_bot : nullptr;
@@ -40,7 +40,7 @@ void ContourPair::Reader::next(const DxfEntity*& bot, const DxfEntity*& top) {
 }
 
 // ContourPair
-ContourPair::Reader ContourPair::reader(const DxfEntity*& bot, const DxfEntity*& top) const {
+ContourPair::Reader ContourPair::reader(const SegmentEntity*& bot, const SegmentEntity*& top) const {
     Reader reader(*this);
 
     bot = reader.bot();
@@ -75,8 +75,8 @@ fpoint_t ContourPair::getOutPoint() const { return m_bot ? m_bot->getOutPoint() 
 
 ContourPair::ContourPair(CONTOUR_TYPE type) :
     m_type(type),
-    m_bot(new Dxf),
-    m_top(new Dxf),
+    m_bot(new Contour),
+    m_top(new Contour),
     m_cut(nullptr),
     m_genModes(nullptr)
 {
@@ -85,8 +85,8 @@ ContourPair::ContourPair(CONTOUR_TYPE type) :
 
 ContourPair::ContourPair(const ContourPair& other) :
     m_type(other.m_type),
-    m_bot(new Dxf(*other.m_bot)),
-    m_top(new Dxf(*other.m_top)),
+    m_bot(new Contour(*other.m_bot)),
+    m_top(new Contour(*other.m_top)),
     m_cut(nullptr),
     m_genModes(nullptr)
 {
@@ -102,8 +102,8 @@ ContourPair::ContourPair(const ContourPair& other) :
 
 ContourPair::ContourPair(const ContourPair& other, CONTOUR_TYPE type) :
      m_type(type),
-     m_bot(new Dxf(*other.m_bot)),
-     m_top(new Dxf(*other.m_top)),
+     m_bot(new Contour(*other.m_bot)),
+     m_top(new Contour(*other.m_top)),
      m_cut(nullptr),
      m_genModes(nullptr)
 {
@@ -119,8 +119,8 @@ ContourPair::ContourPair(const ContourPair& other, CONTOUR_TYPE type) :
 
 ContourPair::ContourPair(CONTOUR_TYPE type, const cut_t* const cut, const std::deque<GeneratorMode>* const modes) :
     m_type(type),
-    m_bot(new Dxf),
-    m_top(new Dxf),
+    m_bot(new Contour),
+    m_top(new Contour),
     m_cut(nullptr),
     m_genModes(nullptr)
 {
@@ -141,8 +141,8 @@ ContourPair::ContourPair(ContourPair&& other) :
     m_cut( other.m_cut ),
     m_genModes( other.m_genModes )
 {
-    other.m_bot = new Dxf;
-    other.m_top = new Dxf;
+    other.m_bot = new Contour;
+    other.m_top = new Contour;
     other.m_cut = nullptr;
     other.m_genModes = nullptr;
 
@@ -199,11 +199,11 @@ void ContourPair::swap(ContourPair &other) {
     other.m_type = m_type;
     m_type = type;
 
-    Dxf *bot = other.m_bot;
+    Contour *bot = other.m_bot;
     other.m_bot = m_bot;
     m_bot = bot;
 
-    Dxf *top = other.m_top;
+    Contour *top = other.m_top;
     other.m_top = m_top;
     m_top = top;
 
@@ -236,8 +236,8 @@ ContourPair& ContourPair::operator=(ContourPair&& other) noexcept {
         m_genModes = other.m_genModes;        
 
         other.m_type = CONTOUR_TYPE::CONTOUR_UNKNOWN;
-        other.m_bot = new Dxf;
-        other.m_top = new Dxf;
+        other.m_bot = new Contour;
+        other.m_top = new Contour;
         other.m_cut = nullptr;
         other.m_genModes = nullptr;        
     }
@@ -251,34 +251,34 @@ void ContourPair::clear() {
     if (m_bot)
         m_bot->clear();
     else
-        m_bot = new Dxf();
+        m_bot = new Contour();
 
     if (m_top)
         m_top->clear();
     else
-        m_top = new Dxf();    
+        m_top = new Contour();    
 
     clearCut();
     clearModes();
 }
 
-void ContourPair::setBot(const Dxf& ctr) {
+void ContourPair::setBot(const Contour& ctr) {
     if (m_bot)
         delete m_bot;
 
-    m_bot = new Dxf(ctr);
+    m_bot = new Contour(ctr);
 }
 
-Dxf* ContourPair::bot() const { return m_bot; }
+Contour* ContourPair::bot() const { return m_bot; }
 
-void ContourPair::setTop(const Dxf& ctr) {
+void ContourPair::setTop(const Contour& ctr) {
     if (m_top)
         delete m_top;
 
-    m_top = new Dxf(ctr);
+    m_top = new Contour(ctr);
 }
 
-Dxf* ContourPair::top() const { return m_top; }
+Contour* ContourPair::top() const { return m_top; }
 
 void ContourPair::setCut(const cut_t& cut) {
     if (!m_cut)
@@ -402,12 +402,12 @@ void ContourPair::reverse() {
     if (m_top) m_top->reverse();
 }
 
-void ContourPair::move_back(Dxf* const bot, Dxf* const top) {
+void ContourPair::move_back(Contour* const bot, Contour* const top) {
     if (m_bot) m_bot->move_back(bot);
     if (m_top) m_top->move_back(top);
 }
 
-void ContourPair::move_back(Dxf &bot, Dxf &top) { move_back(&bot, &top); }
+void ContourPair::move_back(Contour &bot, Contour &top) { move_back(&bot, &top); }
 void ContourPair::move_back(ContourPair &pair) { move_back(pair.m_bot, pair.m_top); }
 
 void ContourPair::setFirst(size_t layer, size_t index) {
@@ -622,9 +622,9 @@ void ContourPair::scale(double k) {
 ContourRange ContourPair::range() const {
     ContourRange range, top_range;
 
-    range = Dxf::contourRange(bot()->entities());
+    range = Contour::contourRange(bot()->entities());
 
-    top_range = Dxf::contourRange(top()->entities());
+    top_range = Contour::contourRange(top()->entities());
     range.scale(top_range);
 
     return range;
@@ -648,7 +648,7 @@ ContourPair ContourPair::getMux(size_t in_seg, size_t out_seg) const {
 ContourPair ContourPair::createCutline(double len, AXIS axis, DIR dir, bool top_ena) {
     ContourPair res(CONTOUR_TYPE::CUTLINE_CONTOUR);
 
-    Dxf dxf;
+    Contour dxf;
     dxf.buildLine(len, axis, dir);
     res.setBot(dxf);
 

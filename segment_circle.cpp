@@ -1,21 +1,21 @@
-#include "dxf_circle.h"
+#include "segment_circle.h"
 #include <cmath>
 
 using namespace std;
 
-DxfCircle::DxfCircle() : DxfArc(DxfArc()) {}
-DxfCircle::DxfCircle(const fpoint_t& C, double R, double alpha, bool ccw) : DxfArc(C, R, alpha, alpha, ccw) {}
-DxfCircle::DxfCircle(const DxfCircle& other) : DxfArc(other) {}
-DxfCircle::~DxfCircle() {}
+SegmentCircle::SegmentCircle() : SegmentArc(SegmentArc()) {}
+SegmentCircle::SegmentCircle(const fpoint_t& C, double R, double alpha, bool ccw) : SegmentArc(C, R, alpha, alpha, ccw) {}
+SegmentCircle::SegmentCircle(const SegmentCircle& other) : SegmentArc(other) {}
+SegmentCircle::~SegmentCircle() {}
 
-DxfEntity* DxfCircle::clone() const { return new DxfCircle(*this); }
+SegmentEntity* SegmentCircle::clone() const { return new SegmentCircle(*this); }
 
-void DxfCircle::setStartAngle(double degree) { m_beta = m_alpha = range360(degree); }
+void SegmentCircle::setStartAngle(double degree) { m_beta = m_alpha = range360(degree); }
 
-bool DxfCircle::isPoint() const { return m_R < M_PRECISION; }
-bool DxfCircle::isCircle() const { return true; }
+bool SegmentCircle::isPoint() const { return m_R < M_PRECISION; }
+bool SegmentCircle::isCircle() const { return true; }
 
-vector<fpoint_t> DxfCircle::getPoints() const {
+vector<fpoint_t> SegmentCircle::getPoints() const {
     vector<fpoint_t> res;
 
     for (double a = 0; a < 2 * M_PI; a += ANGLE_STEP) {
@@ -28,7 +28,7 @@ vector<fpoint_t> DxfCircle::getPoints() const {
     return res;
 }
 
-void DxfCircle::set(const fpoint_t& C, double R, double angle, bool ccw) {
+void SegmentCircle::set(const fpoint_t& C, double R, double angle, bool ccw) {
     m_flags.valid = 1;
     m_flags.circle = 1;
     m_flags.ccw = ccw;    
@@ -37,7 +37,7 @@ void DxfCircle::set(const fpoint_t& C, double R, double angle, bool ccw) {
     this->m_C = C;
 }
 
-void DxfCircle::set(const fpoint_t& A, const fpoint_t& C, bool ccw) {
+void SegmentCircle::set(const fpoint_t& A, const fpoint_t& C, bool ccw) {
     m_flags.valid = 1;
 
     if (A == C) { // point
@@ -57,9 +57,9 @@ void DxfCircle::set(const fpoint_t& A, const fpoint_t& C, bool ccw) {
     }
 }
 
-double DxfCircle::length() const { return 2 * M_PI * m_R; }
+double SegmentCircle::length() const { return 2 * M_PI * m_R; }
 
-void DxfCircle::offset(OFFSET_SIDE side, double offset, const DxfEntity* /*prev*/, const DxfEntity* /*next*/) {
+void SegmentCircle::offset(OFFSET_SIDE side, double offset, const SegmentEntity* /*prev*/, const SegmentEntity* /*next*/) {
     if ((m_flags.ccw && side == OFFSET_SIDE::RIGHT) || (!m_flags.ccw && side == OFFSET_SIDE::LEFT))
         m_R += offset;
     else {
@@ -68,27 +68,27 @@ void DxfCircle::offset(OFFSET_SIDE side, double offset, const DxfEntity* /*prev*
     }
 }
 
-void DxfCircle::shift(const fpoint_t& value) { m_C.shift(value); }
+void SegmentCircle::shift(const fpoint_t& value) { m_C.shift(value); }
 
-void DxfCircle::reverse() { m_flags.ccw = !m_flags.ccw; }
+void SegmentCircle::reverse() { m_flags.ccw = !m_flags.ccw; }
 
-string DxfCircle::toString() const {
+string SegmentCircle::toString() const {
     return m_flags.valid ? "Circle: Center " + m_C.toString() +
             ", Radius " + to_string(m_R) +
             ", Start Angle " + to_string(m_alpha / M_PI * 180) +
             ", CCW " + to_string(m_flags.ccw) : "Not valid";
 }
 
-string DxfCircle::toString2() const {
+string SegmentCircle::toString2() const {
     return m_flags.valid ? "Circle: Center " + m_C.toString() +
             ", Radius " + to_string(m_R) +
             ", Start Angle " + to_string(m_alpha / M_PI * 180) +
             ", CCW " + to_string(m_flags.ccw) : "Not valid";
 }
 
-double DxfCircle::deltaAngle() const { return m_flags.ccw ? 2 * M_PI : -2 * M_PI; }
+double SegmentCircle::deltaAngle() const { return m_flags.ccw ? 2 * M_PI : -2 * M_PI; }
 
-bool DxfCircle::check() {
+bool SegmentCircle::check() {
     if (!m_flags.valid && m_flags.Cx && m_flags.Cy && m_flags.R) {
         m_flags.Cx = 0;
         m_flags.Cy = 0;
@@ -99,8 +99,8 @@ bool DxfCircle::check() {
     return m_flags.valid;
 }
 
-void DxfCircle::clear() {
-    DxfArc::clear();
+void SegmentCircle::clear() {
+    SegmentArc::clear();
     m_flags = {0,0,0,0,0,0,1,1};
     m_R = 0;
     m_alpha = 0;

@@ -11,7 +11,7 @@
 #include <QRadioButton>
 #include <vector>
 //#include "fpoint_t.h"
-#include "dxf_entity.h"
+#include "segment_entity.h"
 
 class SegPropertiesDialog : public QDialog {
     Q_OBJECT
@@ -36,7 +36,7 @@ public:
 
     explicit SegPropertiesDialog(
         const QStringList& contours_list,
-        const DxfEntity* const ent,
+        const SegmentEntity* const ent,
         size_t ctr_num, size_t row_num, size_t col_num,
         bool before, bool after,
         QWidget *parent = nullptr

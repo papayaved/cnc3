@@ -60,8 +60,8 @@ class GCode {
     void append(const GFrame& frame);
     void push_back(const GeneratorMode& genMode, bool fb_ena, const double low_thld[2], const double high_thld[2]);
 
-    static void addLine(Dxf& cnt, const GCommand& cmd, bool inc_ena, const fpoint_t& offset, double& X, double& Y, LAYER_T layer = LAYER_T::BOT);
-    static void addArc (Dxf& cnt, const GCommand& cmd, bool inc_ena, const fpoint_t& offset, double& X, double& Y, bool ccw, LAYER_T layer = LAYER_T::BOT);
+    static void addLine(Contour& cnt, const GCommand& cmd, bool inc_ena, const fpoint_t& offset, double& X, double& Y, LAYER_T layer = LAYER_T::BOT);
+    static void addArc (Contour& cnt, const GCommand& cmd, bool inc_ena, const fpoint_t& offset, double& X, double& Y, bool ccw, LAYER_T layer = LAYER_T::BOT);
 
     void addG2G2(fpoint_t& A, const fpoint_t& B, fpoint_t& A2, const fpoint_t& B2, const fpoint_t& C);
 

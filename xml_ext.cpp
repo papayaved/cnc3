@@ -41,7 +41,7 @@ void xml_ext::writeFPoint(QXmlStreamWriter& xml, const QString& name, const fpoi
     xml.writeEndElement();
 }
 
-void xml_ext::writeContourLine(QXmlStreamWriter &xml, const DxfLine* line) {
+void xml_ext::writeContourLine(QXmlStreamWriter &xml, const SegmentLine* line) {
     if (!line) return;
 
     xml.writeStartElement("line");
@@ -50,7 +50,7 @@ void xml_ext::writeContourLine(QXmlStreamWriter &xml, const DxfLine* line) {
     xml.writeEndElement();
 }
 
-void xml_ext::writeContourArc(QXmlStreamWriter &xml, const DxfArc* arc) {
+void xml_ext::writeContourArc(QXmlStreamWriter &xml, const SegmentArc* arc) {
     if (!arc) return;
 
     xml.writeStartElement("arc");
@@ -62,7 +62,7 @@ void xml_ext::writeContourArc(QXmlStreamWriter &xml, const DxfArc* arc) {
     xml.writeEndElement();
 }
 
-void xml_ext::writeContourPoint(QXmlStreamWriter &xml, const DxfPoint* pt) {
+void xml_ext::writeContourPoint(QXmlStreamWriter &xml, const SegmentPoint* pt) {
     if (!pt) return;
 
     xml.writeStartElement("point");
@@ -70,25 +70,25 @@ void xml_ext::writeContourPoint(QXmlStreamWriter &xml, const DxfPoint* pt) {
     xml.writeEndElement();
 }
 
-void xml_ext::writeContourEntity(QXmlStreamWriter &xml, const DxfEntity *ent) {
+void xml_ext::writeContourEntity(QXmlStreamWriter &xml, const SegmentEntity *ent) {
     if (!ent) return;
 
     switch (ent->type()) {
-    case ENTITY_TYPE::LINE:
-        writeContourLine(xml, dynamic_cast<const DxfLine*>(ent));
+    case DXF_ENTITY_TYPE::LINE:
+        writeContourLine(xml, dynamic_cast<const SegmentLine*>(ent));
         break;
-    case ENTITY_TYPE::ARC:
-        writeContourArc(xml, dynamic_cast<const DxfArc*>(ent));
+    case DXF_ENTITY_TYPE::ARC:
+        writeContourArc(xml, dynamic_cast<const SegmentArc*>(ent));
         break;
-    case ENTITY_TYPE::POINT:
-        writeContourPoint(xml, dynamic_cast<const DxfPoint*>(ent));
+    case DXF_ENTITY_TYPE::POINT:
+        writeContourPoint(xml, dynamic_cast<const SegmentPoint*>(ent));
         break;
     default:
         break;
     }
 }
 
-void xml_ext::writeContour(QXmlStreamWriter &xml, const QString &name, const list<DxfEntity*> &list) {
+void xml_ext::writeContour(QXmlStreamWriter &xml, const QString &name, const list<SegmentEntity*> &list) {
     xml.writeStartElement(name);
 
     for (auto ent : list)
@@ -97,7 +97,7 @@ void xml_ext::writeContour(QXmlStreamWriter &xml, const QString &name, const lis
     xml.writeEndElement();
 }
 
-void xml_ext::writeContour(QXmlStreamWriter &xml, const QString& type, const std::list<DxfEntity *> &bot, const std::list<DxfEntity *> &top) {
+void xml_ext::writeContour(QXmlStreamWriter &xml, const QString& type, const std::list<SegmentEntity *> &bot, const std::list<SegmentEntity *> &top) {
     xml.writeStartElement(type);
         writeContour(xml, "bot", bot);
         writeContour(xml, "top", top);
@@ -320,7 +320,7 @@ bool xml_ext::readFPoint(QXmlStreamReader& xml, const QString& name, fpoint_t& p
     return valid == 3;
 }
 
-bool xml_ext::readContourLine(QXmlStreamReader &xml, DxfLine &line) {
+bool xml_ext::readContourLine(QXmlStreamReader &xml, SegmentLine &line) {
     fpoint_t A, B;
     int valid = 0;
 
@@ -340,14 +340,14 @@ bool xml_ext::readContourLine(QXmlStreamReader &xml, DxfLine &line) {
     }
 
     if (valid == 3) {
-        line = DxfLine(A, B);
+        line = SegmentLine(A, B);
         return true;
     }
 
     return false;
 }
 
-bool xml_ext::readContourArc(QXmlStreamReader &xml, DxfArc &arc) {
+bool xml_ext::readContourArc(QXmlStreamReader &xml, SegmentArc &arc) {
     fpoint_t C;
     double R(0), a(0), b(0);
     bool ccw = true;
@@ -376,14 +376,14 @@ bool xml_ext::readContourArc(QXmlStreamReader &xml, DxfArc &arc) {
     }
 
     if (valid == 0x1F) {
-        arc = DxfArc(C, R, a, b, ccw);
+        arc = SegmentArc(C, R, a, b, ccw);
         return true;
     }
 
     return false;
 }
 
-bool xml_ext::readContourPoint(QXmlStreamReader &xml, DxfPoint &pt) {
+bool xml_ext::readContourPoint(QXmlStreamReader &xml, SegmentPoint &pt) {
     fpoint_t P;
     bool OK = false;
 
@@ -400,15 +400,15 @@ bool xml_ext::readContourPoint(QXmlStreamReader &xml, DxfPoint &pt) {
     }
 
     if (OK)
-        pt = DxfPoint(P);
+        pt = SegmentPoint(P);
 
     return OK;
 }
 
-DxfEntity* xml_ext::readContourEntity(QXmlStreamReader &xml) {
+SegmentEntity* xml_ext::readContourEntity(QXmlStreamReader &xml) {
     if (xml.tokenType() == QXmlStreamReader::StartElement) {
         if (xml.name() == "line") {
-            DxfLine* line = new DxfLine();
+            SegmentLine* line = new SegmentLine();
 
             if (!readContourLine(xml, *line)) {
                 delete line;
@@ -417,7 +417,7 @@ DxfEntity* xml_ext::readContourEntity(QXmlStreamReader &xml) {
 
             return line;
         } else if (xml.name() == "arc") {
-            DxfArc* arc = new DxfArc();
+            SegmentArc* arc = new SegmentArc();
 
             if (!readContourArc(xml, *arc)) {
                 delete arc;
@@ -426,7 +426,7 @@ DxfEntity* xml_ext::readContourEntity(QXmlStreamReader &xml) {
 
             return arc;
         } else if (xml.name() == "point") {
-            DxfPoint* pt = new DxfPoint();
+            SegmentPoint* pt = new SegmentPoint();
 
             if (!readContourPoint(xml, *pt)) {
                 delete pt;
@@ -441,8 +441,8 @@ DxfEntity* xml_ext::readContourEntity(QXmlStreamReader &xml) {
 }
 
 // read until end of name
-Dxf xml_ext::readContourLayer(QXmlStreamReader &xml, const QString& name) {
-    Dxf dxf;
+Contour xml_ext::readContourLayer(QXmlStreamReader &xml, const QString& name) {
+    Contour dxf;
 
     while ( !(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == name) ) {
         if (xml.atEnd() || xml.hasError()) {
@@ -450,7 +450,7 @@ Dxf xml_ext::readContourLayer(QXmlStreamReader &xml, const QString& name) {
             return dxf;
         }
 
-        DxfEntity* ent = readContourEntity(xml);
+        SegmentEntity* ent = readContourEntity(xml);
         if (ent)
             dxf.push_back(ent);
 
@@ -471,10 +471,10 @@ ContourPair xml_ext::readContourPair(QXmlStreamReader &xml, CONTOUR_TYPE type) {
         }
 
         if (xml.tokenType() == QXmlStreamReader::StartElement && xml.name() == "bot") {
-            Dxf bot = xml_ext::readContourLayer(xml, "bot");
+            Contour bot = xml_ext::readContourLayer(xml, "bot");
             p.setBot(bot);
         } else if (xml.tokenType() == QXmlStreamReader::StartElement && xml.name() == "top") {
-            Dxf top = xml_ext::readContourLayer(xml, "top");
+            Contour top = xml_ext::readContourLayer(xml, "top");
             p.setTop(top);
         }
 

@@ -2,7 +2,7 @@
 #define CONTOUR_PAIR_H
 
 #include <set>
-#include "dxf.h"
+#include "contour.h"
 
 //class CONTOUR_TYPE {
 //public:
@@ -54,7 +54,7 @@ class ContourPair {
     static cut_t m_cutDefault;
 
     CONTOUR_TYPE m_type {CONTOUR_TYPE::MAIN_CONTOUR};
-    Dxf *m_bot {nullptr}, *m_top {nullptr};    
+    Contour *m_bot {nullptr}, *m_top {nullptr};    
 
     cut_t* m_cut {nullptr};
     std::deque<GeneratorMode>* m_genModes {nullptr};
@@ -71,16 +71,16 @@ public:
             uint8_t top:1;
         } valid;
         const ContourPair& m_pair;
-        std::list<DxfEntity*>::const_iterator it_bot, it_top;
+        std::list<SegmentEntity*>::const_iterator it_bot, it_top;
 
     public:
         Reader(const ContourPair& pair);
-        const DxfEntity* bot();
-        const DxfEntity* top();
-        void next(const DxfEntity*& bot, const DxfEntity*& top);
+        const SegmentEntity* bot();
+        const SegmentEntity* top();
+        void next(const SegmentEntity*& bot, const SegmentEntity*& top);
     };
 
-    Reader reader(const DxfEntity*& bot, const DxfEntity*& top) const;
+    Reader reader(const SegmentEntity*& bot, const SegmentEntity*& top) const;
 
     ContourPair(CONTOUR_TYPE type = CONTOUR_TYPE::MAIN_CONTOUR);
     ContourPair(const ContourPair& other);
@@ -94,11 +94,11 @@ public:
 
     void swap(ContourPair& other);
 
-    void setBot(const Dxf& ctr);
-    Dxf* bot() const;
+    void setBot(const Contour& ctr);
+    Contour* bot() const;
 
-    void setTop(const Dxf& ctr);
-    Dxf* top() const;
+    void setTop(const Contour& ctr);
+    Contour* top() const;
 
     void clear();
 
@@ -146,8 +146,8 @@ public:
     void reverse();
 
     // move DxfEntities
-    void move_back(Dxf* const bot, Dxf* const top);
-    void move_back(Dxf& bot, Dxf& top);
+    void move_back(Contour* const bot, Contour* const top);
+    void move_back(Contour& bot, Contour& top);
     void move_back(ContourPair& pair);
 
     void setFirst(size_t layer, size_t index);

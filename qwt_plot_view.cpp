@@ -133,7 +133,7 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
     for (const ContourPair& pair: contourList.contours()) {
         // BOT
         row = 0;
-        for (const DxfEntity* ent: pair.bot()->entities()) {
+        for (const SegmentEntity* ent: pair.bot()->entities()) {
             bool passed = (int)ctr < contourList.currentContourNumber() || ((int)ctr == contourList.currentContourNumber() && (int)row <= contourList.currentSegmentNumber());
 
             if (ent)
@@ -153,7 +153,7 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
 
         // TOP
         row = 0;
-        for (const DxfEntity* ent: pair.top()->entities()) {
+        for (const SegmentEntity* ent: pair.top()->entities()) {
             bool passed = (int)ctr < contourList.currentContourNumber() || ((int)ctr == contourList.currentContourNumber() && (int)row <= contourList.currentSegmentNumber());
 
             if (ent)
@@ -183,7 +183,7 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
             selPair = &pair;
 
         row = 0;
-        for (const DxfEntity* ent: pair.bot()->entities()) {
+        for (const SegmentEntity* ent: pair.bot()->entities()) {
             if (ent) {
                 bool group_sel = contourList.isSelected(ctr, row, 0);
 
@@ -201,7 +201,7 @@ void QwtPlotView::plot(const ContourList& contourList, const QSize& frameSize) {
         }
 
         row = 0;
-        for (const DxfEntity* ent: pair.top()->entities()) {
+        for (const SegmentEntity* ent: pair.top()->entities()) {
             if (ent) {
                 bool group_sel = contourList.isSelected(ctr, row, 1);
 
@@ -252,7 +252,7 @@ void QwtPlotView::plot(const ContourList& contourList) {
         plot(contourList, m_qwtPlot->size());
 }
 
-void QwtPlotView::plot(const Dxf& ctr, const QSize& frameSize) {
+void QwtPlotView::plot(const Contour& ctr, const QSize& frameSize) {
     ContourRange range;
     QVector<QPointF> pts;
 
@@ -275,7 +275,7 @@ void QwtPlotView::plot(const Dxf& ctr, const QSize& frameSize) {
     tweakPlot(m_qwtPlot, range, frameSize);
 }
 
-void QwtPlotView::plot(const Dxf& ctr) {
+void QwtPlotView::plot(const Contour& ctr) {
     if (m_qwtPlot)
         plot(ctr, m_qwtPlot->size());
 }
@@ -533,11 +533,11 @@ void QwtPlotView::addPlot(
     }
 }
 
-void QwtPlotView::addPlot(QwtPlot* const qwtPlot, ContourRange& range, const Dxf* const dxf, bool swapXY, const QColor& color, int width, Qt::PenStyle style) {
+void QwtPlotView::addPlot(QwtPlot* const qwtPlot, ContourRange& range, const Contour* const dxf, bool swapXY, const QColor& color, int width, Qt::PenStyle style) {
     QVector<QPointF> pts;
 
     if (qwtPlot && dxf && !dxf->empty()) {
-        for (const DxfEntity* const ent: dxf->entities()) {
+        for (const SegmentEntity* const ent: dxf->entities()) {
             if (ent)
                 copy_back(pts, ent->getPoints());
 
@@ -549,7 +549,7 @@ void QwtPlotView::addPlot(QwtPlot* const qwtPlot, ContourRange& range, const Dxf
     }
 }
 
-void QwtPlotView::addPlot(QwtPlot* const newPlot, ContourRange& newRange, const DxfEntity* const entity, bool swapXY, const QColor& color, int width, Qt::PenStyle style) {
+void QwtPlotView::addPlot(QwtPlot* const newPlot, ContourRange& newRange, const SegmentEntity* const entity, bool swapXY, const QColor& color, int width, Qt::PenStyle style) {
     QVector<QPointF> pts;
 
     if (newPlot && entity) {

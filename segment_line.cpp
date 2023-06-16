@@ -1,22 +1,22 @@
-#include "dxf_line.h"
+#include "segment_line.h"
 #include <cmath>
 #include <limits>
 
 using namespace std;
 
-DxfLine::DxfLine() : DxfEntity(ENTITY_TYPE::LINE), m_flags({0,0,0,0,0}), m_A(fpoint_t()), m_B(fpoint_t()) {
+SegmentLine::SegmentLine() : SegmentEntity(DXF_ENTITY_TYPE::LINE), m_flags({0,0,0,0,0}), m_A(fpoint_t()), m_B(fpoint_t()) {
     m_additional = false;
 }
-DxfLine::DxfLine(const fpoint_t& A, const fpoint_t& B, bool additional) : DxfEntity(ENTITY_TYPE::LINE), m_flags({0,0,0,0,1}), m_A(A), m_B(B) {
+SegmentLine::SegmentLine(const fpoint_t& A, const fpoint_t& B, bool additional) : SegmentEntity(DXF_ENTITY_TYPE::LINE), m_flags({0,0,0,0,1}), m_A(A), m_B(B) {
     m_additional = additional;
 }
 
-DxfLine::DxfLine(const double Ax, const double Ay, const double Bx, const double By) :
-    DxfEntity(ENTITY_TYPE::LINE), m_flags({0,0,0,0,1}), m_A(fpoint_t(Ax, Ay)), m_B(fpoint_t(Bx, By))
+SegmentLine::SegmentLine(const double Ax, const double Ay, const double Bx, const double By) :
+    SegmentEntity(DXF_ENTITY_TYPE::LINE), m_flags({0,0,0,0,1}), m_A(fpoint_t(Ax, Ay)), m_B(fpoint_t(Bx, By))
 {
 }
 
-DxfLine::DxfLine(double len, AXIS axis, DIR dir) : DxfEntity(ENTITY_TYPE::LINE), m_flags({0,0,0,0,1}), m_A(fpoint_t(0,0)) {
+SegmentLine::SegmentLine(double len, AXIS axis, DIR dir) : SegmentEntity(DXF_ENTITY_TYPE::LINE), m_flags({0,0,0,0,1}), m_A(fpoint_t(0,0)) {
     m_additional = false;
     len = abs(len);
 
@@ -46,16 +46,16 @@ DxfLine::DxfLine(double len, AXIS axis, DIR dir) : DxfEntity(ENTITY_TYPE::LINE),
     }
 }
 
-DxfLine::DxfLine(const DxfLine& other) :
-    DxfEntity(other, ENTITY_TYPE::LINE), m_flags(other.m_flags), m_A(other.m_A), m_B(other.m_B) {}
+SegmentLine::SegmentLine(const SegmentLine& other) :
+    SegmentEntity(other, DXF_ENTITY_TYPE::LINE), m_flags(other.m_flags), m_A(other.m_A), m_B(other.m_B) {}
 
-DxfLine::~DxfLine() {}
+SegmentLine::~SegmentLine() {}
 
-DxfEntity* DxfLine::clone() const { return new DxfLine(*this); }
+SegmentEntity* SegmentLine::clone() const { return new SegmentLine(*this); }
 
-DxfLine& DxfLine::operator=(const DxfLine& other) {
+SegmentLine& SegmentLine::operator=(const SegmentLine& other) {
     if (this != &other) {
-        DxfEntity::operator=(other);
+        SegmentEntity::operator=(other);
         m_flags = other.m_flags;
         m_A = other.m_A;
         m_B = other.m_B;
@@ -63,16 +63,16 @@ DxfLine& DxfLine::operator=(const DxfLine& other) {
     return *this;
 }
 
-bool DxfLine::operator==(const DxfEntity& other) const {
+bool SegmentLine::operator==(const SegmentEntity& other) const {
     return m_type == other.type() && m_A == other.point_0() && m_B == other.point_1();
 }
 
-bool DxfLine::operator!=(const DxfEntity& other) const {
+bool SegmentLine::operator!=(const SegmentEntity& other) const {
     return !(*this == other);
 }
 
 // same line but different segments
-bool DxfLine::same(const DxfEntity& other) const {
+bool SegmentLine::same(const SegmentEntity& other) const {
     if (m_type != other.type())
         return false;
 
@@ -93,48 +93,48 @@ bool DxfLine::same(const DxfEntity& other) const {
     return pt0 == other.point_0() && pt1 == other.point_1();
 }
 
-void DxfLine::setX0(double value) {
+void SegmentLine::setX0(double value) {
     m_flags.valid = 0;
     m_flags.X0 = 1;
     m_A.x = value;
 }
-void DxfLine::setY0(double value) {
+void SegmentLine::setY0(double value) {
     m_flags.valid = 0;
     m_flags.Y0 = 1;
     m_A.y = value;
 }
-void DxfLine::setX1(double value) {
+void SegmentLine::setX1(double value) {
     m_flags.valid = 0;
     m_flags.X1 = 1;
     m_B.x = value;
 }
-void DxfLine::setY1(double value) {
+void SegmentLine::setY1(double value) {
     m_flags.valid = 0;
     m_flags.Y1 = 1;
     m_B.y = value;
 }
 
-void DxfLine::setPoint0(const fpoint_t& value) { m_A = value; }
+void SegmentLine::setPoint0(const fpoint_t& value) { m_A = value; }
 
-void DxfLine::setPoint1(const fpoint_t& value) { m_B = value; }
+void SegmentLine::setPoint1(const fpoint_t& value) { m_B = value; }
 
-void DxfLine::set(const fpoint_t &A, const fpoint_t &B, bool additional) {
+void SegmentLine::set(const fpoint_t &A, const fpoint_t &B, bool additional) {
     m_additional = additional;
     m_flags = {0,0,0,0,1};
     this->m_A = A;
     this->m_B = B;
 }
 
-fpoint_t DxfLine::point_0() const { return m_A; }
-fpoint_t DxfLine::point_1() const { return m_B; }
+fpoint_t SegmentLine::point_0() const { return m_A; }
+fpoint_t SegmentLine::point_1() const { return m_B; }
 
-fpoint_t DxfLine::midpoint(const fpoint_t& A, const fpoint_t& B) {
+fpoint_t SegmentLine::midpoint(const fpoint_t& A, const fpoint_t& B) {
     return fpoint_t((A.x + B.x) / 2, (A.y + B.y) / 2);
 }
-fpoint_t DxfLine::center() const { return midpoint(m_A, m_B); }
+fpoint_t SegmentLine::center() const { return midpoint(m_A, m_B); }
 
 // [0, 360)
-double DxfLine::angle() const {
+double SegmentLine::angle() const {
     const double _2_M_PI = 2 * M_PI;
     double res;
     double x = dx();
@@ -155,48 +155,48 @@ double DxfLine::angle() const {
     return res;
 }
 
-double DxfLine::k() const {
+double SegmentLine::k() const {
     if (vertical())
         return m_B.y >= m_A.y ? numeric_limits<double>::max() : -numeric_limits<double>::max();
 
     return (m_B.y - m_A.y) / (m_B.x - m_A.x);
 }
 
-double DxfLine::b() const {
+double SegmentLine::b() const {
     return vertical() ? m_B.y : m_A.y - k() * m_A.x;
 }
 
-bool DxfLine::vertical(const fpoint_t& A, const fpoint_t& B) {
+bool SegmentLine::vertical(const fpoint_t& A, const fpoint_t& B) {
     return A.x > B.x - M_PRECISION && A.x < B.x + M_PRECISION;
 }
 
-bool DxfLine::vertical() const { return vertical(m_A, m_B); }
+bool SegmentLine::vertical() const { return vertical(m_A, m_B); }
 
-bool DxfLine::horizontal(const fpoint_t &A, const fpoint_t &B) {
+bool SegmentLine::horizontal(const fpoint_t &A, const fpoint_t &B) {
     return A.y > B.y - M_PRECISION && A.y < B.y + M_PRECISION;
 }
 
-bool DxfLine::horizontal() const { return horizontal(m_A, m_B); }
+bool SegmentLine::horizontal() const { return horizontal(m_A, m_B); }
 
-void DxfLine::func(double& coe_k, double& coe_b) const {
+void SegmentLine::func(double& coe_k, double& coe_b) const {
     coe_k = k();
     coe_b = m_A.y - coe_k * m_A.x;
 }
 
-double DxfLine::y(double x) const {
+double SegmentLine::y(double x) const {
     if (vertical())
         return 0;
 
     return (x - m_A.x) * (m_B.y - m_A.y) / (m_B.x - m_A.x) + m_A.y;
 }
 
-double DxfLine::tangent_0() const { return angle(); }
-double DxfLine::tangent_1() const { return angle(); }
+double SegmentLine::tangent_0() const { return angle(); }
+double SegmentLine::tangent_1() const { return angle(); }
 
-void DxfLine::change_0(const fpoint_t &A) { this->m_A = A; }
-void DxfLine::change_1(const fpoint_t& B) { this->m_B = B; }
+void SegmentLine::change_0(const fpoint_t &A) { this->m_A = A; }
+void SegmentLine::change_1(const fpoint_t& B) { this->m_B = B; }
 
-ContourRange DxfLine::range() const {
+ContourRange SegmentLine::range() const {
     ContourRange range;
     range.x_min = m_B.x < m_A.x ? m_B.x : m_A.x;
     range.x_max = m_B.x > m_A.x ? m_B.x : m_A.x;
@@ -206,9 +206,9 @@ ContourRange DxfLine::range() const {
     return range;
 }
 
-DIRECTION DxfLine::dir() const { return DxfEntity::dir(m_A, m_B); } // todo
+DIRECTION SegmentLine::dir() const { return SegmentEntity::dir(m_A, m_B); } // todo
 
-bool DxfLine::otherDir180(const DxfLine& other) const {
+bool SegmentLine::otherDir180(const SegmentLine& other) const {
     double dxThis = dx();
     double dxOther = other.dx();
     bool signX = dxThis < 0;
@@ -224,14 +224,14 @@ bool DxfLine::otherDir180(const DxfLine& other) const {
     return (signXChanged && signYChanged) || isPoint() || other.isPoint();
 }
 
-double DxfLine::length() const {
+double SegmentLine::length() const {
     double x = dx();
     double y = dy();
     return sqrt(x * x + y * y);
 }
 
 // segment length to nearest point
-double DxfLine::length(const fpoint_t& pt) const {
+double SegmentLine::length(const fpoint_t& pt) const {
     double AB2 = lengthSquare(m_A, m_B);
     double AP2 = lengthSquare(m_A, pt);
     double BP2 = lengthSquare(m_B, pt);
@@ -247,7 +247,7 @@ double DxfLine::length(const fpoint_t& pt) const {
         return AN;
 }
 
-double DxfLine::distance(const fpoint_t& pt) const {
+double SegmentLine::distance(const fpoint_t& pt) const {
     double AB2 = lengthSquare(m_A, m_B);
     double AP2 = lengthSquare(m_A, pt);
     double BP2 = lengthSquare(m_B, pt);
@@ -257,17 +257,17 @@ double DxfLine::distance(const fpoint_t& pt) const {
     double AN2 = AN * AN;
 
     if (AN < 0)
-        return DxfEntity::length(m_A, pt);
+        return SegmentEntity::length(m_A, pt);
     else if (AN >= AB)
-        return DxfEntity::length(m_B, pt);
+        return SegmentEntity::length(m_B, pt);
     else if (AP2 <= AN2)
         return 0;
     else
         return sqrt(AP2 - AN2);
 }
 
-DxfEntity* DxfLine::trim_front(double head, bool rem) {
-    DxfLine* res = nullptr;
+SegmentEntity* SegmentLine::trim_front(double head, bool rem) {
+    SegmentLine* res = nullptr;
     double full_len = length();
 
     if (head >= M_PRECISION && head < full_len) {
@@ -276,14 +276,14 @@ DxfEntity* DxfLine::trim_front(double head, bool rem) {
         C.x = m_A.x + dx() * pct;
         C.y = m_A.y + dy() * pct;
 
-        if (rem) res = new DxfLine(m_A, C);
+        if (rem) res = new SegmentLine(m_A, C);
         m_A = C;
     }
     return res;
 }
 
-DxfEntity* DxfLine::trim_front_rev(double tail, bool rem) {
-    DxfLine* res = nullptr;
+SegmentEntity* SegmentLine::trim_front_rev(double tail, bool rem) {
+    SegmentLine* res = nullptr;
     double full_len = length();
 
     if (tail >= M_PRECISION && tail < full_len) {
@@ -292,14 +292,14 @@ DxfEntity* DxfLine::trim_front_rev(double tail, bool rem) {
         C.x = m_B.x - dx() * pct;
         C.y = m_B.y - dy() * pct;
 
-        if (rem) res = new DxfLine(m_A, C);
+        if (rem) res = new SegmentLine(m_A, C);
         m_A = C;
     }
     return res;
 }
 
-DxfEntity* DxfLine::trim_back(double tail, bool rem) {
-    DxfLine* res = nullptr;
+SegmentEntity* SegmentLine::trim_back(double tail, bool rem) {
+    SegmentLine* res = nullptr;
     double full_len = length();
 
     if (tail > M_PRECISION && tail < full_len) {
@@ -308,14 +308,14 @@ DxfEntity* DxfLine::trim_back(double tail, bool rem) {
         C.x = m_B.x - dx() * pct;
         C.y = m_B.y - dy() * pct;
 
-        if (rem) res = new DxfLine(C, m_B);
+        if (rem) res = new SegmentLine(C, m_B);
         m_B = C;
     }
     return res;
 }
 
-DxfEntity* DxfLine::trim_back_rev(double head, bool rem) {
-    DxfLine* res = nullptr;
+SegmentEntity* SegmentLine::trim_back_rev(double head, bool rem) {
+    SegmentLine* res = nullptr;
     double full_len = length();
 
     if (head > M_PRECISION && head < full_len) {
@@ -324,28 +324,28 @@ DxfEntity* DxfLine::trim_back_rev(double head, bool rem) {
         C.x = m_A.x + dx() * pct;
         C.y = m_A.y + dy() * pct;
 
-        if (rem) res = new DxfLine(C, m_B);
+        if (rem) res = new SegmentLine(C, m_B);
         m_B = C;
     }
     return res;
 }
 
-double DxfLine::dx() const { return m_B.x - m_A.x; }
-double DxfLine::dy() const { return m_B.y - m_A.y; }
+double SegmentLine::dx() const { return m_B.x - m_A.x; }
+double SegmentLine::dy() const { return m_B.y - m_A.y; }
 
-void DxfLine::clearWithoutLayer() {
+void SegmentLine::clearWithoutLayer() {
     m_additional = false;
     m_flags = {0,0,0,0,0};
     m_A = fpoint_t();
     m_B = fpoint_t();
 }
 
-void DxfLine::clear() {
-    DxfEntity::clear();
+void SegmentLine::clear() {
+    SegmentEntity::clear();
     clearWithoutLayer();
 }
 
-bool DxfLine::check() {
+bool SegmentLine::check() {
     if (!m_flags.valid && m_flags.X0 && m_flags.Y0 && m_flags.X1 && m_flags.Y1) {
         m_additional = false;
         m_flags = {0,0,0,0,1};
@@ -354,40 +354,40 @@ bool DxfLine::check() {
     return m_flags.valid;
 }
 
-bool DxfLine::empty() {
+bool SegmentLine::empty() {
     return m_flags.X0 == 0 && m_flags.Y0 == 0 && m_flags.X1 == 0 && m_flags.Y1 == 0 && !m_flags.valid && !m_additional;
 }
 
-void DxfLine::rotate(const RotateMatrix &mx) {
+void SegmentLine::rotate(const RotateMatrix &mx) {
     m_A.rotate(mx);
     m_B.rotate(mx);
 }
 
-void DxfLine::flipX(double x) {
+void SegmentLine::flipX(double x) {
     m_A.flipX(x);
     m_B.flipX(x);
 }
 
-void DxfLine::flipY(double y) {
+void SegmentLine::flipY(double y) {
     m_A.flipY(y);
     m_B.flipY(y);
 }
 
-void DxfLine::scale(double k) {
+void SegmentLine::scale(double k) {
     m_A.scale(k);
     m_B.scale(k);
 }
 
-void DxfLine::shift(const fpoint_t& value) {
+void SegmentLine::shift(const fpoint_t& value) {
     m_A.shift(value);
     m_B.shift(value);
 }
 
-void DxfLine::reverse() {
+void SegmentLine::reverse() {
     swap<fpoint_t>(m_A, m_B);
 }
 
-void DxfLine::offset(OFFSET_SIDE side, double offset, const DxfEntity *prev, const DxfEntity *next) {
+void SegmentLine::offset(OFFSET_SIDE side, double offset, const SegmentEntity *prev, const SegmentEntity *next) {
     double a, a0, a1, g, b, R, dx, dy;
 
     a = tangent_0();
@@ -428,7 +428,7 @@ void DxfLine::offset(OFFSET_SIDE side, double offset, const DxfEntity *prev, con
     }
 }
 
-void DxfLine::offset(OFFSET_SIDE side, double h) {
+void SegmentLine::offset(OFFSET_SIDE side, double h) {
     struct sign_t { int8_t x, y; };
 
     sign_t sign;    
@@ -439,7 +439,7 @@ void DxfLine::offset(OFFSET_SIDE side, double h) {
     double _dx = dx();
     double _dy = dy();
 
-    DIRECTION _dir = DxfEntity::dir(_dx, _dy);
+    DIRECTION _dir = SegmentEntity::dir(_dx, _dy);
 
     double d = sqrt(_dx * _dx + _dy * _dy);
 
@@ -471,11 +471,11 @@ void DxfLine::offset(OFFSET_SIDE side, double h) {
     m_B.shift(delta);
 }
 
-string DxfLine::toString() const {
+string SegmentLine::toString() const {
     return m_flags.valid ? "Line: " + m_A.toString() + " - " + m_B.toString() + ", Speed: " + (hasSpeed() ? std::to_string(speed()) : "null") : "Not valid";
 }
 
-string DxfLine::toString2() const {
+string SegmentLine::toString2() const {
     if (m_flags.valid) {
         char buf[128];
         snprintf(buf, sizeof(buf), ", Length: %.3f mm", length());
@@ -486,6 +486,6 @@ string DxfLine::toString2() const {
     return "Not valid";
 }
 
-vector<fpoint_t> DxfLine::getPoints() const { return vector<fpoint_t>({m_A, m_B}); }
+vector<fpoint_t> SegmentLine::getPoints() const { return vector<fpoint_t>({m_A, m_B}); }
 
-bool DxfLine::isPoint() const { return m_A == m_B; }
+bool SegmentLine::isPoint() const { return m_A == m_B; }

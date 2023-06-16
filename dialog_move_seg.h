@@ -11,7 +11,7 @@
 #include <QRadioButton>
 #include <vector>
 //#include "fpoint_t.h"
-#include "dxf_entity.h"
+#include "segment_entity.h"
 
 class MoveSegDialog : public QDialog {
     Q_OBJECT

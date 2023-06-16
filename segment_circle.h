@@ -1,15 +1,15 @@
-#ifndef DXF_CIRCLE_H
-#define DXF_CIRCLE_H
+#ifndef SEGMENT_CIRCLE_H
+#define SEGMENT_CIRCLE_H
 
-#include "dxf_arc.h"
+#include "segment_arc.h"
 
-class DxfCircle : public DxfArc {
+class SegmentCircle : public SegmentArc {
 public:
-    DxfCircle();
-    DxfCircle(const fpoint_t& center, double radius, double alpha = 0, bool ccw = true);
-    DxfCircle(const DxfCircle& other);
-    ~DxfCircle() override;
-    DxfEntity* clone() const override;
+    SegmentCircle();
+    SegmentCircle(const fpoint_t& center, double radius, double alpha = 0, bool ccw = true);
+    SegmentCircle(const SegmentCircle& other);
+    ~SegmentCircle() override;
+    SegmentEntity* clone() const override;
 
     void setStartAngle(double degree) override;
 
@@ -22,7 +22,7 @@ public:
     void set(const fpoint_t& A, const fpoint_t& center, bool ccw = true);
 
     double length() const override;
-    void offset(OFFSET_SIDE side, double offset, const DxfEntity* prev, const DxfEntity* next) override;
+    void offset(OFFSET_SIDE side, double offset, const SegmentEntity* prev, const SegmentEntity* next) override;
 
     bool isPoint() const override;
     bool isCircle() const override;
@@ -36,4 +36,4 @@ public:
     double deltaAngle() const override;
 };
 
-#endif // DXF_CIRCLE_H
+#endif // SEGMENT_CIRCLE_H

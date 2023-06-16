@@ -1,11 +1,11 @@
 #include "dialog_segment_properties.h"
-#include "dxf_arc.h"
+#include "segment_arc.h"
 
 using namespace std;
 
 SegPropertiesDialog::SegPropertiesDialog(
     const QStringList& list,
-    const DxfEntity* const ent,
+    const SegmentEntity* const ent,
     size_t ctr_num, size_t row_num, size_t col_num,
     bool before, bool after,
     QWidget *parent
@@ -26,10 +26,10 @@ SegPropertiesDialog::SegPropertiesDialog(
 
     labelAB = new QLabel( ent ? QString::fromStdString( ent->point_0().toString() + " - " + ent->point_1().toString()) : tr("Invalid") );
 
-    bool isArc = ent && ent->type() == ENTITY_TYPE::ARC;
+    bool isArc = ent && ent->type() == DXF_ENTITY_TYPE::ARC;
 
     if (isArc) {
-        const DxfArc* const arc = reinterpret_cast<const DxfArc*>(ent);
+        const SegmentArc* const arc = reinterpret_cast<const SegmentArc*>(ent);
 
         labelRText = new QLabel(tr("Radius") + ":");
 

@@ -1,9 +1,9 @@
-#ifndef DXF_POINT_H
-#define DXF_POINT_H
+#ifndef SEGMENT_POINT_H
+#define SEGMENT_POINT_H
 
-#include "dxf_entity.h"
+#include "segment_entity.h"
 
-class DxfPoint : public DxfEntity {
+class SegmentPoint : public SegmentEntity {
     struct {
         uint8_t X:1;
         uint8_t Y:1;
@@ -13,19 +13,19 @@ class DxfPoint : public DxfEntity {
     fpoint_t m_pt;
 
 public:
-    DxfPoint(bool additional = false);
-    DxfPoint(const fpoint_t& pt, bool additional = false);
-    DxfPoint(double x, double y, bool additional = false);
-    DxfPoint(const DxfPoint& other);
-    ~DxfPoint() override;
+    SegmentPoint(bool additional = false);
+    SegmentPoint(const fpoint_t& pt, bool additional = false);
+    SegmentPoint(double x, double y, bool additional = false);
+    SegmentPoint(const SegmentPoint& other);
+    ~SegmentPoint() override;
 
-    DxfEntity* clone() const override;
+    SegmentEntity* clone() const override;
 
-    bool operator==(const DxfEntity &other) const override {
+    bool operator==(const SegmentEntity &other) const override {
         return m_type == other.type() && m_pt == other.point_0();
     }
 
-    bool operator!=(const DxfEntity &other) const override {
+    bool operator!=(const SegmentEntity &other) const override {
         return !(*this == other);
     }
 
@@ -60,4 +60,4 @@ public:
     ContourRange range() const override;
 };
 
-#endif // DXF_POINT_H
+#endif // SEGMENT_POINT_H

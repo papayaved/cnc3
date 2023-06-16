@@ -1,7 +1,7 @@
-#ifndef DXF_H
-#define DXF_H
+#ifndef CONTOUR_H
+#define CONTOUR_H
 
-#include "dxf_entities.h"
+#include "segment_block.h"
 #include <algorithm>
 #include "main.h"
 #include <QVector>
@@ -22,7 +22,7 @@ struct DxfCodeValue {
 };
 
 // Contour
-class Dxf {
+class Contour {
     constexpr static const double M_PRECISION = CncParam::PRECISION; // mm
 
     enum class STATES {SKIP, SECTION, BLOCKS, BLOCK, BLOCK_LINE, BLOCK_LWPOLYLINE, BLOCK_ARC, BLOCK_CIRCLE, BLOCK_POINT, BLOCK_ENTITY, ENTITIES, LINE, LWPOLYLINE, ARC, CIRCLE, POINT, INSERT, ENTITY};
@@ -31,8 +31,8 @@ class Dxf {
     FILE* m_fp {nullptr};
     int m_ch_reg {0};
 
-    std::deque<DxfBlock*> m_blocks;
-    std::list<DxfEntity*> m_entities; // contour
+    std::deque<SegmentBlock*> m_blocks;
+    std::list<SegmentEntity*> m_entities; // contour
     std::set<std::string> m_layers;
 
     QColor m_color {Qt::GlobalColor::blue};
@@ -43,15 +43,15 @@ class Dxf {
 
     bool m_sorted {false};
 
-    static STATES next_entity(Dxf::STATES state, const DxfCodeValue& pair);
-    STATES next_block_entity(Dxf::STATES state, const DxfCodeValue& pair, DxfBlock*& block);
+    static STATES next_entity(Contour::STATES state, const DxfCodeValue& pair);
+    STATES next_block_entity(Contour::STATES state, const DxfCodeValue& pair, SegmentBlock*& block);
 
-    void init_entity(DxfLine& line, const DxfCodeValue& pair);
-    void init_polyline(DxfPoint& point, DxfLine& line, const DxfCodeValue& pair);
+    void init_entity(SegmentLine& line, const DxfCodeValue& pair);
+    void init_polyline(SegmentPoint& point, SegmentLine& line, const DxfCodeValue& pair);
 
-    void init_entity(DxfArc& arc, const DxfCodeValue& pair);
-    void init_entity(DxfCircle& circle, const DxfCodeValue& pair);
-    void init_entity(DxfPoint& point, const DxfCodeValue& pair);
+    void init_entity(SegmentArc& arc, const DxfCodeValue& pair);
+    void init_entity(SegmentCircle& circle, const DxfCodeValue& pair);
+    void init_entity(SegmentPoint& point, const DxfCodeValue& pair);
 
 //    double x_min, x_max, y_min, y_max;
 
@@ -61,37 +61,37 @@ class Dxf {
     void clearEntities();
     void clearBlocks();
 
-    void addInsert(const DxfInsert& insert);
-    const DxfBlock* getBlockByName(const std::string& blockName) const;
+    void addInsert(const SegmentInsertBlock& insert);
+    const SegmentBlock* getBlockByName(const std::string& blockName) const;
 
-    std::list<DxfEntity*>::iterator insertBlock(std::list<DxfEntity*>::iterator it);
+    std::list<SegmentEntity*>::iterator insertBlock(std::list<SegmentEntity*>::iterator it);
     void insertBlocks();
 
     static bool searchNext(
             const fpoint_t& pt1,
-            std::list<DxfEntity*>::iterator& it,
-            const std::list<DxfEntity*>::iterator& begin,
-            const std::list<DxfEntity*>::iterator& end
+            std::list<SegmentEntity*>::iterator& it,
+            const std::list<SegmentEntity*>::iterator& begin,
+            const std::list<SegmentEntity*>::iterator& end
     );
 
     static bool searchPrev(
             const fpoint_t& pt0,
-            std::list<DxfEntity*>::iterator& it,
-            const std::list<DxfEntity*>::iterator& begin,
-            const std::list<DxfEntity*>::iterator& end
+            std::list<SegmentEntity*>::iterator& it,
+            const std::list<SegmentEntity*>::iterator& begin,
+            const std::list<SegmentEntity*>::iterator& end
     );
 
-    static size_t size(const std::list<DxfEntity*> entities);
+    static size_t size(const std::list<SegmentEntity*> entities);
 
 public:
-    Dxf();
-    Dxf(const Dxf& other);
-    Dxf(Dxf&& other);
-    Dxf(std::list<DxfEntity*>& entities);
-    ~Dxf();
+    Contour();
+    Contour(const Contour& other);
+    Contour(Contour&& other);
+    Contour(std::list<SegmentEntity*>& entities);
+    ~Contour();
 
-    Dxf& operator=(const Dxf& other);
-    Dxf& operator=(Dxf&& other) noexcept;
+    Contour& operator=(const Contour& other);
+    Contour& operator=(Contour&& other) noexcept;
 
     void init(const std::string& fileDir, const std::string& fileName);
     inline const std::string& fileName() const { return m_fileName; }
@@ -104,42 +104,45 @@ public:
 
     size_t numberLayers() const { return m_layers.size(); }
     const std::set<std::string>& getLayers() const { return m_layers; }
-    Dxf getLayer(const std::string& layer_name) const;
-    Dxf cutLayer(const std::string& layer_name);
+    Contour getLayer(const std::string& layer_name) const;
+    Contour cutLayer(const std::string& layer_name);
 
-    void cutUnconnected(std::list<DxfEntity*>& free);
-    void cutTails(std::list<DxfEntity*>& tails);
-    void moveOneTail(std::list<DxfEntity*>& tails);
-    static void shiftToBegin(std::list<DxfEntity*>& entities, const fpoint_t* const first);
-    static void shiftToBegin(std::list<DxfEntity*>& entities, const fpoint_valid_t& first);
+    void cutUnconnected(std::list<SegmentEntity*>& free);
+    void cutTails(std::list<SegmentEntity*>& tails);
+    void moveTwoTails(std::list<SegmentEntity*>& tails);
+    static void shiftToBegin(std::list<SegmentEntity*>& entities, const fpoint_t* const first);
+    static void shiftToBegin(std::list<SegmentEntity*>& entities, const fpoint_valid_t& first);
 
-    bool sort(Dxf& free, Dxf& unused, const fpoint_valid_t& prev_pt = fpoint_valid_t(false), const fpoint_valid_t& next_pt = fpoint_valid_t(false));
-    bool sort(const fpoint_valid_t& prev_pt = fpoint_valid_t(false), const fpoint_valid_t& next_pt = fpoint_valid_t(false));
+    void reversePrev(Contour* const prev);
+    bool sort(Contour& free, Contour& tails, Contour* const prev = nullptr, bool prev_first = false);
+//    bool sort(Contour& free, Contour& unused, const fpoint_valid_t& prev_pt = fpoint_valid_t(false));
+    bool sort(Contour* const prev = nullptr, bool prev_first = false);
+    bool trySort(Contour* const prev = nullptr, bool prev_first = false);
 
     bool checkSorted(fpoint_valid_t prev_pt = fpoint_valid_t(false), const fpoint_valid_t& next_pt = fpoint_valid_t(false));
 
     void reverse();
-    static void shiftFirst(std::list<DxfEntity*>& entities, size_t index);
+    static void shiftFirst(std::list<SegmentEntity*>& entities, size_t index);
     void shiftFirst(size_t index);
     void shiftLast(size_t index);
 
-    void push_back(DxfEntity* const entity);    
-    void push_back(const DxfEntity& entity);
+    void push_back(SegmentEntity* const entity);    
+    void push_back(const SegmentEntity& entity);
 
-    void push_back(const std::list<DxfEntity*>& entities);
+    void push_back(const std::list<SegmentEntity*>& entities);
 
     // Move DxfEntities into currnet Dxf
-    void move_back(Dxf& ent);
-    void move_back(Dxf* const ent);
+    void move_back(Contour& ent);
+    void move_back(Contour* const ent);
 
-    void push_front(DxfEntity* const entity);
-    void push_front(const DxfEntity& entity);
+    void push_front(SegmentEntity* const entity);
+    void push_front(const SegmentEntity& entity);
 
     fpoint_valid_t first_point() const;
     fpoint_valid_t last_point() const;
-    const DxfEntity* at(size_t index) const;
+    const SegmentEntity* at(size_t index) const;
 
-    inline const std::list<DxfEntity*>& entities() const { return m_entities; }
+    inline const std::list<SegmentEntity*>& entities() const { return m_entities; }
     bool isLoop() const;
 
     bool hasOut() const;
@@ -151,7 +154,7 @@ public:
     bool isSorted() const { return m_sorted; }
 //    GCode moveToGCode();
 
-    static ContourRange contourRange(const std::list<DxfEntity*>& contour);
+    static ContourRange contourRange(const std::list<SegmentEntity*>& contour);
     ContourRange contourRange() const;
 
     void printDebug() const;
@@ -166,12 +169,12 @@ public:
     void moveUp(size_t index);
     void moveDown(size_t index);
 
-    Dxf cut_front();
-    Dxf cut_back();
-    Dxf cut_at(size_t index);
+    Contour cut_front();
+    Contour cut_back();
+    Contour cut_at(size_t index);
 
-    DxfEntity* front() const { return m_entities.empty() ? nullptr : m_entities.front(); }
-    DxfEntity* back() const { return m_entities.empty() ? nullptr : m_entities.back(); }
+    SegmentEntity* front() const { return m_entities.empty() ? nullptr : m_entities.front(); }
+    SegmentEntity* back() const { return m_entities.empty() ? nullptr : m_entities.back(); }
 
     fpoint_valid_t first() const { return m_entities.empty() ? fpoint_valid_t(false) : m_entities.front()->point_0(); }
     fpoint_valid_t last() const { return m_entities.empty() ? fpoint_valid_t(false) : m_entities.back()->point_1(); }
@@ -180,26 +183,26 @@ public:
     double length() const;
     double length(size_t index, const fpoint_t& pt) const;
 
-    Dxf* copy_front(double length) const;
-    Dxf* copy_front_rev(double tab) const;
-    Dxf* copy_back(double length) const;
+    Contour* copy_front(double length) const;
+    Contour* copy_front_rev(double tab) const;
+    Contour* copy_back(double length) const;
 
     bool offset(OFFSET_SIDE offset_side, double offset);
-    bool intersectLine(DxfEntity*& A, DxfEntity*& B);
+    bool intersectLine(SegmentEntity*& A, SegmentEntity*& B);
     bool intersect(bool loop, OFFSET_SIDE side, double offset);
     void connectLoop();
     void alignDxfPoints();
-    static std::list<DxfEntity*>::iterator nextLineOrArc(
-            const std::list<DxfEntity*>::iterator& init,
-            const std::list<DxfEntity*>::iterator& begin,
-            const std::list<DxfEntity*>::iterator& end,
+    static std::list<SegmentEntity*>::iterator nextLineOrArc(
+            const std::list<SegmentEntity*>::iterator& init,
+            const std::list<SegmentEntity*>::iterator& begin,
+            const std::list<SegmentEntity*>::iterator& end,
             bool& stop_req,
             bool loop = false
         );
-    static std::list<DxfEntity*>::iterator prevLineOrArc(
-            const std::list<DxfEntity*>::iterator& init,
-            const std::list<DxfEntity*>::iterator& begin,
-            const std::list<DxfEntity*>::iterator& end,
+    static std::list<SegmentEntity*>::iterator prevLineOrArc(
+            const std::list<SegmentEntity*>::iterator& init,
+            const std::list<SegmentEntity*>::iterator& begin,
+            const std::list<SegmentEntity*>::iterator& end,
             bool& stop_req,
             bool loop = false
         );
@@ -235,9 +238,10 @@ public:
 
     bool setOut(const fpoint_valid_t& pt = fpoint_valid_t::null());
     bool setOut(int seg_num);
+    void setOut(const Contour* const next);
 
     void setInOut(size_t in_seg, size_t out_seg);
-    Dxf createMux(size_t in_seg, size_t out_seg) const;
+    Contour createMux(size_t in_seg, size_t out_seg) const;
 
     // East North West South IDs
     std::vector<size_t> getVerticesPoints() const;
@@ -252,7 +256,7 @@ public:
     void generate(const snake_t& par);
     void generate(const comb_t& par);
 
-    const Dxf& buildLine(double len, AXIS axis, DIR dir);
+    const Contour& buildLine(double len, AXIS axis, DIR dir);
 };
 
-#endif // DXF_H
+#endif // CONTOUR_H

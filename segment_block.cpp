@@ -1,45 +1,45 @@
-#include "dxf_entities.h"
+#include "segment_block.h"
 #include <cmath>
 
 using namespace std;
 
 // DxfInsert
-DxfInsert::DxfInsert() : DxfEntity(ENTITY_TYPE::INSERT), flags({0,0,0}), pt(fpoint_t()), block_name(std::string()) {}
-DxfInsert::DxfInsert(const DxfInsert& other) : DxfEntity(other, ENTITY_TYPE::INSERT), flags(other.flags), pt(other.pt), block_name(other.block_name) {}
-DxfInsert::~DxfInsert() {}
+SegmentInsertBlock::SegmentInsertBlock() : SegmentEntity(DXF_ENTITY_TYPE::INSERT), flags({0,0,0}), pt(fpoint_t()), block_name(std::string()) {}
+SegmentInsertBlock::SegmentInsertBlock(const SegmentInsertBlock& other) : SegmentEntity(other, DXF_ENTITY_TYPE::INSERT), flags(other.flags), pt(other.pt), block_name(other.block_name) {}
+SegmentInsertBlock::~SegmentInsertBlock() {}
 
-DxfEntity* DxfInsert::clone() const { return new DxfInsert(*this); }
+SegmentEntity* SegmentInsertBlock::clone() const { return new SegmentInsertBlock(*this); }
 
-void DxfInsert::setX(double value) {
+void SegmentInsertBlock::setX(double value) {
     flags.valid = 0;
     flags.X = 1;
     pt.x = value;
 }
 
-void DxfInsert::setY(double value) {
+void SegmentInsertBlock::setY(double value) {
     flags.valid = 0;
     flags.Y = 1;
     pt.y = value;
 }
 
-bool DxfInsert::check() {
+bool SegmentInsertBlock::check() {
     if (!flags.valid && flags.X && flags.Y)
         flags = {0,0,1};
 
     return flags.valid && !block_name.empty();
 }
 
-string DxfInsert::toString() const {
+string SegmentInsertBlock::toString() const {
     return flags.valid ? "Insert Block: " + block_name + " at " + pt.toString() : "Not valid";
 }
 
-string DxfInsert::toString2() const {
+string SegmentInsertBlock::toString2() const {
     return flags.valid ? "Insert Block: " + block_name + " at " + pt.toString() : "Not valid";
 }
 
 // DxfBlock
-void DxfBlock::clearEntities() {
-    for (DxfEntity* o: m_entities)
+void SegmentBlock::clearEntities() {
+    for (SegmentEntity* o: m_entities)
         if (o) {
             delete o;
             o = nullptr;
@@ -48,19 +48,19 @@ void DxfBlock::clearEntities() {
     m_entities.clear();
 }
 
-DxfBlock::DxfBlock() : flags({0,0,0}), m_base(fpoint_t(0, 0)) {}
+SegmentBlock::SegmentBlock() : flags({0,0,0}), m_base(fpoint_t(0, 0)) {}
 
-DxfBlock::DxfBlock(const DxfBlock& other) :
+SegmentBlock::SegmentBlock(const SegmentBlock& other) :
     flags(other.flags),
     m_base(other.m_base),
     m_name(other.m_name)
 {
-    for (const DxfEntity* entity: other.m_entities)
+    for (const SegmentEntity* entity: other.m_entities)
         if (entity)
             m_entities.push_back(entity->clone());
 }
 
-DxfBlock::DxfBlock(DxfBlock&& other) :
+SegmentBlock::SegmentBlock(SegmentBlock&& other) :
     flags(other.flags),
     m_base(other.m_base),
     m_name(move(other.m_name)),
@@ -68,23 +68,23 @@ DxfBlock::DxfBlock(DxfBlock&& other) :
 {
 }
 
-DxfBlock::~DxfBlock() { clearEntities(); }
+SegmentBlock::~SegmentBlock() { clearEntities(); }
 
-DxfBlock& DxfBlock::operator=(const DxfBlock& other) {
+SegmentBlock& SegmentBlock::operator=(const SegmentBlock& other) {
     if (this != &other) {
         flags = other.flags;
         m_base = other.m_base;
         m_name = other.m_name;
 
         clearEntities();
-        for (const DxfEntity* entity: other.m_entities)
+        for (const SegmentEntity* entity: other.m_entities)
             if (entity)
                 m_entities.push_back(entity->clone());
     }
     return *this;
 }
 
-DxfBlock& DxfBlock::operator=(DxfBlock&& other) noexcept {
+SegmentBlock& SegmentBlock::operator=(SegmentBlock&& other) noexcept {
     if (this != &other) {
         flags = other.flags;
         m_base = other.m_base;
@@ -96,32 +96,32 @@ DxfBlock& DxfBlock::operator=(DxfBlock&& other) noexcept {
     return *this;
 }
 
-void DxfBlock::setX(double value) {
+void SegmentBlock::setX(double value) {
     flags.valid = 0;
     flags.X = 1;
     m_base.x = value;
 }
 
-void DxfBlock::setY(double value) {
+void SegmentBlock::setY(double value) {
     flags.valid = 0;
     flags.Y = 1;
     m_base.y = value;
 }
 
-void DxfBlock::append(const DxfEntity& entity) {
+void SegmentBlock::append(const SegmentEntity& entity) {
     m_entities.push_back(entity.clone());
 }
 
-void DxfBlock::clear() {
+void SegmentBlock::clear() {
     flags = {0,0,0};
     m_base = fpoint_t();
     m_name.clear();
     clearEntities();
 }
 
-bool DxfBlock::empty() const { return !flags.valid || m_name.empty() || m_entities.empty(); }
+bool SegmentBlock::empty() const { return !flags.valid || m_name.empty() || m_entities.empty(); }
 
-bool DxfBlock::check() {
+bool SegmentBlock::check() {
     if (!flags.valid && flags.X && flags.Y)
         flags = {0,0,1};
 

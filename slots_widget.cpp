@@ -233,7 +233,7 @@ void SlotsWidget::onGenerate() {
     btnGen->setEnabled(false);
 
     try {
-        Dxf bot;
+        Contour bot;
         par.saveComb( comb() );
         init();
 

@@ -1,10 +1,10 @@
-#include "dxf_intersect.h"
+#include "segment_intersection.h"
 #include <cmath>
 
-using namespace DxfIntersect;
+using namespace SegmentIntersection;
 using namespace std;
 
-void DxfIntersect::intersect(const DxfLine& A, const DxfLine& B, fpoint_t& pt) {
+void SegmentIntersection::intersect(const SegmentLine& A, const SegmentLine& B, fpoint_t& pt) {
     if (A.point_1() == B.point_0())
         pt = A.point_1();
     else if ((A.vertical() && B.vertical()) || (A.horizontal() && B.horizontal()) || A.same(B))
@@ -24,7 +24,7 @@ void DxfIntersect::intersect(const DxfLine& A, const DxfLine& B, fpoint_t& pt) {
         B.func(Bk, Bb);
 
         if (Ak == Bk)
-            pt = DxfLine::midpoint(A.point_1(), B.point_0());
+            pt = SegmentLine::midpoint(A.point_1(), B.point_0());
         else {
             pt.x = (Bb - Ab) / (Ak - Bk);
 
@@ -40,7 +40,7 @@ void DxfIntersect::intersect(const DxfLine& A, const DxfLine& B, fpoint_t& pt) {
     }
 }
 
-bool DxfIntersect::intersect(const DxfLine& A, const DxfArc& B, fpoint_t (&pt)[2], double (&angle)[2]) {
+bool SegmentIntersection::intersect(const SegmentLine& A, const SegmentArc& B, fpoint_t (&pt)[2], double (&angle)[2]) {
     double x0 = B.center().x;
     double y0 = B.center().y;
     double R = B.radius();
@@ -96,7 +96,7 @@ bool DxfIntersect::intersect(const DxfLine& A, const DxfArc& B, fpoint_t (&pt)[2
     return false;
 }
 
-bool DxfIntersect::intersect(const DxfArc& A, const DxfArc& B, double (&angleA)[2], double (&angleB)[2]) {
+bool SegmentIntersection::intersect(const SegmentArc& A, const SegmentArc& B, double (&angleA)[2], double (&angleB)[2]) {
     if (A.intersected(B)) {
         double R1 = A.radius();
         double R2 = B.radius();
@@ -129,13 +129,13 @@ bool DxfIntersect::intersect(const DxfArc& A, const DxfArc& B, double (&angleA)[
         bool swap_req;
         if (B.radius() > A.radius()) {
             double dB[2];
-            dB[0] = DxfArc::deltaAngle(B.CCW(), angleB[0], B.endAngle());
-            dB[1] = DxfArc::deltaAngle(B.CCW(), angleB[1], B.endAngle());
+            dB[0] = SegmentArc::deltaAngle(B.CCW(), angleB[0], B.endAngle());
+            dB[1] = SegmentArc::deltaAngle(B.CCW(), angleB[1], B.endAngle());
             swap_req = fabs(dB[1]) < fabs(dB[0]);
         } else {
             double dA[2];
-            dA[0] = DxfArc::deltaAngle(A.CCW(), angleA[0], A.endAngle());
-            dA[1] = DxfArc::deltaAngle(A.CCW(), angleA[1], A.endAngle());
+            dA[0] = SegmentArc::deltaAngle(A.CCW(), angleA[0], A.endAngle());
+            dA[1] = SegmentArc::deltaAngle(A.CCW(), angleA[1], A.endAngle());
             swap_req = fabs(dA[1]) < fabs(dA[0]);
         }
 
@@ -151,7 +151,7 @@ bool DxfIntersect::intersect(const DxfArc& A, const DxfArc& B, double (&angleA)[
     return false;
 }
 
-double DxfIntersect::atangent(double dx, double dy, double R) {
+double SegmentIntersection::atangent(double dx, double dy, double R) {
     if (R <= 0) // error
         return 0;
 
@@ -168,6 +168,6 @@ double DxfIntersect::atangent(double dx, double dy, double R) {
     return angle;
 }
 
-double DxfIntersect::atangent(const fpoint_t& C, const fpoint_t& A, double R) {
+double SegmentIntersection::atangent(const fpoint_t& C, const fpoint_t& A, double R) {
     return atangent(A.x - C.x, A.y - C.y, R);
 }

@@ -1,9 +1,9 @@
-#ifndef DXF_LINE_H
-#define DXF_LINE_H
+#ifndef SEGMENT_LINE_H
+#define SEGMENT_LINE_H
 
-#include "dxf_entity.h"
+#include "segment_entity.h"
 
-class DxfLine : public DxfEntity {
+class SegmentLine : public SegmentEntity {
     struct flags_t {
         uint8_t X0:1;
         uint8_t Y0:1;
@@ -15,19 +15,19 @@ class DxfLine : public DxfEntity {
     fpoint_t m_A, m_B;
 
 public:
-    DxfLine();
-    DxfLine(const fpoint_t& A, const fpoint_t& B, bool additional = false);
-    DxfLine(const double Ax, const double Ay, const double Bx, const double By);
-    DxfLine(double len, AXIS axis, DIR dir);
-    DxfLine(const DxfLine& other);
-    ~DxfLine() override;
-    DxfEntity* clone() const override;
+    SegmentLine();
+    SegmentLine(const fpoint_t& A, const fpoint_t& B, bool additional = false);
+    SegmentLine(const double Ax, const double Ay, const double Bx, const double By);
+    SegmentLine(double len, AXIS axis, DIR dir);
+    SegmentLine(const SegmentLine& other);
+    ~SegmentLine() override;
+    SegmentEntity* clone() const override;
 
-    DxfLine& operator=(const DxfLine& other);
-    virtual bool operator==(const DxfEntity& other) const override;
-    virtual bool operator!=(const DxfEntity& other) const override;
+    SegmentLine& operator=(const SegmentLine& other);
+    virtual bool operator==(const SegmentEntity& other) const override;
+    virtual bool operator!=(const SegmentEntity& other) const override;
 
-    bool same(const DxfEntity& other) const override;
+    bool same(const SegmentEntity& other) const override;
 
     void setX0(double value);
     void setY0(double value);
@@ -51,16 +51,16 @@ public:
     ContourRange range() const override;
 
     DIRECTION dir() const;
-    bool otherDir180(const DxfLine& other) const;
+    bool otherDir180(const SegmentLine& other) const;
 
     double length() const override;
     double length(const fpoint_t& pt) const override;
     double distance(const fpoint_t& pt) const;
-    DxfEntity* trim_front(double head_length, bool rem = false) override;
-    DxfEntity* trim_front_rev(double tail_length, bool rem = false) override;
-    DxfEntity* trim_back(double tail_length, bool rem = false) override;
-    DxfEntity* trim_back_rev(double head_length, bool rem = false) override;
-    void offset(OFFSET_SIDE side, double offset, const DxfEntity* prev, const DxfEntity* next) override;
+    SegmentEntity* trim_front(double head_length, bool rem = false) override;
+    SegmentEntity* trim_front_rev(double tail_length, bool rem = false) override;
+    SegmentEntity* trim_back(double tail_length, bool rem = false) override;
+    SegmentEntity* trim_back_rev(double head_length, bool rem = false) override;
+    void offset(OFFSET_SIDE side, double offset, const SegmentEntity* prev, const SegmentEntity* next) override;
     void offset(OFFSET_SIDE side, double offset) override;
 
     double dx() const override;
@@ -95,4 +95,4 @@ public:
     void scale(double k) override;
 };
 
-#endif // DXF_LINE_H
+#endif // SEGMENT_LINE_H

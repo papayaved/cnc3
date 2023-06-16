@@ -5,10 +5,10 @@
 #include <QtXml>
 #include "my_types.h"
 //#include "dxf_entity.h"
-#include "dxf_line.h"
-#include "dxf_arc.h"
-#include "dxf_point.h"
-#include "dxf.h"
+#include "segment_line.h"
+#include "segment_arc.h"
+#include "segment_point.h"
+#include "contour.h"
 #include "contour_pair.h"
 
 namespace xml_ext {
@@ -23,13 +23,13 @@ namespace xml_ext {
 
     void writeFPoint(QXmlStreamWriter& xml, const QString& name, const fpoint_t& pt);
 
-    void writeContourLine(QXmlStreamWriter &xml, const DxfLine* line);
-    void writeContourArc(QXmlStreamWriter &xml, const DxfArc* arc);
-    void writeContourPoint(QXmlStreamWriter &xml, const DxfPoint* pt);
-    void writeContourEntity(QXmlStreamWriter& xml, const DxfEntity* ent);
+    void writeContourLine(QXmlStreamWriter &xml, const SegmentLine* line);
+    void writeContourArc(QXmlStreamWriter &xml, const SegmentArc* arc);
+    void writeContourPoint(QXmlStreamWriter &xml, const SegmentPoint* pt);
+    void writeContourEntity(QXmlStreamWriter& xml, const SegmentEntity* ent);
 
-    void writeContour(QXmlStreamWriter& xml, const QString& name, const std::list<DxfEntity*>& list);
-    void writeContour(QXmlStreamWriter& xml, const QString& type, const std::list<DxfEntity*>& bot, const std::list<DxfEntity*>& top);
+    void writeContour(QXmlStreamWriter& xml, const QString& name, const std::list<SegmentEntity*>& list);
+    void writeContour(QXmlStreamWriter& xml, const QString& type, const std::list<SegmentEntity*>& bot, const std::list<SegmentEntity*>& top);
     void writeContours(QXmlStreamWriter& xml, const std::deque<ContourPair>& contours);
 
     QString readType(QXmlStreamReader& xml);
@@ -52,12 +52,12 @@ namespace xml_ext {
     bool readOffsets(QXmlStreamReader& xml, std::vector<offset_t>& v);
 
     bool readFPoint(QXmlStreamReader& xml, const QString& name, fpoint_t& pt);
-    bool readContourLine(QXmlStreamReader& xml, DxfLine& line);
-    bool readContourArc(QXmlStreamReader& xml, DxfArc& arc);
-    bool readContourPoint(QXmlStreamReader& xml, DxfPoint& pt);
+    bool readContourLine(QXmlStreamReader& xml, SegmentLine& line);
+    bool readContourArc(QXmlStreamReader& xml, SegmentArc& arc);
+    bool readContourPoint(QXmlStreamReader& xml, SegmentPoint& pt);
 
-    DxfEntity* readContourEntity(QXmlStreamReader& xml);
-    Dxf readContourLayer(QXmlStreamReader& xml, const QString& name);
+    SegmentEntity* readContourEntity(QXmlStreamReader& xml);
+    Contour readContourLayer(QXmlStreamReader& xml, const QString& name);
     ContourPair readContourPair(QXmlStreamReader& xml, CONTOUR_TYPE type);
     std::deque<ContourPair> readContours(QXmlStreamReader& xml);
 };
