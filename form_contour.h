@@ -40,10 +40,10 @@ class FormContour : public QWidget {
     QTableView *viewContours, *viewSegments;
     enum class VIEW_STATE : uint {TABLE_VIEW_UNDEFINED, TABLE_VIEW_CONTOURS, TABLE_VIEW_SEGMENTS} m_viewState = VIEW_STATE::TABLE_VIEW_UNDEFINED;
 
-    QAction *actPropCtr {nullptr}, *actChangeDirCtr {nullptr}, *actDeleteCtr {nullptr},
+    QAction *actPropCtr {nullptr}, *actNewCtr {nullptr}, *actReverseCtr {nullptr}, *actDeleteCtr {nullptr},
         *actFirstCtr {nullptr}, *actUpCtr {nullptr}, *actDownCtr {nullptr}, *actLastCtr {nullptr},
 
-        *actPropSeg {nullptr}, *actMoveSeg {nullptr}, *actUseAsEntryLineSeg {nullptr},
+        *actPropSeg {nullptr}, *actReverseSeg {nullptr}, *actMoveSeg {nullptr}, *actUseAsEntryLineSeg {nullptr},
         *actFirstSeg {nullptr}, *actUpSeg {nullptr}, *actDownSeg {nullptr}, *actLastSeg {nullptr}, *actSortSeg {nullptr}, *actSortCtr {nullptr},
         *actDeleleSeg {nullptr};
 
@@ -116,6 +116,7 @@ private slots:
     void on_btnClear_clicked();
 
     void on_btnChangeDir_clicked();
+    void on_actReverseSeg_clicked();
 
     void on_actFirstCtr_clicked();
     void on_actLastCtr_clicked();

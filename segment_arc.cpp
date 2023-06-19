@@ -482,7 +482,7 @@ string SegmentArc::toString() const {
     return m_flags.valid ? "ARC: Center " + m_C.toString() +
             ", Radius " + to_string(m_R) +
             ", angles (" + to_string(m_alpha / M_PI * 180) + ", " + to_string(m_beta / M_PI * 180) + ")" +
-                         ", CCW " + to_string(m_flags.ccw) : "Not valid";
+                         ", CCW " + to_string(m_flags.ccw) : "Arc is not valid";
 }
 
 string SegmentArc::toString2() const {
@@ -498,7 +498,7 @@ string SegmentArc::toString2() const {
         return s;
     }
 
-    return "Not valid";
+    return "Arc is not valid";
 }
 
 bool SegmentArc::between(double angle) const {

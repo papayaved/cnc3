@@ -76,11 +76,11 @@ void SegmentPoint::scale(double k) {
 }
 
 string SegmentPoint::toString() const {
-    return m_flags.valid ? "Point: " + m_pt.toString() : "Not valid";
+    return m_flags.valid ? "Point: " + m_pt.toString() : "Point is not valid";
 }
 
 string SegmentPoint::toString2() const {
-    return m_flags.valid ? "Point: " + m_pt.toString() : "Not valid";
+    return m_flags.valid ? "Point: " + m_pt.toString() : "Point is not valid";
 }
 
 ContourRange SegmentPoint::range() const { return ContourRange(m_pt.x, m_pt.x, m_pt.y, m_pt.y); }

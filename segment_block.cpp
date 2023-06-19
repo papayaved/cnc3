@@ -30,11 +30,11 @@ bool SegmentInsertBlock::check() {
 }
 
 string SegmentInsertBlock::toString() const {
-    return flags.valid ? "Insert Block: " + block_name + " at " + pt.toString() : "Not valid";
+    return flags.valid ? "Insert Block: " + block_name + " at " + pt.toString() : "Block is not valid";
 }
 
 string SegmentInsertBlock::toString2() const {
-    return flags.valid ? "Insert Block: " + block_name + " at " + pt.toString() : "Not valid";
+    return flags.valid ? "Insert Block: " + block_name + " at " + pt.toString() : "Block is not valid";
 }
 
 // DxfBlock

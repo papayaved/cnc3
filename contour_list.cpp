@@ -476,6 +476,7 @@ bool ContourList::sort() {
 
     clearSelected();
 
+    // sort contours
     for (int i = 0; i < (int)m_contours.size(); i++) {
         Contour* const bot = m_contours[i].bot();
         Contour* const top = m_contours[i].top();
@@ -484,27 +485,56 @@ bool ContourList::sort() {
 
         if (bot && !bot->empty()) {
             Contour* const prev = prev_pair ? prev_pair->bot() : nullptr;
-            OK &= bot->sort(prev, i == 1);
+            bot->sort(prev, i == 1);
         }
 
         if (top && !top->empty()) {
             Contour* const prev = prev_pair ? prev_pair->top() : nullptr;
-            OK &= top->sort(prev, i == 1);
+            top->sort(prev, i == 1);
         }
     }
 
+    // Set outputs
     for (int i = 0; i < (int)m_contours.size(); i++) {
         const ContourPair* const next = i < (int)m_contours.size() - 1 ? &m_contours[i + 1] : nullptr;
+
+        const Contour* const next_bot = next ? next->bot() : nullptr;
+        const Contour* const next_top = next ? next->top() : nullptr;
 
         Contour* const bot = m_contours[i].bot();
         Contour* const top = m_contours[i].top();
 
-        if (bot && !bot->empty() && bot->isSorted() && next)
-            bot->setOut(next->firstBot());
+        if (bot && !bot->empty()) {
+            if (bot->isSorted()) {
+                if (next_bot)
+                    bot->setOut(next_bot->first_point());
+                else
+                    bot->setOut(bot->last_point());
+            }
+            else
+                bot->setOut();
+        }
 
-        if (top && !top->empty() && top->isSorted() && next)
-            top->setOut(next->firstTop());
+        if (top && !top->empty()) {
+            if (top->isSorted()) {
+                if (next_top)
+                    top->setOut(next_top->first_point());
+                else
+                    top->setOut(top->last_point());
+            }
+            else
+                top->setOut();
+        }
     }
+
+    return OK;
+}
+
+bool ContourList::isSorted() const {
+    bool OK = true;
+
+    for (const auto& pair: m_contours)
+        OK &= pair.isSorted();
 
     return OK;
 }

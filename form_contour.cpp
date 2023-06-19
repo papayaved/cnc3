@@ -1,4 +1,4 @@
-#include "form_contour.h"
+﻿#include "form_contour.h"
 
 #include <QFileDialog>
 //#include <QSizePolicy>
@@ -186,11 +186,14 @@ void FormContour::createGridView() {
     act_bold_font.setBold(true);
     actPropCtr->setFont(act_bold_font);
 
+    actNewCtr = new QAction(tr("New"), this);
+    actNewCtr->setStatusTip(tr("Add a new empty contour above"));
+
     actSortCtr = new QAction(tr("Sort all"), this);
     actSortCtr->setStatusTip(tr("Sort all contours"));
 
-    actChangeDirCtr = new QAction(tr("Change Direction"), this);
-    actChangeDirCtr->setStatusTip(tr("Change the current contour direction"));
+    actReverseCtr = new QAction(tr("Change Direction"), this);
+    actReverseCtr->setStatusTip(tr("Change the current contour direction"));
 
     actFirstCtr = new QAction(tr("First"), this);
     actFirstCtr->setStatusTip(tr("Set the selected contour as the first contour"));
@@ -209,15 +212,16 @@ void FormContour::createGridView() {
 
     viewContours->setContextMenuPolicy(Qt::ContextMenuPolicy::ActionsContextMenu);
     viewContours->addAction(actPropCtr);
-    viewContours->addAction(actChangeDirCtr);
+
+    viewContours->addAction(actNewCtr);
+    viewContours->addAction(actDeleteCtr);
+    viewContours->addAction(actReverseCtr);
 
     viewContours->addAction(actSortCtr);
     viewContours->addAction(actFirstCtr);
     viewContours->addAction(actUpCtr);
     viewContours->addAction(actDownCtr);
-    viewContours->addAction(actLastCtr);
-
-    viewContours->addAction(actDeleteCtr);
+    viewContours->addAction(actLastCtr);    
 
     actPropSeg = new QAction(tr("Properties"), this);
     actPropSeg->setStatusTip(tr("Current segment properties"));
@@ -228,6 +232,9 @@ void FormContour::createGridView() {
 
     actMoveSeg = new QAction(tr("Move to"), this);
     actMoveSeg->setStatusTip(tr("Move selected segments to another contour"));
+
+    actReverseSeg = new QAction(tr("Reverse"), this);
+    actReverseSeg->setStatusTip(tr("Reverse direction of the current segment"));
 
     actFirstSeg = new QAction(tr("First"), this);
     actFirstSeg->setStatusTip(tr("Set the selected segment as the first of the contour"));
@@ -248,14 +255,18 @@ void FormContour::createGridView() {
     actDeleleSeg->setStatusTip(tr("Delete current segment"));
 
     viewSegments->setContextMenuPolicy(Qt::ContextMenuPolicy::ActionsContextMenu);
-    viewSegments->addAction(actPropSeg);    
+    viewSegments->addAction(actPropSeg);
+
     viewSegments->addAction(actUseAsEntryLineSeg);
+    viewSegments->addAction(actDeleleSeg);
+    viewSegments->addAction(actReverseSeg);
+
     viewSegments->addAction(actSortSeg);
     viewSegments->addAction(actFirstSeg);
     viewSegments->addAction(actUpSeg);
     viewSegments->addAction(actDownSeg);
-    viewSegments->addAction(actLastSeg);    
-    viewSegments->addAction(actDeleleSeg);
+    viewSegments->addAction(actLastSeg);
+
     viewSegments->addAction(actMoveSeg);
 
     groupContours = new QGroupBox(tr("Contours"));
@@ -294,8 +305,8 @@ void FormContour::createGridView() {
     connect(viewSegments, &QTableView::pressed, this, &FormContour::onViewSegmentsClicked); // left or right one mouse click, no enter
 
     actions = {
-        actPropCtr, actSortCtr, actChangeDirCtr, actFirstCtr, actUpCtr, actDownCtr, actLastCtr, actDeleteCtr,
-        actPropSeg, actMoveSeg, actUseAsEntryLineSeg, actFirstSeg, actUpSeg, actDownSeg, actLastSeg, actSortSeg, actDeleleSeg
+        actPropCtr, actNewCtr, actSortCtr, actReverseCtr, actFirstCtr, actUpCtr, actDownCtr, actLastCtr, actDeleteCtr,
+        actPropSeg, actMoveSeg, actReverseSeg, actUseAsEntryLineSeg, actFirstSeg, actUpSeg, actDownSeg, actLastSeg, actSortSeg, actDeleleSeg
     };
 }
 
@@ -452,16 +463,19 @@ void FormContour::createViewControl() {
     connect(actPropCtr, &QAction::triggered, this, &FormContour::on_btnCtrProp_clicked);
     connect(actPropSeg, &QAction::triggered, this, &FormContour::on_btnSegProp_clicked);
 
+    connect(actNewCtr, &QAction::triggered, this, &FormContour::on_btnNewContour_clicked);
+
     connect(actDeleteCtr, &QAction::triggered, this, &FormContour::on_actDeleteCtr_clicked);
     connect(actDeleleSeg, &QAction::triggered, this, &FormContour::on_actDeleteSeg_clicked);
 
     connect(actMoveSeg, &QAction::triggered, this, &FormContour::on_actMoveSeg_clicked);
+    connect(actReverseSeg, &QAction::triggered, this, &FormContour::on_actReverseSeg_clicked);
 
     connect(actSortSeg, &QAction::triggered, this, &FormContour::on_actSortSegClicked);
     connect(actSortCtr, &QAction::triggered, this, &FormContour::on_actSortCtrClicked);
 
     connect(actChangeDir, &QAction::triggered, this, &FormContour::on_btnChangeDir_clicked);
-    connect(actChangeDirCtr, &QAction::triggered, this, &FormContour::on_btnChangeDir_clicked);
+    connect(actReverseCtr, &QAction::triggered, this, &FormContour::on_btnChangeDir_clicked);
 
     connect(actUseAsEntryLine, &QAction::triggered, this, &FormContour::on_actUseAsEntryLine_clicked);
     connect(actUseAsEntryLineSeg, &QAction::triggered, this, &FormContour::on_actUseAsEntryLine_clicked);
@@ -937,6 +951,41 @@ void FormContour::on_btnChangeDir_clicked() {
     restoreViewPos(m_ctr_num, pair->count() - 1 - m_row_num, m_col_num);
 }
 
+void FormContour::on_actReverseSeg_clicked() {
+    updateCurrentViewPos();
+    ContourPair* const pair = par.contours.at(m_ctr_num);
+
+    if (!pair || pair->empty())
+        return;
+
+    Contour* ctr = nullptr;
+    switch (m_col_num) {
+    case 0:
+        ctr = pair->bot();
+        break;
+    case 1:
+        ctr = pair->top();
+        break;
+    default:
+        ctr = nullptr;
+        break;
+    }
+
+    if (!ctr || ctr->empty())
+        return;
+
+    SegmentEntity* ent = ctr->at(m_row_num);
+    if (!ent)
+        return;
+
+    saveUndo();
+
+    ent->reverse();
+    txtMsg->setText("Reverse: " + QString(ent->toString2().c_str()));
+
+    restoreViewPos(m_ctr_num, m_row_num, m_col_num);
+}
+
 void FormContour::on_actFirstCtr_clicked() {
     updateCurrentViewPos();
 
@@ -1213,8 +1262,9 @@ void FormContour::on_actUseAsEntryLine_clicked() {
         ContourPair* const pair = par.contours.front();
 
         if (pair && !pair->botEmpty()) {
-            if (!pair->bot()->isSorted())
-                pair->checkSorted();
+            if (!pair->bot()->isSorted()) {
+                pair->fixReverse();
+            }
 
             if (pair->bot()->isSorted() && !pair->bot()->isLoop() && (pair->topEmpty() || (pair->top()->isSorted() && !pair->top()->isLoop()))) {
                 if (m_row_num == 0)

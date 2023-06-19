@@ -447,6 +447,12 @@ void MainWindow::onGenerateClicked() {
 
     par.contours.sort();
 
+    if (!par.contours.isSorted()) {
+        m_formContour->setText(tr("G-code generation error: Contour not sorted"));
+        onContourPageClicked();
+        return;
+    }
+
     const bool isCutLine = par.contours.at(0)->type() == CONTOUR_TYPE::CUTLINE_CONTOUR;
 
     if (count == 1 && isCutLine) {

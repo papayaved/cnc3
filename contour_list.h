@@ -103,6 +103,7 @@ public:
     bool isSelected(size_t ctr, size_t row, size_t col) const;
 
     bool sort();
+    bool isSorted() const;
 
     std::string toString() const;
 

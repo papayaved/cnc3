@@ -845,43 +845,59 @@ void Contour::shiftToBegin(std::list<SegmentEntity *> &entities, const fpoint_va
     }
 }
 
-void Contour::reversePrev(Contour* const prev) {
+void Contour::reversePrevIf(Contour* const prev) {
     bool rev_req = false;
 
-    for (SegmentEntity* const ent : m_entities) {
-        if (prev->last() == ent->point_0())
-            return;
-        else if (prev->last() == ent->point_1()) {
-            ent->reverse();
-            return;
+    if (!prev->isLoop()) {
+        for (SegmentEntity* const ent : m_entities) {
+            if (prev->last() == ent->point_0())
+                return;
+            else if (prev->last() == ent->point_1()) {
+                ent->reverse();
+                return;
+            }
+            else if (prev->first() == ent->point_0()) {
+                rev_req = true;
+                break;
+            }
+            else if (prev->first() == ent->point_1()) {
+                ent->reverse();
+                rev_req = true;
+                break;
+            }
         }
-        else if (prev->first() == ent->point_0())
-            rev_req = true;
-        else if (prev->first() == ent->point_1()) {
-            ent->reverse();
-            rev_req = true;
+
+        if (rev_req)
+            prev->reverse();
+    }
+}
+
+fpoint_valid_t Contour::searchPrevLast(const Contour* const prev) const {
+    if (prev && !prev->empty()) {
+        if (prev->hasOut())
+            return fpoint_valid_t(prev->getOutPoint());
+
+        if (!prev->isLoop())
+            return fpoint_valid_t(prev->last_point());
+
+        for (const auto& p: prev->m_entities) {
+            for (const auto& t: this->m_entities) {
+                if (p->point_1() == t->point_0() || p->point_1() == t->point_1())
+                    return fpoint_valid_t(p->point_1());
+                else if (p->point_0() == t->point_0() || p->point_0() == t->point_1())
+                    return fpoint_valid_t(p->point_0());
+            }
         }
     }
 
-    if (rev_req)
-        prev->reverse();
+    return fpoint_valid_t(false);
 }
 
 bool Contour::sort(Contour& free, Contour& tails, Contour* const prev, bool prev_first) {
+    m_sorted = false;
+
     if (m_entities.empty())
-        return false;
-
-    // Reverse previous contour
-    if (prev && !prev->empty()) {
-        if (prev_first)
-            reversePrev(prev);
-
-        // Search first
-        shiftToBegin(m_entities, prev->last());
-    }
-
-    if (m_entities.size() == 1)
-        return prev ? this->first() == prev->last() : true;
+        return false;    
 
     cutUnconnected(free.m_entities);
     qDebug() << "Free segments:";
@@ -902,53 +918,36 @@ bool Contour::sort(Contour& free, Contour& tails, Contour* const prev, bool prev
     list<SegmentEntity*> clone(0), sorted(0); // they are only copies of pointers
     list<SegmentEntity*>::iterator it;
 
-    if (!prev) {
-        for (size_t i = 0; i < m_entities.size(); i++) {
-            clone = m_entities;
-            sorted.clear();
+    fpoint_valid_t prev_last(false);
 
-            shiftFirst(clone, i);
+    if (prev && !prev->empty()) {
+        vector<fpoint_t> prev_pts;
 
-            it = clone.begin();
+        if (prev->isLoop())
+            prev_pts = prev->vertices();
+        else
+            prev_pts = {prev->last()};
 
-            sorted.push_back(*it);
-            it = clone.erase(it);
+        // Reverse previous contour if need
+        if (prev_first)
+            reversePrevIf(prev);
 
-            while (!clone.empty()) {
-                bool OK = sorted.back() ? searchNext(sorted.back()->point_1(), it, clone.begin(), clone.end()) : false;
+        // Find fisrt common point
+        prev_last = searchPrevLast(prev);
 
-                if (OK) {
-                    sorted.push_back(*it);
-                    it = clone.erase(it);
-                }
-                else
-                    break;
-            }
-
-            while (!clone.empty()) {
-                bool OK = sorted.front() ? searchPrev(sorted.front()->point_0(), it, clone.begin(), clone.end()) : false;
-
-                if (OK) {
-                    sorted.push_front(*it);
-                    it = clone.erase(it);
-                }
-                else
-                    break;
-            }
-
-            if (clone.empty()) {
-                m_entities = sorted;
+        if (m_entities.size() == 1) {
+            if (prev_last == this->first())
                 m_sorted = true;
-                qDebug() << "Sorted:";
-                qDebug() << toString().c_str();
-
-                return true;
+            else if (prev_last == this->last()) {
+                this->reverse();
+                m_sorted = true;
             }
 
-            // try to set as the first segment the next segment
+            return m_sorted;
         }
-    }
-    else {
+
+        shiftToBegin(m_entities, prev_last);
+
         clone = m_entities;
         sorted.clear();
 
@@ -978,15 +977,69 @@ bool Contour::sort(Contour& free, Contour& tails, Contour* const prev, bool prev
             else
                 break;
         }
-
-        if (clone.empty()) {
-            m_entities = sorted;
+    }
+    else { // the first point is unknown
+        if (m_entities.size() == 1) {
             m_sorted = true;
-            qDebug() << "Sorted:";
-            qDebug() << toString().c_str();
-
-            return true;
+            return m_sorted;
         }
+
+        for (size_t i = 0; i < m_entities.size(); i++) {
+            for (int j = 0; j < 2; j++) {
+                clone = m_entities;
+                sorted.clear();
+
+                shiftFirst(clone, i);
+
+                it = clone.begin();
+
+                if (j == 1)
+                    (*it)->reverse();
+
+                sorted.push_back(*it);
+                it = clone.erase(it);
+
+                while (!clone.empty()) {
+                    bool OK = sorted.back() ? searchNext(sorted.back()->point_1(), it, clone.begin(), clone.end()) : false;
+
+                    if (OK) {
+                        sorted.push_back(*it);
+                        it = clone.erase(it);
+                    }
+                    else
+                        break;
+                }
+
+                while (!clone.empty()) {
+                    bool OK = sorted.front() ? searchPrev(sorted.front()->point_0(), it, clone.begin(), clone.end()) : false;
+
+                    if (OK) {
+                        sorted.push_front(*it);
+                        it = clone.erase(it);
+                    }
+                    else
+                        break;
+                }
+
+                if (clone.empty())
+                    break;
+
+                // reverse first segment
+            }
+
+            if (clone.empty())
+                break;
+
+            // try to set as the first segment the next segment
+        }
+    }
+
+    if (clone.empty()) {
+        m_entities = sorted;
+        qDebug() << "Sorted:";
+        qDebug() << toString().c_str();
+
+        return checkSorted(prev_last);
     }
 
     m_last_error = clone.front() ? "Error at " + clone.front()->toString() : "Error: DxfEntity is NULL";
@@ -1110,21 +1163,40 @@ bool Contour::trySort(Contour* const prev, bool prev_first) {
     return OK;
 }
 
-bool Contour::checkSorted(fpoint_valid_t prev_pt, const fpoint_valid_t& next_pt) {
+bool Contour::fixReverse(fpoint_valid_t prev_last) {
+    m_sorted = true;
+
+    for (list<SegmentEntity*>::iterator it = m_entities.begin(); it != m_entities.end(); ++it) {
+        if (prev_last.valid) {
+            if (prev_last != (*it)->point_0())
+                ;
+            else if (prev_last != (*it)->point_1())
+                (*it)->reverse();
+            else {
+                m_sorted = false;
+                break;
+            }
+        }
+
+        prev_last = (*it)->point_1();
+        prev_last.valid = true;
+    }
+
+    return m_sorted;
+}
+
+bool Contour::checkSorted(fpoint_valid_t prev_last) {
     m_sorted = true;
 
     for (list<SegmentEntity*>::const_iterator it = m_entities.cbegin(); it != m_entities.cend(); ++it) {
-        if (prev_pt.valid && prev_pt != (*it)->point_0()) {
+        if (prev_last.valid && prev_last != (*it)->point_0()) {
             m_sorted = false;
             break;
         }
 
-        prev_pt = (*it)->point_1();
-        prev_pt.valid = true;
+        prev_last = (*it)->point_1();
+        prev_last.valid = true;
     }
-
-    if (m_sorted && prev_pt.valid && next_pt.valid && prev_pt != next_pt)
-        m_sorted = false;
 
     return m_sorted;
 }
@@ -1150,6 +1222,18 @@ fpoint_valid_t Contour::last_point() const {
         return m_entities.back()->point_1();
 
     return fpoint_valid_t(false);
+}
+
+SegmentEntity *Contour::at(size_t index) {
+    m_sorted = false;
+    size_t i = 0;
+
+    if (index < m_entities.size())
+        for (auto it = m_entities.begin(); it != m_entities.end(); ++it, i++)
+            if (i == index)
+                return *it;
+
+    return nullptr;
 }
 
 const SegmentEntity *Contour::at(size_t index) const {
@@ -2508,6 +2592,17 @@ std::vector<size_t> Contour::getVerticesPoints() const {
             s = pt;
             res[3] = i;
         }
+    }
+
+    return res;
+}
+
+vector<fpoint_t> Contour::vertices() const {
+    vector<fpoint_t> res;
+
+    for (const auto& ent: m_entities) {
+        res.push_back(ent->point_0());
+        res.push_back(ent->point_1());
     }
 
     return res;

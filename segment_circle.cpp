@@ -76,14 +76,14 @@ string SegmentCircle::toString() const {
     return m_flags.valid ? "Circle: Center " + m_C.toString() +
             ", Radius " + to_string(m_R) +
             ", Start Angle " + to_string(m_alpha / M_PI * 180) +
-            ", CCW " + to_string(m_flags.ccw) : "Not valid";
+            ", CCW " + to_string(m_flags.ccw) : "Circle is not valid";
 }
 
 string SegmentCircle::toString2() const {
     return m_flags.valid ? "Circle: Center " + m_C.toString() +
             ", Radius " + to_string(m_R) +
             ", Start Angle " + to_string(m_alpha / M_PI * 180) +
-            ", CCW " + to_string(m_flags.ccw) : "Not valid";
+            ", CCW " + to_string(m_flags.ccw) : "Circle is not valid";
 }
 
 double SegmentCircle::deltaAngle() const { return m_flags.ccw ? 2 * M_PI : -2 * M_PI; }

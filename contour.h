@@ -113,13 +113,16 @@ public:
     static void shiftToBegin(std::list<SegmentEntity*>& entities, const fpoint_t* const first);
     static void shiftToBegin(std::list<SegmentEntity*>& entities, const fpoint_valid_t& first);
 
-    void reversePrev(Contour* const prev);
+    void reversePrevIf(Contour* const prev);
+    fpoint_valid_t searchPrevLast(const Contour* const prev) const;
+
     bool sort(Contour& free, Contour& tails, Contour* const prev = nullptr, bool prev_first = false);
 //    bool sort(Contour& free, Contour& unused, const fpoint_valid_t& prev_pt = fpoint_valid_t(false));
     bool sort(Contour* const prev = nullptr, bool prev_first = false);
     bool trySort(Contour* const prev = nullptr, bool prev_first = false);
 
-    bool checkSorted(fpoint_valid_t prev_pt = fpoint_valid_t(false), const fpoint_valid_t& next_pt = fpoint_valid_t(false));
+    bool fixReverse(fpoint_valid_t prev_last);
+    bool checkSorted(fpoint_valid_t prev_last);
 
     void reverse();
     static void shiftFirst(std::list<SegmentEntity*>& entities, size_t index);
@@ -140,6 +143,7 @@ public:
 
     fpoint_valid_t first_point() const;
     fpoint_valid_t last_point() const;
+    SegmentEntity* at(size_t index);
     const SegmentEntity* at(size_t index) const;
 
     inline const std::list<SegmentEntity*>& entities() const { return m_entities; }
@@ -245,6 +249,7 @@ public:
 
     // East North West South IDs
     std::vector<size_t> getVerticesPoints() const;
+    std::vector<fpoint_t> vertices() const;
 
 private:
     void addRectSpeedProfile(AXIS axis, double width, double speed, bool fwd, fpoint_t& A, fpoint_t& B);

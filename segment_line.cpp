@@ -472,7 +472,7 @@ void SegmentLine::offset(OFFSET_SIDE side, double h) {
 }
 
 string SegmentLine::toString() const {
-    return m_flags.valid ? "Line: " + m_A.toString() + " - " + m_B.toString() + ", Speed: " + (hasSpeed() ? std::to_string(speed()) : "null") : "Not valid";
+    return m_flags.valid ? "Line: " + m_A.toString() + " - " + m_B.toString() + ", Speed: " + (hasSpeed() ? std::to_string(speed()) : "null") : "Line is not valid";
 }
 
 string SegmentLine::toString2() const {
@@ -483,7 +483,7 @@ string SegmentLine::toString2() const {
         return "Line: " + m_A.toString() + " - " + m_B.toString() + buf;
     }
 
-    return "Not valid";
+    return "Line is not valid";
 }
 
 vector<fpoint_t> SegmentLine::getPoints() const { return vector<fpoint_t>({m_A, m_B}); }
