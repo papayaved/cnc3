@@ -78,7 +78,7 @@ void FormSettings::createSettingsWidget() {
 
     comboInputLevel = new QComboBox;
     comboInputLevel->addItem(tr(""));
-    comboInputLevel->addItem(tr("Type 1")); // Metal
+    comboInputLevel->addItem(tr("Type 1")); // EDM
     comboInputLevel->addItem(tr("Type 2")); // Stone
     comboInputLevel->addItem(tr("Debug"));
 
@@ -442,7 +442,7 @@ void FormSettings::createSettingsWidget() {
         numInputLevel->blockSignals(true);
 
         switch (i) {
-        case 1: numInputLevel->setValue(CncParam::INPUT_LEVEL_METAL); break;
+        case 1: numInputLevel->setValue(CncParam::INPUT_LEVEL_EDM); break;
         case 2: numInputLevel->setValue(CncParam::INPUT_LEVEL_STONE); break;
         case 3: numInputLevel->setValue(CncParam::INPUT_LEVEL_DEBUG); break;
         }
@@ -572,7 +572,7 @@ void FormSettings::selectComboInputLevel(int bits) {
     comboInputLevel->blockSignals(true);
 
     switch (bits) {
-    case (CncParam::INPUT_LEVEL_METAL): comboInputLevel->setCurrentIndex(1); break;
+    case (CncParam::INPUT_LEVEL_EDM): comboInputLevel->setCurrentIndex(1); break;
     case (CncParam::INPUT_LEVEL_STONE): comboInputLevel->setCurrentIndex(2); break;
     case (CncParam::INPUT_LEVEL_DEBUG): comboInputLevel->setCurrentIndex(3); break;
     default: comboInputLevel->setCurrentIndex(0); break;

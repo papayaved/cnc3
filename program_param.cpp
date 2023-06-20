@@ -223,9 +223,9 @@ QString ProgramParam::helpSubDir() {
     }
 #else
     switch (lang) {
-    case InterfaceLanguage::ENGLISH: return "metal/en";
-    case InterfaceLanguage::RUSSIAN: return "metal/ru";
-    default: return "metal/en";
+    case InterfaceLanguage::ENGLISH: return "EDM/en";
+    case InterfaceLanguage::RUSSIAN: return "EDM/ru";
+    default: return "EDM/en";
     }
 #endif
 }

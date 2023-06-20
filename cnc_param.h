@@ -8,14 +8,14 @@ struct CncParam {
     static constexpr size_t AXES_NUM = 4;
     static constexpr size_t ENC_NUM = 2;
 
-    static constexpr uint16_t INPUT_LEVEL_METAL = 0x001;
+    static constexpr uint16_t INPUT_LEVEL_EDM = 0x001;
     static constexpr uint16_t INPUT_LEVEL_STONE = 0x010;
     static constexpr uint16_t INPUT_LEVEL_DEBUG = 0x300;
 
 //#ifdef STONE
 //    static constexpr uint16_t DEFAULT_INPUT_LEVEL = INPUT_LEVEL_STONE;
 //#else
-    static constexpr uint16_t DEFAULT_INPUT_LEVEL = INPUT_LEVEL_METAL;
+    static constexpr uint16_t DEFAULT_INPUT_LEVEL = INPUT_LEVEL_EDM;
 //#endif
 
     static constexpr bool DEFAULT_SD_ENA = false;

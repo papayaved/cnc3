@@ -159,7 +159,7 @@ bool GCode::generate(const cut_t& cut, const deque<ContourPair>& contours, const
 //                        frames.push_back(GFrame::M0());
 
 #if defined(STONE)
-                    const DxfEntity* ent = contours.front().bot()->front();
+                    const SegmentEntity* ent = contours.front().bot()->front();
 
                     M105.value = ent->hasRollVel() ? ent->rollVel() : 7;
                     M105.init = true;
