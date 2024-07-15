@@ -4,9 +4,8 @@
 #
 #-------------------------------------------------
 
-#unix:include ( /usr/local/qwt-6.3.0-svn/features/qwt.prf )
-unix: include ( /usr/local/qwt-6.1.5/features/qwt.prf )
-else: include ( C:\Qwt-6.2.0\features\qwt.prf )
+unix: include ( /usr/local/qwt-6.3.0/features/qwt.prf )
+else: include ( c:\Qwt-6.3.0\features\qwt.prf )
 
 unix: DEFINES += LINUX
 
@@ -24,7 +23,7 @@ unix: DEFINES += QT_NO_DEBUG_OUTPUT
 QT       += core gui widgets
 #requires(qtConfig(tableview))
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+# greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = icnc
 TEMPLATE = app

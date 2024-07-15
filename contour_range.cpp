@@ -1,3 +1,4 @@
+#include <limits>
 #include "contour_range.h"
 
 using namespace std;
